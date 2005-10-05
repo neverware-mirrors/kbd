@@ -1,0 +1,19 @@
+#
+# This files tells the `kbd' package:
+#
+# - whether to load a specific font and boot and/or to setup a default screen
+# mapping. This may be useful, if not using SVGATextMode, to load a font with
+# an another encoding than default.
+#
+#
+# Example:
+#
+#CONSOLE_FONT=iso01.f16
+
+# Be warned that kbd (8bit) console maps are dependant on both the encoding
+# you wish your apps to use, and the actual encoding of the font you
+# use.  Look at console-tools 16bit console maps to get rid of
+# font-encoding dependancy.
+
+#CONSOLE_MAP=trivial
+#CONSOLE_MAP=vga2iso

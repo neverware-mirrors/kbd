@@ -1,0 +1,23 @@
+Index: kbd-1.12/src/unicode_stop
+===================================================================
+--- kbd-1.12.orig/src/unicode_stop
++++ kbd-1.12/src/unicode_stop
+@@ -15,4 +15,4 @@
+ # stop unicode
+ kbd_mode -a
+ 
+-echo -n -e '\033%@'
++printf '\033%%@'
+Index: kbd-1.12/src/unicode_start
+===================================================================
+--- kbd-1.12.orig/src/unicode_start
++++ kbd-1.12/src/unicode_start
+@@ -38,7 +38,7 @@
+ # Tell the console output driver that the bytes arriving are UTF-8
+ # encoded multibyte sequences.
+ 
+-echo -n -e '\033%G'
++printf '\033%%G'
+ 
+ # Tell the graphics card how to display Unicode characters not
+ # contained in the IBM 437 character set (on PCs). The font should

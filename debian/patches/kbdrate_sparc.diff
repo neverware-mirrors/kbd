@@ -1,0 +1,118 @@
+#! /bin/sh -e
+## 30_kbdrate_sparc.dpatch by Denis Barbier <barbier@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Description: On Sparc machines, the kbd_repeat struct has
+## DP: no 'period' member.
+## DP: Date: 2004-08-01
+
+if [ $# -lt 1 ]; then
+    echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+    -patch) patch -p1 ${patch_opts} < $0;;
+    -unpatch) patch -R -p1 ${patch_opts} < $0;;
+    *)
+        echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
+        exit 1;;
+esac
+
+exit 0
+
+@DPATCH@
+diff -urNad /opt/tmp/kbd-1.12/src/kbdrate.c kbd-1.12/src/kbdrate.c
+--- /opt/tmp/kbd-1.12/src/kbdrate.c	2004-08-03 00:25:20.000000000 +0200
++++ kbd-1.12/src/kbdrate.c	2004-08-03 00:26:47.000000000 +0200
+@@ -86,10 +86,20 @@
+ 				 * actually used values are returned */
+ struct kbd_repeat {
+         int delay;        /* in msec; <= 0: don't change */
++#ifdef __sparc__
++        int rate;         /* in msec; <= 0: don't change */
++#else
+         int period;       /* in msec; <= 0: don't change */
++#endif
+ };
+ #endif
+ 
++#ifdef __sparc__
++#define KBD_PERIOD(var) var.rate
++#else
++#define KBD_PERIOD(var) var.period
++#endif
++
+ #include "nls.h"
+ #include "version.h"
+ 
+@@ -109,7 +119,7 @@
+ 	struct kbd_repeat kbdrep_s;
+ 
+ 	/* don't change, just test */
+-	kbdrep_s.period = -1;
++	KBD_PERIOD(kbdrep_s) = -1;
+ 	kbdrep_s.delay = -1;
+ 	if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
+ 		if (errno == EINVAL || errno == ENOTTY)
+@@ -120,16 +130,16 @@
+ 
+ #if 0
+ 	printf("old delay %d, period %d\n",
+-	       kbdrep_s.delay, kbdrep_s.period);
++	       kbdrep_s.delay, KBD_PERIOD(kbdrep_s));
+ #endif
+ 
+ 	/* do the change */
+ 	if (rate == 0)				  /* switch repeat off */
+-		kbdrep_s.period = 0;
++		KBD_PERIOD(kbdrep_s) = 0;
+ 	else
+-		kbdrep_s.period  = 1000.0 / rate; /* convert cps to msec */
+-	if (kbdrep_s.period < 1)
+-		kbdrep_s.period = 1;
++		KBD_PERIOD(kbdrep_s)  = 1000.0 / rate; /* convert cps to msec */
++	if (KBD_PERIOD(kbdrep_s) < 1)
++		KBD_PERIOD(kbdrep_s) = 1;
+ 	kbdrep_s.delay = delay;
+ 	if (kbdrep_s.delay < 1)
+ 		kbdrep_s.delay = 1;
+@@ -140,10 +150,10 @@
+ 	}
+ 
+ 	/* report */
+-	if (kbdrep_s.period == 0)
++	if (KBD_PERIOD(kbdrep_s) == 0)
+ 		rate = 0;
+ 	else
+-		rate = 1000.0 / (double) kbdrep_s.period;
++		rate = 1000.0 / (double) KBD_PERIOD(kbdrep_s);
+ 
+ 	if (!silent)
+ 		printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
+@@ -164,10 +174,10 @@
+ 		exit( 1 );
+ 	}
+ 
+-	kbdrate_s.period = (int) (rate + 0.5);  /* round up */
++	KBD_PERIOD(kbdrate_s) = (int) (rate + 0.5);  /* round up */
+ 	kbdrate_s.delay = delay * HZ / 1000;  /* convert ms to Hz */
+-	if (kbdrate_s.period > 50)
+-		kbdrate_s.period = 50;
++	if (KBD_PERIOD(kbdrate_s) > 50)
++		KBD_PERIOD(kbdrate_s) = 50;
+ 
+ 	if (ioctl( fd, KIOCSRATE, &kbdrate_s )) {
+ 		perror( "ioctl(KIOCSRATE)" );
+@@ -177,7 +187,7 @@
+ 
+ 	if (!silent)
+ 		printf( "Typematic Rate set to %d cps (delay = %d ms)\n",
+-			kbdrate_s.period, kbdrate_s.delay * 1000 / HZ );
++			KBD_PERIOD(kbdrate_s), kbdrate_s.delay * 1000 / HZ );
+ 
+ 	return 1;
+ #else /* no KIOCSRATE */

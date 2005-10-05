@@ -1,0 +1,13 @@
+ Have a look at /etc/kbd/config if you need to setup a specific font
+at boot-time.
+
+ The kernel's builtin keymap is saved in /var/lib/kbd/ before loading
+a new one on boot.  This saved keymap is used by kbdconfig when it
+feels it needs to restore a working keymap.  This saved keymap is
+deleted on reboot/halt to cope with changes in the builtin keymap.
+This is done by the /etc/init.d/keymaps.sh script.
+
+ The Agafari ethiopic fonts were not included because it's a bit
+unclear whether they should be distributed. Please use Goha or
+GohaClassic if you want the Ethiopic script.
+ See /usr/kbd/doc/README.Ethiopic for details.

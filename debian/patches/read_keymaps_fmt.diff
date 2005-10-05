@@ -1,0 +1,344 @@
+#! /bin/sh -e
+## 90_read_keymaps_fmt.dpatch by Denis Barbier <barbier@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Description: in order to work under legacy and UTF-8 locales,
+## DP: two keymaps must be provided.  With this patch, a single keymap
+## DP: can be loaded both in ASCII and UTF-8 mode.
+## DP: Date: 2004-07-31
+
+if [ $# -lt 1 ]; then
+    echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+    -patch) patch -p1 ${patch_opts} < $0;;
+    -unpatch) patch -R -p1 ${patch_opts} < $0;;
+    *)
+        echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
+        exit 1;;
+esac
+
+exit 0
+
+@DPATCH@
+diff -urNad kbd-1.12/po/cat-id-tbl.c /tmp/dpep.h0bgxc/kbd-1.12/po/cat-id-tbl.c
+--- kbd-1.12/po/cat-id-tbl.c	2004-01-16 22:42:41.000000000 +0100
++++ /tmp/dpep.h0bgxc/kbd-1.12/po/cat-id-tbl.c	2004-10-01 00:02:37.000000000 +0200
+@@ -104,13 +104,13 @@
+   {"bug: getfont called with count<256\n", 63},
+   {"%s: out of memory\n", 64},
+   {"unknown charset %s - ignoring charset request\n", 65},
+-  {"assuming iso-8859-1 %s\n", 66},
+-  {"assuming iso-8859-15 %s\n", 67},
+-  {"assuming iso-8859-2 %s\n", 68},
+-  {"assuming iso-8859-3 %s\n", 69},
+-  {"assuming iso-8859-4 %s\n", 70},
+-  {"unknown keysym '%s'\n", 71},
+-  {"plus before %s ignored\n", 72},
++  {"null symbol found", 66},
++  {"assuming iso-8859-1 %s\n", 67},
++  {"assuming iso-8859-15 %s\n", 68},
++  {"assuming iso-8859-2 %s\n", 69},
++  {"assuming iso-8859-3 %s\n", 70},
++  {"assuming iso-8859-4 %s\n", 71},
++  {"unknown keysym '%s'\n", 72},
+   {"\
+ Usage:\n\
+ \t%s [-C console] [-o map.orig]\n", 73},
+diff -urNad kbd-1.12/src/analyze.l /tmp/dpep.h0bgxc/kbd-1.12/src/analyze.l
+--- kbd-1.12/src/analyze.l	2004-01-16 22:51:44.000000000 +0100
++++ /tmp/dpep.h0bgxc/kbd-1.12/src/analyze.l	2004-10-01 00:02:37.000000000 +0200
+@@ -77,7 +77,7 @@
+ \-			{return(DASH);}
+ \,			{return(COMMA);}
+ \+			{return(PLUS);}
+-{Unicode}		{yylval=strtol(yytext+1,NULL,16);return(UNUMBER);}
++{Unicode}		{yylval=strtol(yytext+1,NULL,16) ^ 0xf000;return(UNUMBER);}
+ {Decimal}|{Octal}|{Hex}	{yylval=strtol(yytext,NULL,0);return(NUMBER);}
+ <RVALUE>{Literal}	{return((yylval=ksymtocode(yytext))==-1?ERROR:LITERAL);}
+ {Charset}		{return(CHARSET);}
+diff -urNad kbd-1.12/src/dumpkeys.c /tmp/dpep.h0bgxc/kbd-1.12/src/dumpkeys.c
+--- kbd-1.12/src/dumpkeys.c	2004-01-16 20:45:31.000000000 +0100
++++ /tmp/dpep.h0bgxc/kbd-1.12/src/dumpkeys.c	2004-10-01 00:02:37.000000000 +0200
+@@ -131,11 +131,10 @@
+ 	t = KTYP(code);
+ 	v = KVAL(code);
+ 	if (t >= syms_size) {
+-		code = code ^ 0xf000;
+-		if (!numeric && (p = unicodetoksym(code)) != NULL)
++		if (!numeric && (p = codetoksym(code)) != NULL)
+ 			printf("%-16s", p);
+ 		else
+-			printf("U+%04x          ", code);
++			printf("U+%04x          ", code ^ 0xf000);
+ 		return;
+ 	}
+ 	if (t == KT_LETTER) {
+diff -urNad kbd-1.12/src/ksyms.c /tmp/dpep.h0bgxc/kbd-1.12/src/ksyms.c
+--- kbd-1.12/src/ksyms.c	2004-10-01 00:02:36.000000000 +0200
++++ /tmp/dpep.h0bgxc/kbd-1.12/src/ksyms.c	2004-10-01 00:02:45.000000000 +0200
+@@ -1,3 +1,4 @@
++#include <linux/kd.h>
+ #include <linux/keyboard.h>
+ #include <stdio.h>
+ #include <string.h>
+@@ -1689,10 +1690,17 @@
+ }
+ 
+ const char *
+-unicodetoksym(int code) {
++codetoksym(int code) {
+ 	int i, j;
+ 	sym *p;
+ 
++	if (KTYP(code) == KT_META)
++		return NULL;
++	if (KTYP(code) == KT_LETTER)
++		code = K(KT_LATIN, KVAL(code));
++	if (KTYP(code) < syms_size)
++		return syms[KTYP(code)].table[KVAL(code)];
++	code = code ^ 0xf000;
+ 	if (code < 0)
+ 		return NULL;
+ 	if (code < 0x80)
+@@ -1709,25 +1717,40 @@
+ 
+ /* Functions for loadkeys. */
+ 
+-int unicode_used = 0;
+-
+ int
+ ksymtocode(const char *s) {
+ 	int i;
+-	int j, jmax;
++	int j;
+ 	int keycode;
++	int save_prefer_unicode;
++	int syms_start = 0;
+ 	sym *p;
+ 
++	if (!s) {
++		fprintf(stderr, "%s\n", _("null symbol found"));
++		return -1;
++	}
++
+ 	if (!strncmp(s, "Meta_", 5)) {
++		/* Temporarily set prefer_unicode to ensure that keycode is
++		   right. */
++		save_prefer_unicode = prefer_unicode;
++		prefer_unicode = 0;
+ 		keycode = ksymtocode(s+5);
++		prefer_unicode = save_prefer_unicode;
+ 		if (KTYP(keycode) == KT_LATIN)
+ 			return K(KT_META, KVAL(keycode));
+ 		/* fall through to error printf */
+ 	}
+ 
+-	for (i = 0; i < syms_size; i++) {
+-		jmax = ((i == 0 && prefer_unicode) ? 128 : syms[i].size);
+-		for (j = 0; j < jmax; j++)
++	if (prefer_unicode) {
++		for (j = 0; j < 0x80; j++)
++			if (!strcmp(s,iso646_syms[j]))
++				return (j ^ 0xf000);
++		syms_start = 1;
++	}
++	for (i = syms_start; i < syms_size; i++) {
++		for (j = 0; j < syms[i].size; j++)
+ 			if (!strcmp(s,syms[i].table[j]))
+ 				return K(i, j);
+ 	}
+@@ -1741,8 +1764,7 @@
+ 			p = charsets[i].charnames;
+ 			for (j = charsets[i].start; j < 256; j++, p++)
+ 				if (!strcmp(s,p->name)) {
+-					unicode_used = 1;
+-					return (p->uni ^ 0xf000); /* %%% */
++					return (p->uni ^ 0xf000);
+ 				}
+ 		}
+ 	} else /* if (!chosen_charset) */ {
+@@ -1794,38 +1816,27 @@
+ }
+ 
+ int
+-unicodetocode(int code) {
+-	const char *s;
+-
+-	s = unicodetoksym(code);
+-	if (s)
+-		return ksymtocode(s);
+-	else {
+-		unicode_used = 1;
+-		return (code ^ 0xf000); /* %%% */
++add_number(int code)
++{
++	if (KTYP(code) == KT_META)
++		return code;
++	if (prefer_unicode && KTYP(code) >= syms_size) {
++		if ((code ^ 0xf000) < 0x80)
++			return K(KT_LATIN, code ^ 0xf000);
++		else
++			return code;
+ 	}
++	if (!prefer_unicode && KTYP(code) < syms_size)
++		return code;
++	return ksymtocode(codetoksym(code));
+ }
+ 
+ int
+ add_capslock(int code)
+ {
+-	char buf[7];
+-	const char *p;
+-
+ 	if (KTYP(code) == KT_LATIN)
+ 		return K(KT_LETTER, KVAL(code));
+-	if (KTYP(code) >= syms_size) {
+-		if ((p = unicodetoksym(code ^ 0xf000)) == NULL) {
+-			sprintf(buf, "U+%04x", code ^ 0xf000);
+-			p = buf;
+-		}
+-	} else {
+-		sprintf(buf, "0x%04x", code);
+-		p = buf;
+-	}
+-#if 0
+-	/* silence the common usage  dumpkeys | loadkeys -u  */
+-	fprintf(stderr, _("plus before %s ignored\n"), p);
+-#endif
+-	return code;
++	if (KTYP(code) >= syms_size && (code ^ 0xf000) < 0x80)
++		return K(KT_LETTER, code ^ 0xf000);
++	return add_number(code);
+ }
+diff -urNad kbd-1.12/src/ksyms.h /tmp/dpep.h0bgxc/kbd-1.12/src/ksyms.h
+--- kbd-1.12/src/ksyms.h	1999-10-05 13:42:16.000000000 +0200
++++ /tmp/dpep.h0bgxc/kbd-1.12/src/ksyms.h	2004-10-01 00:02:37.000000000 +0200
+@@ -23,10 +23,10 @@
+ extern const int syn_size;
+ 
+ extern int set_charset(const char *name);
+-extern const char *unicodetoksym(int code);
++extern const char *codetoksym(int code);
+ extern void list_charsets(FILE *f);
+ extern int ksymtocode(const char *s);
+-extern int unicodetocode(int code);
++extern int add_number(int code);
+ extern int add_capslock(int code);
+ 
+ #endif
+diff -urNad kbd-1.12/src/loadkeys.y /tmp/dpep.h0bgxc/kbd-1.12/src/loadkeys.y
+--- kbd-1.12/src/loadkeys.y	2004-10-01 00:02:35.000000000 +0200
++++ /tmp/dpep.h0bgxc/kbd-1.12/src/loadkeys.y	2004-10-01 00:02:37.000000000 +0200
+@@ -74,7 +74,6 @@
+ extern char *xstrdup(char *);
+ int key_buf[MAX_NR_KEYMAPS];
+ int mod;
+-extern int unicode_used;
+ int private_error_ct = 0;
+ 
+ extern int rvalct;
+@@ -227,13 +226,15 @@
+ 			}
+ 		;
+ rvalue		: NUMBER
+-			{$$=$1;}
++			{$$=add_number($1);}
++		| LITERAL
++			{$$=add_number($1);}
+ 		| UNUMBER
+-			{$$=($1 ^ 0xf000); unicode_used=1;}
++			{$$=add_number($1);}
+                 | PLUS NUMBER
+                         {$$=add_capslock($2);}
+-		| LITERAL
+-			{$$=$1;}
++                | PLUS UNUMBER
++                        {$$=add_capslock($2);}
+                 | PLUS LITERAL
+                         {$$=add_capslock($2);}
+ 		;
+@@ -262,6 +263,7 @@
+ char **args;
+ int optd = 0;
+ int optm = 0;
++int optu = 0;
+ int opts = 0;
+ int verbose = 0;
+ int quiet = 0;
+@@ -283,6 +285,8 @@
+ 		{ NULL, 0, NULL, 0 }
+ 	};
+ 	int c;
++	int fd;
++	int mode;
+ 
+ 	set_progname(argv[0]);
+ 
+@@ -303,6 +307,7 @@
+ 				break;
+ 			case 'u':
+ 				set_charset("unicode");
++				optu = 1;
+ 				break;
+ 			case 'q':
+ 				quiet = 1;
+@@ -318,8 +323,18 @@
+ 		}
+ 	}
+ 
++	fd = getfd(NULL);
++	if (!optu) {
++		if (ioctl(fd, KDGKBMODE, &mode)) {
++			perror("KDGKBMODE");
++			fprintf(stderr, _("loadkeys: error reading keyboard mode\n"));
++			exit(1);
++		}
++		if (mode == K_UNICODE)
++			set_charset("unicode");
++	}
++
+ 	args = argv + optind - 1;
+-	unicode_used = 0;
+ 	yywrap();	/* set up the first input file, if any */
+ 	if (yyparse() || private_error_ct) {
+ 		fprintf(stderr, _("syntax error in map file\n"));
+@@ -766,15 +781,6 @@
+ 	int i,j,fail;
+ 	int oldm;
+ 
+-	if (unicode_used) {
+-	     /* Switch keyboard mode for a moment -
+-		do not complain about errors.
+-		Do not attempt a reset if the change failed. */
+-	     if (ioctl(fd, KDGKBMODE, &oldm)
+-	        || (oldm != K_UNICODE && ioctl(fd, KDSKBMODE, K_UNICODE)))
+-		  oldm = K_UNICODE;
+-	}
+-
+ 	for(i=0; i<MAX_NR_KEYMAPS; i++) {
+ 	    if (key_map[i]) {
+ 		for(j=0; j<NR_KEYS; j++) {
+@@ -839,16 +845,6 @@
+ 		}
+ 	    }
+ 	}
+-
+-	if(unicode_used && oldm != K_UNICODE) {
+-	     if (ioctl(fd, KDSKBMODE, oldm)) {
+-		  fprintf(stderr, _("%s: failed to restore keyboard mode\n"),
+-			  progname);
+-	     }
+-	     fprintf(stderr, _("%s: warning: this map uses Unicode symbols\n"
+-		             "    (perhaps you want to do `kbd_mode -u'?)\n"),
+-		     progname);
+-	}
+ 	return ct;
+ }
+ 

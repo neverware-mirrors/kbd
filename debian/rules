@@ -1,0 +1,115 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# 
+# debian/rules file for the `kbd' package
+
+package=kbd
+
+ARCH=$(shell dpkg --print-architecture)
+
+topdir=$(shell pwd)
+debdir=${topdir}/debian
+tmpdir=${debdir}/${package}
+bindir=${tmpdir}/bin
+sbindir=${tmpdir}/sbin
+ubindir=${tmpdir}/usr/bin
+usbindir=${tmpdir}/usr/sbin
+docdir=${tmpdir}/usr/share/doc/${package}
+
+configure-stamp:
+	${topdir}/configure --prefix=/usr \
+		--datadir=/usr/share --mandir=/usr/share/man
+	touch configure-stamp
+
+build: build-stamp
+build-stamp: patch configure-stamp
+	dh_testdir
+	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH}
+	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH} -C contrib codepage splitfont vcstime
+	touch build-stamp
+
+clean: clean1 unpatch
+clean1:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp \
+	  contrib/codepage contrib/splitfont contrib/vcstime
+	-make reallyclean ARCH=${ARCH}
+	dh_clean
+
+install: build-stamp
+	dh_testdir
+	dh_testroot
+	dh_clean
+	dh_installdirs -a
+
+	# Now it seems like most of this is already provided by prefix mechanism.
+	# make install-progs install-man DESTDIR=${tmpdir} ARCH=${ARCH}
+	make DESTDIR=${tmpdir} LOADKEYS_BINDIR=${tmpdir}/bin ARCH=${ARCH} install-progs install-man
+	-@find ${topdir}/data/*_Z -name '.arch-ids' -exec rm -rf {} \; 2>/dev/null
+
+     	# install contribs
+	install -m 755 ${topdir}/contrib/codepage ${ubindir}
+	install -m 755 ${topdir}/contrib/splitfont ${ubindir}
+	install -m 755 ${topdir}/contrib/vcstime ${usbindir}
+
+     	# install misc
+	install -m 755 ${topdir}/src/screendump ${ubindir}
+	install -m 755 ${topdir}/src/setlogcons ${ubindir}
+	install -m 755 ${topdir}/src/setvesablank ${usbindir}
+
+     	# correct locations
+	mv ${ubindir}/kbdrate ${sbindir}
+	mv ${ubindir}/fgconsole ${bindir}
+
+     	# open compat symlink
+	ln -s openvt ${ubindir}/open
+	ln -s openvt.1 ${tmpdir}/usr/share/man/man1/open.1
+
+binary-indep:
+	dh_testdir
+
+binary-arch:	install
+	dh_testdir -a
+	dh_testroot -a
+	dh_installdocs -a -X.arch-ids
+	mv ${tmpdir}/usr/share/doc/kbd/utf/invalid_name "${tmpdir}/usr/share/doc/kbd/utf/♪♬"
+
+     	# do not install the FAQ/HOWTO (already in doc-linux)
+	rm ${docdir}/kbd.FAQ*
+	install -m 755 ${topdir}/data/keymaps/i386/mk_modmap ${ubindir}
+    	# some deb-specific files
+	install -m 644 debian/conffiles.d/config ${tmpdir}/etc/kbd/
+
+	dh_installinit --init-script=console-screen.kbd.sh -r -u"start 48 S ."
+	dh_installchangelogs CHANGES
+	dh_strip -a
+	dh_compress -a
+	dh_fixperms -a
+	dh_installdeb -a
+	dh_shlibdeps -a
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
+
+# Below here is fairly generic really
+
+patch: patch-stamp
+patch-stamp:
+	[ -L patches ] || ln -s debian/patches patches
+	quilt push -a || test $$? == 2
+	touch patch-stamp
+
+unpatch:
+	quilt pop -a || test $$? == 2
+	if [ -L patches ]; then rm -f patches; fi
+	rm -rf .pc
+	rm -f patch-stamp
+
+deb:
+	dpkg-buildpackage -rfakeroot -i'/\.arch|/{arch}'
+
+binary: binary-indep binary-arch
+
+.PHONY: binary binary-arch binary-indep clean checkroot build install patch unpatch \
+	clean1
