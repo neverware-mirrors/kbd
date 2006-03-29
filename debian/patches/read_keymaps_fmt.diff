@@ -167,7 +167,7 @@ Index: trunk/src/ksyms.c
  				}
  		}
  	} else /* if (!chosen_charset) */ {
-@@ -1794,38 +1816,27 @@
+@@ -1794,38 +1816,32 @@
  }
  
  int
@@ -182,6 +182,7 @@ Index: trunk/src/ksyms.c
 -		return (code ^ 0xf000); /* %%% */
 +add_number(int code)
 +{
++	const char * kc;
 +	if (KTYP(code) == KT_META)
 +		return code;
 +	if (prefer_unicode && KTYP(code) >= syms_size) {
@@ -192,7 +193,11 @@ Index: trunk/src/ksyms.c
  	}
 +	if (!prefer_unicode && KTYP(code) < syms_size)
 +		return code;
-+	return ksymtocode(codetoksym(code));
++	kc = codetoksym(code);
++	if (kc == NULL)
++		return code;
++	else
++		return ksymtocode(kc);
  }
  
  int
