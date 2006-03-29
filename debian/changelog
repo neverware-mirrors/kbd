@@ -7,6 +7,15 @@ kbd (1.12-14) UNRELEASED; urgency=low
     argument if it corresponds to an unknown symbol, because Unicode symbols
     are not always defined (and may appear within Unicode private range,
     anyway).  See #312844.
+  ***** Warning: The changes below have not been fully tested, please test
+  *****          before uploading.
+  * debian/console-screen.kbd.sh: Apply changes from console-tools:
+     - Include LSB-formatted Init dependency info
+     - Remove all exit statements from /etc/init.d/console-screen.kbd.sh.
+     - Ensure the correct font, unicode_mode are set for all VTs.
+     - Make vcstime work under udev.
+     - Read /etc/kbd/config.d for the benefit of fonty, etc. integration.
+     - Go into unicode mode if locale is in UTF-8.
 
  -- Denis Barbier <barbier@debian.org>  Wed, 29 Mar 2006 21:39:02 +0200
 
