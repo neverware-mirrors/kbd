@@ -79,15 +79,16 @@ setup ()
         echo .
     fi
 
+    NUM_CONSOLES=`fgconsole --next-available`
+    NUM_CONSOLES=`expr ${NUM_CONSOLES} - 1`
+    [ ${NUM_CONSOLES} -eq 1 ] && NUM_CONSOLES=6
+
     # Global default font+map
     if [ "${CONSOLE_FONT}" ]; then
         echo -n "Setting up general console font... "
         [ "${CONSOLE_MAP}" ] && SETFONT_OPT="$SETFONT_OPT -m ${CONSOLE_MAP}"
 
         # Set for the first 6 VCs (as they are allocated in /etc/inittab)
-        NUM_CONSOLES=`fgconsole --next-available`
-        NUM_CONSOLES=`expr ${NUM_CONSOLES} - 1`
-        [ ${NUM_CONSOLES} -eq 1 ] && NUM_CONSOLES=6
         for vc in `seq 0 ${NUM_CONSOLES}` 
         do
             ${SETFONT} -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} ${CONSOLE_FONT} || { echo " failed."; break; }
@@ -115,24 +116,24 @@ setup ()
     fi
 
 
-    # Global ACM
-    #[ "${APP_CHARSET_MAP}" ] && ${CHARSET} G0 ${APP_CHARSET_MAP}
-
-
-    # Per-VC ACMs
-    PERVC_ACMS="`set | grep "^APP_CHARSET_MAP_vc[0-9]*="  | tr -d \' `"
-    if [ "${PERVC_ACMS}" ]; then
-        echo -n "Setting up per-VC ACM's: "
-        for acm in ${PERVC_ACMS}
-        do
-            # extract VC and FONTNAME info from variable setting
-            vc=`echo $acm | cut -b19- | cut -d= -f1`
-            eval acm=\$APP_CHARSET_MAP_vc$vc
-            [ X"$QUIET_PERVC" = X1 ] || echo -n "${DEVICE_PREFIX}${vc} ($acm), "
-            #eval "${CHARSET} --tty='${DEVICE_PREFIX}$vc' G0 '$acm'"
-        done
-        echo "done."
-    fi
+#    # Global ACM
+#    [ "${APP_CHARSET_MAP}" ] && ${CHARSET} G0 ${APP_CHARSET_MAP}
+#
+#
+#    # Per-VC ACMs
+#    PERVC_ACMS="`set | grep "^APP_CHARSET_MAP_vc[0-9]*="  | tr -d \' `"
+#    if [ "${PERVC_ACMS}" ]; then
+#        echo -n "Setting up per-VC ACM's: "
+#        for acm in ${PERVC_ACMS}
+#        do
+#            # extract VC and FONTNAME info from variable setting
+#            vc=`echo $acm | cut -b19- | cut -d= -f1`
+#            eval acm=\$APP_CHARSET_MAP_vc$vc
+#            [ X"$QUIET_PERVC" = X1 ] || echo -n "${DEVICE_PREFIX}${vc} ($acm), "
+#            eval "${CHARSET} --tty='${DEVICE_PREFIX}$vc' G0 '$acm'"
+#        done
+#        echo "done."
+#    fi
 
 
     # Go to UTF-8 mode as necessary
@@ -147,9 +148,9 @@ setup ()
     fi
     CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
     if [ "$CHARMAP" = "UTF-8" ]; then
-        /usr/bin/unicode_start 2> /dev/null || true
+        unicode_start 2> /dev/null || true
     else
-        /usr/bin/unicode_stop 2> /dev/null|| true
+        unicode_stop 2> /dev/null|| true
     fi
 
     # screensaver stuff
@@ -190,9 +191,10 @@ setup ()
     if [ -r /etc/$PKG/remap ]; then
 	dumpkeys < ${DEVICE_PREFIX}1 | sed -f /etc/$PKG/remap | loadkeys --quiet
     fi
+
     # Set LEDS here
     if [ -n "$LEDS" ]; then
-        for i in `seq 1 12`
+        for i in `seq 0 $NUM_CONSOLES`
         do
             setleds -D $LEDS < $DEVICE_PREFIX$i
         done
