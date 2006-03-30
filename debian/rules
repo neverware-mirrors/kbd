@@ -80,6 +80,7 @@ binary-arch:	install
 	install -m 755 ${topdir}/data/keymaps/i386/mk_modmap ${ubindir}
     	# some deb-specific files
 	install -m 644 debian/conffiles.d/config ${tmpdir}/etc/kbd/
+	install -m 644 debian/conffiles.d/remap ${tmpdir}/etc/kbd/
 
 	dh_installinit --init-script=console-screen.kbd.sh -r -u"start 48 S ."
 	dh_installchangelogs CHANGES

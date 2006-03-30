@@ -17,6 +17,7 @@ kbd (1.12-14) UNRELEASED; urgency=low
       - Make vcstime work under udev.
       - Read /etc/kbd/config.d for the benefit of fonty, etc. integration.
       - Go into unicode mode if locale is in UTF-8.
+      - Added support for LED setting and key remapping.
     + debian/patches/fgconsole.diff: New patch, to add "--next-available"
       option to fgconsole to discover the next unallocated VT.
 
