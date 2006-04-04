@@ -14,3 +14,4 @@ unicode_start_breaks_X.diff
 replace_echo_by_printf.diff
 fedora-kbd-1.12-alias.patch
 fgconsole.diff
+braille.diff

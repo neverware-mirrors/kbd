@@ -7,6 +7,8 @@ kbd (1.12-14) UNRELEASED; urgency=low
     argument if it corresponds to an unknown symbol, because Unicode symbols
     are not always defined (and may appear within Unicode private range,
     anyway).  See #312844.
+  * debian/patches/braille.diff: New patch, to add braille keysyms, introduced
+    in Linux 2.6.17-rc1.  Closes: #360813  Thanks Samuel Thibault
   * debian/README.Debian: Rewrite this documentation.
     Closes: #328783  Thanks David Liontooth
   * Apply changes from console-tools:
