@@ -9,6 +9,8 @@ kbd (1.12-14) UNRELEASED; urgency=low
     anyway).  See #312844.
   * debian/patches/braille.diff: New patch, to add braille keysyms, introduced
     in Linux 2.6.17-rc1.  Closes: #360813  Thanks Samuel Thibault
+  * debian/patches/thai.diff: New patch, to add tis-620 charset for Thai.
+    See #360592  Thanks Theppitak Karoonboon
   * debian/README.Debian: Rewrite this documentation.
     Closes: #328783  Thanks David Liontooth
   * Apply changes from console-tools:
