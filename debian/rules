@@ -108,7 +108,7 @@ unpatch:
 	rm -f patch-stamp
 
 deb:
-	dpkg-buildpackage -rfakeroot -i'/\.arch|/{arch}'
+	dpkg-buildpackage -rfakeroot -i'/\.svn'
 
 binary: binary-indep binary-arch
 
