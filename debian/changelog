@@ -21,6 +21,9 @@ kbd (1.12-14) UNRELEASED; urgency=low
   * debian/control: Change Maintainer field to pkg-kbd-dev@l.a.d.o, and
     add myself to Uploaders.
 
+  * debian/console-screen.kbd.sh: Check for locale variables in both files
+    /etc/environment and /etc/default/locale.
+
   * Apply changes from console-tools:
     + debian/console-screen.kbd.sh:
       - Include LSB-formatted Init dependency info

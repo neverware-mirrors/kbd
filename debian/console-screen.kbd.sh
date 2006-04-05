@@ -138,11 +138,11 @@ setup ()
 
     # Go to UTF-8 mode as necessary
     # 
-    if [ -f /etc/environment ]
+    if [ -f /etc/environment ] || [ -f /etc/default/locale ]
     then
         for var in LANG LC_CTYPE LC_ALL
         do
-            value=$(egrep "^[^#]*${var}=" /etc/environment | tail -n1 | cut -d= -f2)
+            value=$(egrep "^[^#]*${var}=" /etc/environment /etc/default/locale 2>/dev/null | tail -n1 | cut -d= -f2)
             eval $var=$value
         done
     fi
