@@ -46,7 +46,7 @@ install: build-stamp
 	# Now it seems like most of this is already provided by prefix mechanism.
 	# make install-progs install-man DESTDIR=${tmpdir} ARCH=${ARCH}
 	make DESTDIR=${tmpdir} LOADKEYS_BINDIR=${tmpdir}/bin ARCH=${ARCH} install-progs install-man
-	-@find ${topdir}/data/*_Z -name '.arch-ids' -exec rm -rf {} \; 2>/dev/null
+	-@find ${topdir}/data/*_Z -name '\.svn' -exec rm -rf {} \; 2>/dev/null
 
      	# install contribs
 	install -m 755 ${topdir}/contrib/codepage ${ubindir}
@@ -74,7 +74,7 @@ binary-indep:
 binary-arch:	install
 	dh_testdir -a
 	dh_testroot -a
-	dh_installdocs -a -X.arch-ids
+	dh_installdocs -a -X.svn
 	mv ${tmpdir}/usr/share/doc/kbd/utf/invalid_name "${tmpdir}/usr/share/doc/kbd/utf/♪♬"
 
      	# do not install the FAQ/HOWTO (already in doc-linux)
