@@ -1,4 +1,4 @@
-kbd (1.12-14) UNRELEASED; urgency=low
+kbd (1.12-14) unstable; urgency=low
 
   * debian/patches/read_keymaps_fmt.diff: When -m flag is set, do not try to
     open a file descriptor on the console so that loadkeys -m can be used
