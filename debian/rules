@@ -61,9 +61,11 @@ install: build-stamp
      	# correct locations
 	mv ${ubindir}/kbdrate ${sbindir}
 	mv ${ubindir}/fgconsole ${bindir}
+	mv ${ubindir}/openvt ${bindir}
+	mv ${ubindir}/chvt ${bindir}
 
      	# open compat symlink
-	ln -s openvt ${ubindir}/open
+	ln -s openvt ${bindir}/open
 	ln -s openvt.1 ${tmpdir}/usr/share/man/man1/open.1
 
 binary-indep:

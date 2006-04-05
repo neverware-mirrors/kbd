@@ -24,6 +24,8 @@ kbd (1.12-14) UNRELEASED; urgency=low
   * debian/console-screen.kbd.sh: Check for locale variables in both files
     /etc/environment and /etc/default/locale.
 
+  * Move openvt and chvt into /bin.  Closes: #320571  Thanks Tim Connors
+
   * Apply changes from console-tools:
     + debian/console-screen.kbd.sh:
       - Include LSB-formatted Init dependency info
