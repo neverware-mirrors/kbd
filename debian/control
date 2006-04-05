@@ -1,7 +1,8 @@
 Source: kbd
 Section: utils
 Priority: extra
-Maintainer: Denis Barbier <barbier@debian.org>
+Maintainer: Console utilities maintainers <pkg-kbd-devel@lists.alioth.debian.org>
+Uploaders: Denis Barbier <barbier@debian.org>
 Build-Depends: debhelper (>= 4), linuxdoc-tools, bison, flex | flex-old, gettext, quilt
 Standards-Version: 3.6.2
 
