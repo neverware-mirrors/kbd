@@ -1,6 +1,7 @@
-diff -upr kbd-1.12/src/ksyms.c kbd-1.12-mine/src/ksyms.c
---- kbd-1.12/src/ksyms.c	2006-04-04 22:15:32.000000000 +0200
-+++ kbd-1.12-mine/src/ksyms.c	2006-04-04 22:14:59.000000000 +0200
+Index: trunk/src/ksyms.c
+===================================================================
+--- trunk.orig/src/ksyms.c
++++ trunk/src/ksyms.c
 @@ -1498,6 +1498,20 @@
  	"SCtrlR"
  };
@@ -22,12 +23,13 @@ diff -upr kbd-1.12/src/ksyms.c kbd-1.12-mine/src/ksyms.c
  #define E(x) { x, sizeof(x) / sizeof(x[0]) }
  
  syms_entry syms[] = {
-@@ -1513,7 +1527,8 @@ syms_entry syms[] = {
+@@ -1513,7 +1527,9 @@
  	E(ascii_syms),		/* KT_ASCII */
  	E(lock_syms),		/* KT_LOCK */
  	{ 0, 0 },		/* KT_LETTER */
 -	E(sticky_syms)		/* KT_SLOCK */
 +	E(sticky_syms),		/* KT_SLOCK */
++	{ 0, 0 },		/*  */
 +	E(brl_syms)		/* KT_BRL */
  };
  
