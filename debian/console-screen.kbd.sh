@@ -3,8 +3,8 @@
 # Provides:          console-screen
 # Required-Start:    $local_fs $remote_fs
 # Required-Stop:     $local_fs $remote_fs
-# Default-Start:     S 1 2 3 4 5
-# Default-Stop:      0 6
+# Default-Start:     S 2 3 4 5
+# Default-Stop:      0 1 6
 ### END INIT INFO
 
 # This is the boot script for the `kbd' package.
