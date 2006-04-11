@@ -1,10 +1,19 @@
 kbd (1.12-15) UNRELEASED; urgency=low
 
-  * debian/console-screen.kbd.sh: Fix LSB runtime info, as reported in #361051.
-
   * debian/patches/getfd.diff: New patch, the getfd function now tries to
     open /proc/self/fd/0, so that kbd_mode can be used to query or modify any
     TTY by running kbd_mode < /dev/ttyN.
+
+  * debian/console-screen.kbd.sh: Fix LSB runtime info, as reported in #361051.
+
+  * debian/console-screen.kbd.sh: When this script is run, only the first TTY
+    is created, so all other TTYs have no settings.  A workaround is to add
+      u8:23:once:/etc/init.d/console-screen.kbd.sh reload
+    in /etc/inittab so that this script is run again after TTYs are allocated.
+    If console detection does not work as expected, LIST_CONSOLES can be set
+    in /etc/kbd/config, it contains a space seperated list of TTY numbers to
+    be modified by this script.
+    WARNING: this is still experimental!
 
  -- Denis Barbier <barbier@debian.org>  Tue, 11 Apr 2006 00:37:44 +0200
 

@@ -79,9 +79,13 @@ setup ()
         echo .
     fi
 
-    NUM_CONSOLES=`fgconsole --next-available`
-    NUM_CONSOLES=`expr ${NUM_CONSOLES} - 1`
-    [ ${NUM_CONSOLES} -eq 1 ] && NUM_CONSOLES=6
+    if [ "$RUNLEVEL" = S ]; then
+        LIST_CONSOLES=0
+    elif [ -z "$LIST_CONSOLES" ]; then
+        #  Wait for getty to provide TTYs
+        sleep 3
+        LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep 'tty[0-9]*$' | awk -F: '{printf "%s ", $1}'`
+    fi
 
     # Global default font+map
     if [ "${CONSOLE_FONT}" ]; then
@@ -89,7 +93,7 @@ setup ()
         [ "${CONSOLE_MAP}" ] && SETFONT_OPT="$SETFONT_OPT -m ${CONSOLE_MAP}"
 
         # Set for the first 6 VCs (as they are allocated in /etc/inittab)
-        for vc in `seq 0 ${NUM_CONSOLES}` 
+        for vc in $LIST_CONSOLES
         do
             ${SETFONT} -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} ${CONSOLE_FONT} || { echo " failed."; break; }
         done
@@ -148,10 +152,14 @@ setup ()
     fi
     CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
     if [ "$CHARMAP" = "UTF-8" ]; then
-        unicode_start 2> /dev/null || true
+        action=unicode_start
     else
-        unicode_stop 2> /dev/null|| true
+        action=unicode_stop
     fi
+    for vc in $LIST_CONSOLES
+    do
+        $action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+    done
 
     # screensaver stuff
     setterm_args=""
@@ -189,12 +197,12 @@ setup ()
 
     # Allow user to remap keys on the console
     if [ -r /etc/$PKG/remap ]; then
-	dumpkeys < ${DEVICE_PREFIX}1 | sed -f /etc/$PKG/remap | loadkeys --quiet
+        dumpkeys < ${DEVICE_PREFIX}1 | sed -f /etc/$PKG/remap | loadkeys --quiet
     fi
 
     # Set LEDS here
     if [ -n "$LEDS" ]; then
-        for i in `seq 0 $NUM_CONSOLES`
+        for i in $LIST_CONSOLES
         do
             setleds -D $LEDS < $DEVICE_PREFIX$i
         done
@@ -203,13 +211,13 @@ setup ()
 
 case "$1" in
     start|reload|restart|force-reload)
-	setup
-	;;
+        setup
+        ;;
     stop)
-	;;
+        ;;
     *)
-	setup
-	;;
+        setup
+        ;;
 esac
 
 :
