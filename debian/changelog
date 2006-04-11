@@ -2,6 +2,10 @@ kbd (1.12-15) UNRELEASED; urgency=low
 
   * debian/console-screen.kbd.sh: Fix LSB runtime info, as reported in #361051.
 
+  * debian/patches/getfd.diff: New patch, the getfd function now tries to
+    open /proc/self/fd/0, so that kbd_mode can be used to query or modify any
+    TTY by running kbd_mode < /dev/ttyN.
+
  -- Denis Barbier <barbier@debian.org>  Tue, 11 Apr 2006 00:37:44 +0200
 
 kbd (1.12-14) unstable; urgency=low
