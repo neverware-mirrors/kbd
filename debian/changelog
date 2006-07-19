@@ -1,4 +1,4 @@
-kbd (1.12-15) UNRELEASED; urgency=low
+kbd (1.12-15) unstable; urgency=low
 
   * debian/patches/getfd.diff: New patch, the getfd function now tries to
     open /proc/self/fd/0, so that kbd_mode can be used to query or modify any
@@ -17,6 +17,8 @@ kbd (1.12-15) UNRELEASED; urgency=low
   * debian/patches/mapscrn-acm.diff: Let mapscrn also read ACM files, since
     some fonts shipped by console-data have an .acm suffix.  Closes: #377579
     Thanks Theppitak Karoonboonyanan
+
+  * debian/control: Bump Standards-Version: 3.7.2
 
  -- Denis Barbier <barbier@debian.org>  Wed, 19 Jul 2006 21:24:37 +0200
 
