@@ -12,10 +12,13 @@ kbd (1.12-15) UNRELEASED; urgency=low
     in /etc/inittab so that this script is run again after TTYs are allocated.
     If console detection does not work as expected, LIST_CONSOLES can be set
     in /etc/kbd/config, it contains a space seperated list of TTY numbers to
-    be modified by this script.
-    WARNING: this is still experimental!
+    be modified by this script.  WARNING: this is still experimental!
 
- -- Denis Barbier <barbier@debian.org>  Tue, 11 Apr 2006 00:37:44 +0200
+  * debian/patches/mapscrn-acm.diff: Let mapscrn also read ACM files, since
+    some fonts shipped by console-data have an .acm suffix.  Closes: #377579
+    Thanks Theppitak Karoonboonyanan
+
+ -- Denis Barbier <barbier@debian.org>  Wed, 19 Jul 2006 21:24:37 +0200
 
 kbd (1.12-14) unstable; urgency=low
 
