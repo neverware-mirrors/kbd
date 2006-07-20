@@ -16,17 +16,19 @@ ubindir=${tmpdir}/usr/bin
 usbindir=${tmpdir}/usr/sbin
 docdir=${tmpdir}/usr/share/doc/${package}
 
+QUILT := quilt --quiltrc=debian/patches/quiltrc
+
 configure-stamp:
 	${topdir}/configure --prefix=/usr \
 		--datadir=/usr/share --mandir=/usr/share/man
-	touch configure-stamp
+	touch $@
 
 build: build-stamp
 build-stamp: patch configure-stamp
 	dh_testdir
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH}
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH} -C contrib codepage splitfont vcstime
-	touch build-stamp
+	touch $@
 
 clean: clean1 unpatch
 clean1:
@@ -99,13 +101,11 @@ binary-arch:	install
 
 patch: patch-stamp
 patch-stamp:
-	[ -L patches ] || ln -s debian/patches patches
-	quilt push -a || test $$? == 2
-	touch patch-stamp
+	$(QUILT) push -a || test $$? == 2
+	touch $@
 
 unpatch:
-	quilt pop -a || test $$? == 2
-	if [ -L patches ]; then rm -f patches; fi
+	$(QUILT) pop -a || test $$? == 2
 	rm -rf .pc
 	rm -f patch-stamp
 
