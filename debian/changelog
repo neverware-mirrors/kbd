@@ -5,6 +5,10 @@ kbd (1.12-16) unstable; urgency=low
   * debian/patches/kbdrate_sparc.diff: Drop this patch, it is no more needed.
     Thanks Samuel Mimram for testing these changes on Sparc.
 
+  * debian/patches/quiltrc: Call 'quilt --quiltrc=debian/patches/quiltrc'
+    in debian/rules so that the same quilt configuration file is used under
+    all circumstances.
+
  -- Denis Barbier <barbier@debian.org>  Thu, 20 Jul 2006 22:36:55 +0200
 
 kbd (1.12-15) unstable; urgency=low
