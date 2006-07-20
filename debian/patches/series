@@ -7,7 +7,6 @@ uni_suffix.diff
 canonical_syms.diff
 main_argc.diff
 kbdrate_notty.diff
-kbdrate_sparc.diff
 charsets0.diff
 read_keymaps_fmt.diff
 unicode_start_breaks_X.diff 

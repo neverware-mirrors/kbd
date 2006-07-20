@@ -2,6 +2,9 @@ kbd (1.12-16) UNRELEASED; urgency=low
 
   * debian/patches/sparc-compile.diff: New patch to fix build failure on sparc.
 
+  * debian/patches/kbdrate_sparc.diff: Drop this patch, it is no more needed.
+    Thanks Samuel Mimram for testing these changes on Sparc.
+
  -- Denis Barbier <barbier@debian.org>  Thu, 20 Jul 2006 22:36:55 +0200
 
 kbd (1.12-15) unstable; urgency=low
