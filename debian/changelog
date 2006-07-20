@@ -1,4 +1,4 @@
-kbd (1.12-16) UNRELEASED; urgency=low
+kbd (1.12-16) unstable; urgency=low
 
   * debian/patches/sparc-compile.diff: New patch to fix build failure on sparc.
 
