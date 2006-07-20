@@ -10,7 +10,7 @@ Index: trunk/src/ksyms.c
  #include "ethiopic.syms.h"
  #include "sami.syms.h"
  
-@@ -1633,6 +1634,7 @@
+@@ -1634,6 +1635,7 @@
      { "cp-1250",	cp1250_syms, 128 },
      { "koi8-r",		koi8_syms, 128 },
      { "koi8-u",		koi8_syms, 128 },

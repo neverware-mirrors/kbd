@@ -24,8 +24,10 @@ esac
 
 exit 0
 
---- kbd-1.12.orig/src/ksyms.c
-+++ kbd-1.12/src/ksyms.c
+Index: trunk/src/ksyms.c
+===================================================================
+--- trunk.orig/src/ksyms.c
++++ trunk/src/ksyms.c
 @@ -770,7 +770,7 @@
  };
  

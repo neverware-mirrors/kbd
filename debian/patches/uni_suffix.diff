@@ -23,9 +23,10 @@ esac
 exit 0
 
 @DPATCH@
-diff -urNad /opt/tmp/kbd-1.12/src/loadunimap.c kbd-1.12/src/loadunimap.c
---- /opt/tmp/kbd-1.12/src/loadunimap.c	2004-08-02 22:57:25.000000000 +0200
-+++ kbd-1.12/src/loadunimap.c	2004-08-02 22:57:44.000000000 +0200
+Index: trunk/src/loadunimap.c
+===================================================================
+--- trunk.orig/src/loadunimap.c
++++ trunk/src/loadunimap.c
 @@ -28,8 +28,8 @@
  extern char *progname;
  extern int force;

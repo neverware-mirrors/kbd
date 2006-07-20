@@ -1,6 +1,7 @@
-diff -u kbd-1.12/src/psffontop.c kbd-1.12/src/psffontop.c
---- kbd-1.12/src/psffontop.c	2005-03-12 00:48:30.075310872 +0100
-+++ kbd-1.12/src/psffontop.c	2005-05-14 10:49:59.000000000 +0900
+Index: trunk/src/psffontop.c
+===================================================================
+--- trunk.orig/src/psffontop.c
++++ trunk/src/psffontop.c
 @@ -59,7 +59,6 @@
  
  static unsigned int

@@ -1,17 +1,17 @@
-Index: kbd-1.12/src/unicode_stop
+Index: trunk/src/unicode_stop
 ===================================================================
---- kbd-1.12.orig/src/unicode_stop
-+++ kbd-1.12/src/unicode_stop
+--- trunk.orig/src/unicode_stop
++++ trunk/src/unicode_stop
 @@ -15,4 +15,4 @@
  # stop unicode
  kbd_mode -a
  
 -echo -n -e '\033%@'
 +printf '\033%%@'
-Index: kbd-1.12/src/unicode_start
+Index: trunk/src/unicode_start
 ===================================================================
---- kbd-1.12.orig/src/unicode_start
-+++ kbd-1.12/src/unicode_start
+--- trunk.orig/src/unicode_start
++++ trunk/src/unicode_start
 @@ -38,7 +38,7 @@
  # Tell the console output driver that the bytes arriving are UTF-8
  # encoded multibyte sequences.

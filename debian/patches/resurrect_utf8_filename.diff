@@ -1,7 +1,7 @@
-Index: kbd-1.12/doc/utf/invalid_name
+Index: trunk/doc/utf/invalid_name
 ===================================================================
 --- /dev/null
-+++ kbd-1.12/doc/utf/invalid_name
++++ trunk/doc/utf/invalid_name
 @@ -0,0 +1,12 @@
 +After
 +% kbd_mode -u

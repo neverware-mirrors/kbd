@@ -26,9 +26,11 @@ esac
 
 exit 0
 
---- kbd-1.12.orig/src/ksyms.c
-+++ kbd-1.12/src/ksyms.c
-@@ -1604,6 +1602,7 @@
+Index: trunk/src/ksyms.c
+===================================================================
+--- trunk.orig/src/ksyms.c
++++ trunk/src/ksyms.c
+@@ -1602,6 +1602,7 @@
      sym *charnames;
      int start;
  } charsets[] = {
@@ -36,7 +38,7 @@ exit 0
      { "iso-8859-1",	latin1_syms, 160 },
      { "iso-8859-2",	latin2_syms, 160 },
      { "iso-8859-3",	latin3_syms, 160 },
-@@ -1636,7 +1635,7 @@
+@@ -1637,7 +1638,7 @@
  		fprintf(f, "%s{", mm[j]);
  		ct = 0;
  		lth = strlen(mm[j]);
@@ -45,7 +47,7 @@ exit 0
  			if(!strncmp(charsets[i].charset, mm[j], lth)) {
  				if(ct++)
  					fprintf(f, ",");
-@@ -1645,7 +1644,7 @@
+@@ -1646,7 +1647,7 @@
  		}
  		fprintf(f, "}");
  	}
@@ -54,9 +56,9 @@ exit 0
  		for (j=0; j<sizeof(mm)/sizeof(mm[0]); j++) {
  			lth = strlen(mm[j]);
  			if(!strncmp(charsets[i].charset, mm[j], lth))
-@@ -1665,8 +1664,11 @@
- 	if (!strcasecmp(charset, "unicode"))
+@@ -1668,8 +1669,11 @@
  		return 0;
+ 	}
  
 -	for (i = 0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
 +	for (i = 1; i < sizeof(charsets)/sizeof(charsets[0]); i++) {

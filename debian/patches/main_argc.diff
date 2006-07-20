@@ -24,9 +24,10 @@ esac
 exit 0
 
 @DPATCH@
-diff -urNad /opt/tmp/kbd-1.12/src/getunimap.c kbd-1.12/src/getunimap.c
---- /opt/tmp/kbd-1.12/src/getunimap.c	2004-08-01 20:33:38.000000000 +0200
-+++ kbd-1.12/src/getunimap.c	2004-08-02 22:45:30.000000000 +0200
+Index: trunk/src/getunimap.c
+===================================================================
+--- trunk.orig/src/getunimap.c
++++ trunk/src/getunimap.c
 @@ -62,7 +62,7 @@
  		}
  	}
@@ -36,9 +37,10 @@ diff -urNad /opt/tmp/kbd-1.12/src/getunimap.c kbd-1.12/src/getunimap.c
  		usage();
  
  	fd = getfd(console);
-diff -urNad /opt/tmp/kbd-1.12/src/loadunimap.c kbd-1.12/src/loadunimap.c
---- /opt/tmp/kbd-1.12/src/loadunimap.c	2004-08-02 22:45:06.000000000 +0200
-+++ kbd-1.12/src/loadunimap.c	2004-08-02 22:46:39.000000000 +0200
+Index: trunk/src/loadunimap.c
+===================================================================
+--- trunk.orig/src/loadunimap.c
++++ trunk/src/loadunimap.c
 @@ -73,18 +73,18 @@
  		}
  	}
@@ -61,9 +63,10 @@ diff -urNad /opt/tmp/kbd-1.12/src/loadunimap.c kbd-1.12/src/loadunimap.c
  		infnam = argv[optind];
  	loadunicodemap(fd, infnam);
  	exit(0);
-diff -urNad /opt/tmp/kbd-1.12/src/showconsolefont.c kbd-1.12/src/showconsolefont.c
---- /opt/tmp/kbd-1.12/src/showconsolefont.c	2004-08-02 22:44:30.000000000 +0200
-+++ kbd-1.12/src/showconsolefont.c	2004-08-02 22:47:07.000000000 +0200
+Index: trunk/src/showconsolefont.c
+===================================================================
+--- trunk.orig/src/showconsolefont.c
++++ trunk/src/showconsolefont.c
 @@ -135,7 +135,7 @@
  		}
  	}

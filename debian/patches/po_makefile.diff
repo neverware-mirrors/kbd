@@ -24,8 +24,10 @@ esac
 
 exit 0
 
---- kbd-1.12.orig/po/Makefile.in
-+++ kbd-1.12/po/Makefile.in
+Index: trunk/po/Makefile.in
+===================================================================
+--- trunk.orig/po/Makefile.in
++++ trunk/po/Makefile.in
 @@ -1,5 +1,5 @@
  PACKAGE = kbd
 -VERSION = 1.10

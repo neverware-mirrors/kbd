@@ -23,9 +23,10 @@ esac
 exit 0
 
 @DPATCH@
-diff -urNad /home/wart/Projects/debian/kbd/new/kbd-1.12/src/paths.h kbd-1.12/src/paths.h
---- /home/wart/Projects/debian/kbd/new/kbd-1.12/src/paths.h	2004-01-27 14:26:28.000000000 +0300
-+++ kbd-1.12/src/paths.h	2004-01-27 14:38:14.000000000 +0300
+Index: trunk/src/paths.h
+===================================================================
+--- trunk.orig/src/paths.h
++++ trunk/src/paths.h
 @@ -16,10 +16,10 @@
   * Default keymap, and where the kernel copy of it lives.
   */

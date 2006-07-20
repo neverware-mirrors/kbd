@@ -24,8 +24,10 @@ esac
 
 exit 0
 
---- kbd-1.12.orig/src/kbdrate.c
-+++ kbd-1.12/src/kbdrate.c
+Index: trunk/src/kbdrate.c
+===================================================================
+--- trunk.orig/src/kbdrate.c
++++ trunk/src/kbdrate.c
 @@ -112,7 +112,7 @@
  	kbdrep_s.period = -1;
  	kbdrep_s.delay = -1;

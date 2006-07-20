@@ -23,9 +23,10 @@ esac
 exit 0
 
 @DPATCH@
-diff -urNad /home/wart/Projects/debian/kbd/new/kbd-1.12/src/loadkeys.y kbd-1.12/src/loadkeys.y
---- /home/wart/Projects/debian/kbd/new/kbd-1.12/src/loadkeys.y	2004-01-27 14:25:50.000000000 +0300
-+++ kbd-1.12/src/loadkeys.y	2004-01-27 14:37:01.000000000 +0300
+Index: trunk/src/loadkeys.y
+===================================================================
+--- trunk.orig/src/loadkeys.y
++++ trunk/src/loadkeys.y
 @@ -566,7 +566,7 @@
  }
  
