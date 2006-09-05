@@ -1,3 +1,19 @@
+kbd (1.12-17) unstable; urgency=low
+
+  * debian/rules: Drop bashisms.  Closes: #379500  Thanks Julien Danjou
+
+  * debian/control: Drop versioned dependencies against dpkg and sysvinit,
+    these ttansitions are over for a long time.  As these packages are of
+    priority required, these dependencies can be removed.
+    Closes: #386131  Thanks martin f krafft
+
+  * debian/control: console-data in oldstable satisfies Recommends, so
+    remove this version too.
+
+  * debian/console-screen.kbd.sh: Add lsb logging, see #384785
+
+ -- Denis Barbier <barbier@debian.org>  Tue,  5 Sep 2006 23:05:44 +0200
+
 kbd (1.12-16) unstable; urgency=low
 
   * debian/patches/sparc-compile.diff: New patch to fix build failure on sparc.

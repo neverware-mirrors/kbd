@@ -8,7 +8,7 @@ Standards-Version: 3.7.2
 
 Package: kbd
 Architecture: any
-Depends: ${shlibs:Depends}, sysvinit (>= 2.74), console-common, dpkg (>= 1.4.0.21)
+Depends: ${shlibs:Depends}, console-common, lsb-base (>= 3.0-10)
 Recommends: console-data (>= 1999.08.29-13)
 Provides: console-utilities, open
 Conflicts: console-utilities, kbd-data, open, util-linux (<< 2.11)

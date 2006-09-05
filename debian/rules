@@ -101,11 +101,11 @@ binary-arch:	install
 
 patch: patch-stamp
 patch-stamp:
-	$(QUILT) push -a || test $$? == 2
+	$(QUILT) push -a || test $$? = 2
 	touch $@
 
 unpatch:
-	$(QUILT) pop -a || test $$? == 2
+	$(QUILT) pop -a || test $$? = 2
 	rm -rf .pc
 	rm -f patch-stamp
 

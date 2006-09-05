@@ -23,6 +23,8 @@ if [ -d /etc/$PKG/config.d ]; then
     done
 fi
 
+. /lib/lsb/init-functions
+
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 SETFONT="/usr/bin/setfont"
 SETFONT_OPT="-v"
@@ -74,9 +76,9 @@ setup ()
 
     # start vcstime
     if [ "${DO_VCSTIME}" = "yes" ] && [ -x ${VCSTIME} ]; then
-        echo -n Starting clock on text console: `basename ${VCSTIME}`
+        [ "$VERBOSE" != "no" ] && log_action_begin_msg "Starting clock on text console"
         ${VCSTIME} ${VCSTIME_OPT} &
-        echo .
+        [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
 
     if [ "$RUNLEVEL" = S ]; then
@@ -89,34 +91,39 @@ setup ()
 
     # Global default font+map
     if [ "${CONSOLE_FONT}" ]; then
-        echo -n "Setting up general console font... "
+        [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up general console font"
         [ "${CONSOLE_MAP}" ] && SETFONT_OPT="$SETFONT_OPT -m ${CONSOLE_MAP}"
 
         # Set for the first 6 VCs (as they are allocated in /etc/inittab)
         for vc in $LIST_CONSOLES
         do
-            ${SETFONT} -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} ${CONSOLE_FONT} || { echo " failed."; break; }
+            if ! ${SETFONT} -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} ${CONSOLE_FONT}; then
+                [ "$VERBOSE" != "no" ] && log_action_end_msg 1
+                break
+            fi
         done
-        echo " done."
+        [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
 
 
     # Per-VC font+sfm
     PERVC_FONTS="`set | grep "^CONSOLE_FONT_vc[0-9]*="  | tr -d \' `"
     if [ "${PERVC_FONTS}"  ]; then
-        echo -n "Setting up per-VC fonts: "
+        [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC fonts"
         for font in ${PERVC_FONTS}
         do
             # extract VC and FONTNAME info from variable setting
             vc=`echo $font | cut -b15- | cut -d= -f1`
             eval font=\$CONSOLE_FONT_vc$vc
-            [ X"$QUIET_PERVC" = X1 ] || echo -n "${DEVICE_PREFIX}${vc}, "
             # eventually find an associated SFM
             eval sfm=\${CONSOLE_MAP_vc${vc}}
             [ "$sfm" ] && sfm="-u $sfm"
-            ${SETFONT} -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font
+            if ! ${SETFONT} -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font; then
+                [ "$VERBOSE" != "no" ] && log_action_end_msg 1
+                break
+            fi
         done
-        echo "done."
+        [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
 
 
@@ -127,16 +134,18 @@ setup ()
 #    # Per-VC ACMs
 #    PERVC_ACMS="`set | grep "^APP_CHARSET_MAP_vc[0-9]*="  | tr -d \' `"
 #    if [ "${PERVC_ACMS}" ]; then
-#        echo -n "Setting up per-VC ACM's: "
+#        [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
 #        for acm in ${PERVC_ACMS}
 #        do
 #            # extract VC and FONTNAME info from variable setting
 #            vc=`echo $acm | cut -b19- | cut -d= -f1`
 #            eval acm=\$APP_CHARSET_MAP_vc$vc
-#            [ X"$QUIET_PERVC" = X1 ] || echo -n "${DEVICE_PREFIX}${vc} ($acm), "
-#            eval "${CHARSET} --tty='${DEVICE_PREFIX}$vc' G0 '$acm'"
+#            if ! ${CHARSET} --tty="${DEVICE_PREFIX}$vc" G0 "$acm"; then
+#                [ "$VERBOSE" != "no" ] && log_action_end_msg 1
+#                break
+#            fi
 #        done
-#        echo "done."
+#        [ "$VERBOSE" != "no" ] && log_action_end_msg 0
 #    fi
 
 
@@ -185,9 +194,9 @@ setup ()
         KBDRATE_ARGS="$KBDRATE_ARGS -d $KEYBOARD_DELAY"
     fi
     if [ -n "$KBDRATE_ARGS" ]; then
-        echo -n "Setting keyboard rate and delay: "
+        [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting keyboard rate and delay"
         kbdrate -s $KBDRATE_ARGS
-        echo "done."
+        [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
 
     # Inform gpm if present, of potential changes.
@@ -211,6 +220,7 @@ setup ()
 
 case "$1" in
     start|reload|restart|force-reload)
+        log_action_msg "Setting console screen modes and fonts"
         setup
         ;;
     stop)
