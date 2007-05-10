@@ -12,7 +12,9 @@ kbd (1.12-18) UNRELEASED; urgency=low
       closes: #421390;
     - fix the per-VC font load;
     - (re)enable the per-VC ACM load;
-    - do not run unicode_start for consoles with defined APP_CHARSET_MAP_vcN;
+    - for consistency use CONSOLE_MAP_vcN instead of APP_CHARSET_MAP_vcN
+      and FONT_MAP_vcN instead of CONSOLE_MAP_vcN;
+    - do not run unicode_start for consoles with defined CONSOLE_MAP_vcN;
     - do not use static paths such as /usr/bin/setfont.
   
  -- Anton Zinoviev <zinoviev@debian.org>  Thu, 10 May 2007 11:21:53 +0300

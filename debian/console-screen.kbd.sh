@@ -98,7 +98,7 @@ setup ()
     CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
     for vc in $LIST_CONSOLES
     do
-        if [ "$CHARMAP" = "UTF-8" -a -z "$(eval echo \$APP_CHARSET_MAP_vc$vc)" ]; then
+        if [ "$CHARMAP" = "UTF-8" -a -z "$(eval echo \$CONSOLE_MAP_vc$vc)" ]; then
 	    action=unicode_start
 	else
 	    action=unicode_stop
@@ -138,7 +138,7 @@ setup ()
             vc=`echo $font | cut -b16- | cut -d= -f1`
             eval font=\$CONSOLE_FONT_vc$vc
             # eventually find an associated SFM
-            eval sfm=\${CONSOLE_MAP_vc${vc}}
+            eval sfm=\${FONT_MAP_vc${vc}}
             [ "$sfm" ] && sfm="-u $sfm"
             if ! setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font; then
                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
@@ -149,19 +149,15 @@ setup ()
     fi
 
 
-#     # Global ACM
-#     [ "${APP_CHARSET_MAP}" ] && setfont -m ${APP_CHARSET_MAP}
-
-
      # Per-VC ACMs
-     PERVC_ACMS="`set | grep "^APP_CHARSET_MAP_vc[0-9]*="  | tr -d \' `"
+     PERVC_ACMS="`set | grep "^CONSOLE_MAP_vc[0-9]*="  | tr -d \' `"
      if [ "${PERVC_ACMS}" ]; then
          [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
          for acm in ${PERVC_ACMS}
          do
              # extract VC and ACM_FONTNAME info from variable setting
              vc=`echo $acm | cut -b19- | cut -d= -f1`
-             eval acm=\$APP_CHARSET_MAP_vc$vc
+             eval acm=\$CONSOLE_MAP_vc$vc
              if ! setfont -C "${DEVICE_PREFIX}$vc" -m "$acm"; then
                  [ "$VERBOSE" != "no" ] && log_action_end_msg 1
                  break
