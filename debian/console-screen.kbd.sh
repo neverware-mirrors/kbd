@@ -153,26 +153,26 @@ setup ()
     fi
 
 
-#    # Global ACM
-#    [ "${APP_CHARSET_MAP}" ] && ${CHARSET} G0 ${APP_CHARSET_MAP}
-#
-#
-#    # Per-VC ACMs
-#    PERVC_ACMS="`set | grep "^APP_CHARSET_MAP_vc[0-9]*="  | tr -d \' `"
-#    if [ "${PERVC_ACMS}" ]; then
-#        [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
-#        for acm in ${PERVC_ACMS}
-#        do
-#            # extract VC and FONTNAME info from variable setting
-#            vc=`echo $acm | cut -b19- | cut -d= -f1`
-#            eval acm=\$APP_CHARSET_MAP_vc$vc
-#            if ! ${CHARSET} --tty="${DEVICE_PREFIX}$vc" G0 "$acm"; then
-#                [ "$VERBOSE" != "no" ] && log_action_end_msg 1
-#                break
-#            fi
-#        done
-#        [ "$VERBOSE" != "no" ] && log_action_end_msg 0
-#    fi
+    # Global ACM
+    [ "${APP_CHARSET_MAP}" ] && setfont -m ${APP_CHARSET_MAP}
+
+
+    # Per-VC ACMs
+    PERVC_ACMS="`set | grep "^APP_CHARSET_MAP_vc[0-9]*="  | tr -d \' `"
+    if [ "${PERVC_ACMS}" ]; then
+        [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
+        for acm in ${PERVC_ACMS}
+        do
+            # extract VC and FONTNAME info from variable setting
+            vc=`echo $acm | cut -b19- | cut -d= -f1`
+            eval acm=\$APP_CHARSET_MAP_vc$vc
+            if ! setfont -C "${DEVICE_PREFIX}$vc" -m "$acm"; then
+                [ "$VERBOSE" != "no" ] && log_action_end_msg 1
+                break
+            fi
+        done
+        [ "$VERBOSE" != "no" ] && log_action_end_msg 0
+    fi
 
 
     # screensaver stuff

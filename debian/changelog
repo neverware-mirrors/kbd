@@ -9,6 +9,7 @@ kbd (1.12-18) UNRELEASED; urgency=low
   * Run unicode_{start,stop} before setfont in the init.d script.  Give a
     font argument to unicode_start so the font doesn't change twice.
     Thanks to Mattia, closes: #421390.
+  * (Re)enable the ACM load in the init.d script.
 
  -- Anton Zinoviev <zinoviev@debian.org>  Thu, 10 May 2007 11:21:53 +0300
 
