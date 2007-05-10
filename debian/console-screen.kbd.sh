@@ -25,11 +25,11 @@ fi
 
 # do some magic with the variables for compatibility with the config
 # file of console-tools
-for vc in '' `set | grep "^.*vc[0-9][0-9]*="  | sed 's/^.*vc\([0-9][0-9]*\)=.*/_vc\1/'`
+for vc in '' `set | grep "^.*_vc[0-9][0-9]*="  | sed 's/^.*\(_vc[0-9][0-9]*\)=.*/\1/'`
 do
-    eval CONSOLE_FONT$vc=\${CONSOLE_FONT$vc:-\${SCREN_FONT$vc}}
-    eval FONT_MAP$vc=\${FONT_MAP$vc:-\${SCREN_FONT_MAP$vc}}
-    eval CONSOLE_MAP$vc=\${CONSOLE_MAP$vc:-\${APP_CHARSET_MAP$vc}}
+    eval [ \"\${SCREEN_FONT$vc}\" ] && eval CONSOLE_FONT$vc=\${CONSOLE_FONT$vc:-\${SCREEN_FONT$vc}}
+    eval [ \"\${SCREEN_FONT_MAP$vc}\" ] && eval FONT_MAP$vc=\${FONT_MAP$vc:-\${SCREEN_FONT_MAP$vc}}
+    eval [ \"\${APP_CHARSET_MAP$vc}\" ] && eval CONSOLE_MAP$vc=\${CONSOLE_MAP$vc:-\${APP_CHARSET_MAP$vc}}
 done
 
 . /lib/lsb/init-functions
@@ -128,7 +128,9 @@ setup ()
         # Set for the first 6 VCs (as they are allocated in /etc/inittab)
         for vc in $LIST_CONSOLES
         do
-            if ! unicode_start_stop $vc && setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm ${CONSOLE_FONT} $acm; then
+            if ! ( unicode_start_stop $vc \
+	           && setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm ${CONSOLE_FONT} $acm )
+	    then
                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
                 break
             fi
@@ -144,12 +146,14 @@ setup ()
         for font in ${PERVC_FONTS}
         do
             # extract VC and FONTNAME info from variable setting
-
+            vc=`echo $font | cut -b16- | cut -d= -f1`
             eval font=\$CONSOLE_FONT_vc$vc
             # eventually find an associated SFM
             eval sfm=\${FONT_MAP_vc${vc}}
             [ "$sfm" ] && sfm="-u $sfm"
-            if ! unicode_start_stop $vc && setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font; then
+            if ! ( unicode_start_stop $vc \
+	           && setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font )
+	    then
                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
                 break
             fi
@@ -164,8 +168,8 @@ setup ()
 	[ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
 	for acm in ${PERVC_ACMS}
 	  do
-             # extract VC and ACM_FONTNAME info from variable setting
-	  vc=`echo $acm | cut -b19- | cut -d= -f1`
+	  # extract VC and ACM_FONTNAME info from variable setting
+	  vc=`echo $acm | cut -b15- | cut -d= -f1`
 	  eval acm=\$CONSOLE_MAP_vc$vc
 	  if ! setfont -C "${DEVICE_PREFIX}$vc" ${SETFONT_OPT} -m "$acm"; then
 	      [ "$VERBOSE" != "no" ] && log_action_end_msg 1
