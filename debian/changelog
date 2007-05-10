@@ -1,3 +1,12 @@
+kbd (1.12-18) UNRELEASED; urgency=low
+
+  * Add console-setup as an alternative in the dependencies on
+    console-common and console-data.  Thanks to Martin-Éric Racine,
+    closes: #398439.
+  * Add me to uploaders
+
+ -- Anton Zinoviev <zinoviev@debian.org>  Thu, 10 May 2007 10:59:12 +0300
+
 kbd (1.12-17) unstable; urgency=low
 
   * debian/rules: Drop bashisms.  Closes: #379500  Thanks Julien Danjou

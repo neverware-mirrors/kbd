@@ -2,14 +2,14 @@ Source: kbd
 Section: utils
 Priority: extra
 Maintainer: Console utilities maintainers <pkg-kbd-devel@lists.alioth.debian.org>
-Uploaders: Denis Barbier <barbier@debian.org>
+Uploaders: Denis Barbier <barbier@debian.org>, Anton Zinoviev <zinoviev@debian.org>
 Build-Depends: debhelper (>= 4), linuxdoc-tools, bison, flex | flex-old, gettext, quilt
 Standards-Version: 3.7.2
 
 Package: kbd
 Architecture: any
-Depends: ${shlibs:Depends}, console-common, lsb-base (>= 3.0-10)
-Recommends: console-data (>= 1999.08.29-13)
+Depends: ${shlibs:Depends}, console-common | console-setup, lsb-base (>= 3.0-10)
+Recommends: console-data (>= 1999.08.29-13) | console-setup
 Provides: console-utilities, open
 Conflicts: console-utilities, kbd-data, open, util-linux (<< 2.11)
 Replaces: open, util-linux (<< 2.11)
