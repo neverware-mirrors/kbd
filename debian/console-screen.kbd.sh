@@ -5,11 +5,14 @@
 # Required-Stop:     $local_fs $remote_fs
 # Default-Start:     S 2 3 4 5
 # Default-Stop:      0 1 6
+#
+# Description: Set console screen modes and fonts
+# Short-Description:    Prepare console
 ### END INIT INFO
 
 # This is the boot script for the `kbd' package.
-# It loads parameters from /etc/kbd/config, maybe loads
-# default font and map, and maybe start "vcstime"
+# It loads parameters from /etc/kbd/config and maybe loads
+# default font and map.
 # (c) 1997 Yann Dirson
 
 PKG=kbd
