@@ -89,6 +89,28 @@ setup ()
         LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep 'tty[0-9]*$' | awk -F: '{printf "%s ", $1}'`
     fi
 
+    # Go to UTF-8 mode as necessary
+    # 
+    if [ -f /etc/environment ] || [ -f /etc/default/locale ]
+    then
+        for var in LANG LC_CTYPE LC_ALL
+        do
+            value=$(egrep "^[^#]*${var}=" /etc/environment /etc/default/locale 2>/dev/null | tail -n1 | cut -d= -f2)
+            eval $var=$value
+        done
+    fi
+    CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
+    if [ "$CHARMAP" = "UTF-8" ]; then
+        action=unicode_start
+    else
+        action=unicode_stop
+    fi
+    for vc in $LIST_CONSOLES
+    do
+        $action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+    done
+
+
     # Global default font+map
     if [ "${CONSOLE_FONT}" ]; then
         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up general console font"
@@ -148,27 +170,6 @@ setup ()
 #        [ "$VERBOSE" != "no" ] && log_action_end_msg 0
 #    fi
 
-
-    # Go to UTF-8 mode as necessary
-    # 
-    if [ -f /etc/environment ] || [ -f /etc/default/locale ]
-    then
-        for var in LANG LC_CTYPE LC_ALL
-        do
-            value=$(egrep "^[^#]*${var}=" /etc/environment /etc/default/locale 2>/dev/null | tail -n1 | cut -d= -f2)
-            eval $var=$value
-        done
-    fi
-    CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
-    if [ "$CHARMAP" = "UTF-8" ]; then
-        action=unicode_start
-    else
-        action=unicode_stop
-    fi
-    for vc in $LIST_CONSOLES
-    do
-        $action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
-    done
 
     # screensaver stuff
     setterm_args=""
