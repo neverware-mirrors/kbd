@@ -6,8 +6,9 @@ kbd (1.12-18) UNRELEASED; urgency=low
     closes: #398439.
   * Search for an installed font in unicode_start since now LatArCyrHeb-16
     may not be installed.
-  * Run unicode_{start,stop} before setfont in the init.d script.  Thanks
-    to Mattia, closes: #421390.
+  * Run unicode_{start,stop} before setfont in the init.d script.  Give a
+    font argument to unicode_start so the font doesn't change twice.
+    Thanks to Mattia, closes: #421390.
 
  -- Anton Zinoviev <zinoviev@debian.org>  Thu, 10 May 2007 11:21:53 +0300
 

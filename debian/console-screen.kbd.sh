@@ -107,7 +107,11 @@ setup ()
     fi
     for vc in $LIST_CONSOLES
     do
-        $action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+        if [ "${CONSOLE_FONT}" ]; then
+            $action "${CONSOLE_FONT}" < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+	else
+            $action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+	fi
     done
 
 
