@@ -14,7 +14,10 @@ kbd (1.12-18) UNRELEASED; urgency=low
     - (re)enable the per-VC ACM load;
     - for consistency use CONSOLE_MAP_vcN instead of APP_CHARSET_MAP_vcN
       and FONT_MAP_vcN instead of CONSOLE_MAP_vcN;
-    - do not run unicode_start for consoles with defined CONSOLE_MAP_vcN;
+    - support also the config variables in console-tools style
+      (APP_CHARSET_MAP, SCREEN_FONT, SCREEN_FONT_MAP);
+    - do not run unicode_start if CONSOLE_MAP (or CONSOLE_MAP_vcN) is defined;
+    - run unicode_start/unicode_stop only on consoles where we load a font;
     - do not use static paths such as /usr/bin/setfont.
   
  -- Anton Zinoviev <zinoviev@debian.org>  Thu, 10 May 2007 11:21:53 +0300

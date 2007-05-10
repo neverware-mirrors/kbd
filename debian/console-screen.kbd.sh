@@ -23,6 +23,15 @@ if [ -d /etc/$PKG/config.d ]; then
     done
 fi
 
+# do some magic with the variables for compatibility with the config
+# file of console-tools
+for vc in '' `set | grep "^.*vc[0-9][0-9]*="  | sed 's/^.*vc\([0-9][0-9]*\)=.*/_vc\1/'`
+do
+    eval CONSOLE_FONT$vc=\${CONSOLE_FONT$vc:-\${SCREN_FONT$vc}}
+    eval FONT_MAP$vc=\${FONT_MAP$vc:-\${SCREN_FONT_MAP$vc}}
+    eval CONSOLE_MAP$vc=\${CONSOLE_MAP$vc:-\${APP_CHARSET_MAP$vc}}
+done
+
 . /lib/lsb/init-functions
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
@@ -42,6 +51,30 @@ reset_vga_palette ()
         # They have a framebuffer device.
         # That means we have work to do...
         echo -n "]R"
+    fi
+}
+
+unicode_start_stop ()
+{
+    vc=$1
+    if [ -f /etc/environment ] || [ -f /etc/default/locale ]
+    then
+        for var in LANG LC_CTYPE LC_ALL
+        do
+            value=$(egrep "^[^#]*${var}=" /etc/environment /etc/default/locale 2>/dev/null | tail -n1 | cut -d= -f2)
+            eval $var=$value
+        done
+    fi
+    CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
+    if [ "$CHARMAP" = "UTF-8" -a -z "$(eval echo \$CONSOLE_MAP\$CONSOLE_MAP_vc$vc)" ]; then
+	action=unicode_start
+    else
+	action=unicode_stop
+    fi
+    if [ "${CONSOLE_FONT}" ]; then
+	$action "${CONSOLE_FONT}" < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+    else
+	$action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
     fi
 }
 
@@ -85,41 +118,17 @@ setup ()
         LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep 'tty[0-9]*$' | awk -F: '{printf "%s ", $1}'`
     fi
 
-    # Go to UTF-8 mode as necessary
-    # 
-    if [ -f /etc/environment ] || [ -f /etc/default/locale ]
-    then
-        for var in LANG LC_CTYPE LC_ALL
-        do
-            value=$(egrep "^[^#]*${var}=" /etc/environment /etc/default/locale 2>/dev/null | tail -n1 | cut -d= -f2)
-            eval $var=$value
-        done
-    fi
-    CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
-    for vc in $LIST_CONSOLES
-    do
-        if [ "$CHARMAP" = "UTF-8" -a -z "$(eval echo \$CONSOLE_MAP_vc$vc)" ]; then
-	    action=unicode_start
-	else
-	    action=unicode_stop
-	fi
-	if [ "${CONSOLE_FONT}" ]; then
-	    $action "${CONSOLE_FONT}" < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
-	else
-	    $action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
-	fi
-    done
-
 
     # Global default font+map
     if [ "${CONSOLE_FONT}" ]; then
         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up general console font"
-        [ "${CONSOLE_MAP}" ] && SETFONT_OPT="$SETFONT_OPT -m ${CONSOLE_MAP}"
-
+	sfm="${FONT_MAP}" && [ "$sfm" ] && sfm="-u $sfm"
+	acm="${CONSOLE_MAP}" && [ "$acm" ] && acm="-m $acm"
+    
         # Set for the first 6 VCs (as they are allocated in /etc/inittab)
         for vc in $LIST_CONSOLES
         do
-            if ! setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} ${CONSOLE_FONT}; then
+            if ! unicode_start_stop $vc && setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm ${CONSOLE_FONT} $acm; then
                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
                 break
             fi
@@ -135,12 +144,12 @@ setup ()
         for font in ${PERVC_FONTS}
         do
             # extract VC and FONTNAME info from variable setting
-            vc=`echo $font | cut -b16- | cut -d= -f1`
+
             eval font=\$CONSOLE_FONT_vc$vc
             # eventually find an associated SFM
             eval sfm=\${FONT_MAP_vc${vc}}
             [ "$sfm" ] && sfm="-u $sfm"
-            if ! setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font; then
+            if ! unicode_start_stop $vc && setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font; then
                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
                 break
             fi
@@ -149,23 +158,23 @@ setup ()
     fi
 
 
-     # Per-VC ACMs
-     PERVC_ACMS="`set | grep "^CONSOLE_MAP_vc[0-9]*="  | tr -d \' `"
-     if [ "${PERVC_ACMS}" ]; then
-         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
-         for acm in ${PERVC_ACMS}
-         do
+    # Per-VC ACMs
+    PERVC_ACMS="`set | grep "^CONSOLE_MAP_vc[0-9]*="  | tr -d \' `"
+    if [ "${PERVC_ACMS}" ]; then
+	[ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
+	for acm in ${PERVC_ACMS}
+	  do
              # extract VC and ACM_FONTNAME info from variable setting
-             vc=`echo $acm | cut -b19- | cut -d= -f1`
-             eval acm=\$CONSOLE_MAP_vc$vc
-             if ! setfont -C "${DEVICE_PREFIX}$vc" -m "$acm"; then
-                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
-                 break
-             fi
-         done
-         [ "$VERBOSE" != "no" ] && log_action_end_msg 0
-     fi
-
+	  vc=`echo $acm | cut -b19- | cut -d= -f1`
+	  eval acm=\$CONSOLE_MAP_vc$vc
+	  if ! setfont -C "${DEVICE_PREFIX}$vc" ${SETFONT_OPT} -m "$acm"; then
+	      [ "$VERBOSE" != "no" ] && log_action_end_msg 1
+	      break
+	  fi
+	done
+	[ "$VERBOSE" != "no" ] && log_action_end_msg 0
+    fi
+    
 
     # screensaver stuff
     setterm_args=""
