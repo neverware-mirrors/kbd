@@ -26,17 +26,7 @@ fi
 . /lib/lsb/init-functions
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-SETFONT="/usr/bin/setfont"
 SETFONT_OPT="-v"
-VCSTIME="/usr/sbin/vcstime"
-
-# Different device name for 2.6 kernels and devfs
-if [ `uname -r | cut -f 2 -d .` = 6 ] && [ -e /dev/.devfsd ]; then
-    VCSTIME_OPT="-2 /dev/vcsa0"
-else
-    VCSTIME_OPT=""
-fi
-
 
 
 # set DEVICE_PREFIX depending on devfs/udev
@@ -58,7 +48,7 @@ reset_vga_palette ()
 setup ()
 {
     # be sure the main program is installed
-    [ -x "${SETFONT}" ] || return
+    which setfont >/dev/null || return
 
     VT="no"
     # If we can't access the console, quit
@@ -75,9 +65,15 @@ setup ()
     [ $VT = "no" ] && return
 
     # start vcstime
-    if [ "${DO_VCSTIME}" = "yes" ] && [ -x ${VCSTIME} ]; then
+    if [ "${DO_VCSTIME}" = "yes" ] && which vcstime >/dev/null; then
+        # Different device name for 2.6 kernels and devfs
+	if [ `uname -r | cut -f 2 -d .` = 6 ] && [ -e /dev/.devfsd ]; then
+	    VCSTIME_OPT="-2 /dev/vcsa0"
+	else
+	    VCSTIME_OPT=""
+	fi
         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Starting clock on text console"
-        ${VCSTIME} ${VCSTIME_OPT} &
+        vcstime ${VCSTIME_OPT} &
         [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
 
@@ -100,17 +96,17 @@ setup ()
         done
     fi
     CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
-    if [ "$CHARMAP" = "UTF-8" ]; then
-        action=unicode_start
-    else
-        action=unicode_stop
-    fi
     for vc in $LIST_CONSOLES
     do
-        if [ "${CONSOLE_FONT}" ]; then
-            $action "${CONSOLE_FONT}" < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+        if [ "$CHARMAP" = "UTF-8" -a -z "$(eval echo \$APP_CHARSET_MAP_vc$vc)" ]; then
+	    action=unicode_start
 	else
-            $action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+	    action=unicode_stop
+	fi
+	if [ "${CONSOLE_FONT}" ]; then
+	    $action "${CONSOLE_FONT}" < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+	else
+	    $action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
 	fi
     done
 
@@ -123,7 +119,7 @@ setup ()
         # Set for the first 6 VCs (as they are allocated in /etc/inittab)
         for vc in $LIST_CONSOLES
         do
-            if ! ${SETFONT} -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} ${CONSOLE_FONT}; then
+            if ! setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} ${CONSOLE_FONT}; then
                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
                 break
             fi
@@ -139,12 +135,12 @@ setup ()
         for font in ${PERVC_FONTS}
         do
             # extract VC and FONTNAME info from variable setting
-            vc=`echo $font | cut -b15- | cut -d= -f1`
+            vc=`echo $font | cut -b16- | cut -d= -f1`
             eval font=\$CONSOLE_FONT_vc$vc
             # eventually find an associated SFM
             eval sfm=\${CONSOLE_MAP_vc${vc}}
             [ "$sfm" ] && sfm="-u $sfm"
-            if ! ${SETFONT} -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font; then
+            if ! setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font; then
                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
                 break
             fi
@@ -153,26 +149,26 @@ setup ()
     fi
 
 
-    # Global ACM
-    [ "${APP_CHARSET_MAP}" ] && setfont -m ${APP_CHARSET_MAP}
+#     # Global ACM
+#     [ "${APP_CHARSET_MAP}" ] && setfont -m ${APP_CHARSET_MAP}
 
 
-    # Per-VC ACMs
-    PERVC_ACMS="`set | grep "^APP_CHARSET_MAP_vc[0-9]*="  | tr -d \' `"
-    if [ "${PERVC_ACMS}" ]; then
-        [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
-        for acm in ${PERVC_ACMS}
-        do
-            # extract VC and FONTNAME info from variable setting
-            vc=`echo $acm | cut -b19- | cut -d= -f1`
-            eval acm=\$APP_CHARSET_MAP_vc$vc
-            if ! setfont -C "${DEVICE_PREFIX}$vc" -m "$acm"; then
-                [ "$VERBOSE" != "no" ] && log_action_end_msg 1
-                break
-            fi
-        done
-        [ "$VERBOSE" != "no" ] && log_action_end_msg 0
-    fi
+     # Per-VC ACMs
+     PERVC_ACMS="`set | grep "^APP_CHARSET_MAP_vc[0-9]*="  | tr -d \' `"
+     if [ "${PERVC_ACMS}" ]; then
+         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
+         for acm in ${PERVC_ACMS}
+         do
+             # extract VC and ACM_FONTNAME info from variable setting
+             vc=`echo $acm | cut -b19- | cut -d= -f1`
+             eval acm=\$APP_CHARSET_MAP_vc$vc
+             if ! setfont -C "${DEVICE_PREFIX}$vc" -m "$acm"; then
+                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
+                 break
+             fi
+         done
+         [ "$VERBOSE" != "no" ] && log_action_end_msg 0
+     fi
 
 
     # screensaver stuff

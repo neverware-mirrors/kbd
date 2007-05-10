@@ -6,11 +6,15 @@ kbd (1.12-18) UNRELEASED; urgency=low
     closes: #398439.
   * Search for an installed font in unicode_start since now LatArCyrHeb-16
     may not be installed.
-  * Run unicode_{start,stop} before setfont in the init.d script.  Give a
-    font argument to unicode_start so the font doesn't change twice.
-    Thanks to Mattia, closes: #421390.
-  * (Re)enable the ACM load in the init.d script.
-
+  * Some changes in /etc/init.d/console_screen.kbd.sh:
+    - run unicode_{start,stop} before setfont.  Give a font argument to
+      unicode_start so the font doesn't change twice. Thanks to Mattia,
+      closes: #421390;
+    - fix the per-VC font load;
+    - (re)enable the per-VC ACM load;
+    - do not run unicode_start for consoles with defined APP_CHARSET_MAP_vcN;
+    - do not use static paths such as /usr/bin/setfont.
+  
  -- Anton Zinoviev <zinoviev@debian.org>  Thu, 10 May 2007 11:21:53 +0300
 
 kbd (1.12-17) unstable; urgency=low
