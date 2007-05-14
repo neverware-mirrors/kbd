@@ -1,4 +1,10 @@
-kbd (1.12-18) UNRELEASED; urgency=low
+kbd (1.12-19) UNRELEASED; urgency=low
+
+  * 
+
+ -- Anton Zinoviev <zinoviev@debian.org>  Mon, 14 May 2007 19:42:40 +0300
+
+kbd (1.12-18) unstable; urgency=low
 
   * Add me to uploaders
   * Add console-setup as an alternative in the dependencies on
