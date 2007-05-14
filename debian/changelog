@@ -18,11 +18,15 @@ kbd (1.12-18) UNRELEASED; urgency=low
       (APP_CHARSET_MAP, SCREEN_FONT, SCREEN_FONT_MAP);
     - do not run unicode_start if CONSOLE_MAP (or CONSOLE_MAP_vcN) is defined;
     - run unicode_start/unicode_stop only on consoles where we load a font;
-    - do not use static paths such as /usr/bin/setfont.
+    - do not use static paths such as /usr/bin/setfont;
+    - add description and short description in the LSB header.
   * Use more substantial example for /etc/kbd/config based on the config
     file of console-tools.  Thanks to Jonny, closes: #410553.
+  * Install kbd_mode and setfont in /bin rather than in /usr/bin so the
+    administrator be able to set up the font in case of emergency and use
+    the keyboard in utf-8 mode.
 
- -- Anton Zinoviev <zinoviev@debian.org>  Thu, 10 May 2007 18:20:42 +0300
+ -- Anton Zinoviev <zinoviev@debian.org>  Mon, 14 May 2007 18:34:54 +0300
 
 kbd (1.12-17) unstable; urgency=low
 

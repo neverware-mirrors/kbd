@@ -62,6 +62,8 @@ install: build-stamp
 
      	# correct locations
 	mv ${ubindir}/kbdrate ${sbindir}
+	mv ${ubindir}/kbd_mode ${bindir}
+	mv ${ubindir}/setfont ${bindir}
 	mv ${ubindir}/fgconsole ${bindir}
 	mv ${ubindir}/openvt ${bindir}
 	mv ${ubindir}/chvt ${bindir}
