@@ -25,7 +25,7 @@ static int ctoi (unsigned char *);
 
 /* search for the map file in these directories (with trailing /) */
 static char *mapdirpath[] = { "", DATADIR "/" TRANSDIR "/", 0 };
-static char *mapsuffixes[] = { "", ".acm", ".trans", "_to_uni.trans", 0 };
+static char *mapsuffixes[] = { "", ".trans", "_to_uni.trans", 0 };
 
 #ifdef MAIN
 #include "getfd.h"

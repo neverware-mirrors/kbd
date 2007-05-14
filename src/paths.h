@@ -16,10 +16,10 @@
  * Default keymap, and where the kernel copy of it lives.
  */
 #ifdef __sparc__
-# define DEFMAP "sunkeymap.kmap"
+# define DEFMAP "sunkeymap.map"
 # define KERNDIR "/usr/src/linux/drivers/sbus/char"
 #else
-# define DEFMAP "defkeymap.kmap"
+# define DEFMAP "defkeymap.map"
 # define KERNDIR "/usr/src/linux/drivers/char"
 #endif
 

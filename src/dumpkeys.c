@@ -131,10 +131,11 @@ print_keysym(int code, char numeric) {
 	t = KTYP(code);
 	v = KVAL(code);
 	if (t >= syms_size) {
-		if (!numeric && (p = codetoksym(code)) != NULL)
+		code = code ^ 0xf000;
+		if (!numeric && (p = unicodetoksym(code)) != NULL)
 			printf("%-16s", p);
 		else
-			printf("U+%04x          ", code ^ 0xf000);
+			printf("U+%04x          ", code);
 		return;
 	}
 	if (t == KT_LETTER) {

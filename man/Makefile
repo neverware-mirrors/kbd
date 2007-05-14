@@ -7,13 +7,6 @@ install:
 		install -d -m 755 $(MANDIR)/$$i; \
 		install -m 644 $$i/*.[0-9] $(MANDIR)/$$i; \
 	done
-	install -m 644 man1misc/codepage.1 $(MANDIR)/man1
-	install -m 644 man1misc/screendump.1 $(MANDIR)/man1
-	install -m 644 man1misc/splitfont.1 $(MANDIR)/man1
-	install -m 644 man8misc/mk_modmap.8 $(MANDIR)/man8
-	install -m 644 man8misc/setlogcons.8 $(MANDIR)/man8
-	install -m 644 man8misc/setvesablank.8 $(MANDIR)/man8
-	install -m 644 man8misc/vcstime.8 $(MANDIR)/man8
 	rm -f $(MANDIR)/man5/keytables.5
 
 clean:

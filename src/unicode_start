@@ -1,19 +1,6 @@
 #!/bin/sh
 # Enables Unicode processing in the current console.
 #
-
-if [ ! -e /proc/self/fd/0 ] ; then
-   echo "Won't set unicode mode: Can't determine console type;" >&2
-   echo " Please ensure that /proc is mounted." >&2
-   exit 1
-fi
-
-readlink /proc/self/fd/0 | grep -q -e /dev/vc -e '/dev/tty[^p]' -e /dev/console
-if [ $? -eq 1 ]; then
-    echo  "Won't set unicode mode: not a VT." >&2
-    exit 1
-fi
-
 # 1. The input side: the keyboard driver.
 
 # Set the keyboard driver in Unicode mode. (Default is ASCII mode.)
@@ -38,24 +25,15 @@ dumpkeys | loadkeys --unicode
 # Tell the console output driver that the bytes arriving are UTF-8
 # encoded multibyte sequences.
 
-printf '\033%%G'
+echo -n -e '\033%G'
 
 # Tell the graphics card how to display Unicode characters not
 # contained in the IBM 437 character set (on PCs). The font should
 # have a Unicode map attached, or explicitly specified, e.g.,
 # by giving `def.uni' as a second argument.
 
+DEFAULT_UNICODE_FONT=LatArCyrHeb-16
 # Also drdos8x16 is a good candidate.
-for DEFAULT_UNICODE_FONT in \
-	/usr/share/consolefonts/Uni1-VGA16.psf* \
-	/usr/share/consolefonts/LatArCyrHeb-16.psf* \
-	/usr/share/consolefonts/default*.psf* \
-	/usr/share/consolefonts/*.psf*
-do
-	if [ -f "$DEFAULT_UNICODE_FONT" ]; then
-		break
-	fi
-done
 
 case $# in
 	2)
@@ -65,7 +43,7 @@ case $# in
 		setfont $1
 		;;
 	0)
-		setfont "$DEFAULT_UNICODE_FONT"
+		setfont $DEFAULT_UNICODE_FONT
 		;;
 	*)
 		echo "usage: unicode_start [font [unicode map]]"

@@ -62,7 +62,7 @@ main(int argc, char **argv){
 		}
 	}
 
-	if (optind < argc)
+	if (argc != 1)
 		usage();
 
 	fd = getfd(console);
