@@ -1,3 +1,4 @@
+#include <linux/kd.h>
 #include <linux/keyboard.h>
 #include <stdio.h>
 #include <string.h>
@@ -770,7 +771,7 @@ static sym latin4_syms[] = {
 };
 
 static sym iso_8859_5_syms[] = { /* 160-255 */
-	{ 0x00a0, "no-break_space" },					/* 0240 */
+	{ 0x00a0, "nobreakspace" },
 	{ 0x0401, "cyrillic_capital_letter_io" },
 	{ 0x0402, "serbocroatian_cyrillic_capital_letter_dje" },
 	{ 0x0403, "macedonian_cyrillic_capital_letter_gje" },
@@ -783,7 +784,7 @@ static sym iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x040a, "cyrillic_capital_letter_nje" },
 	{ 0x040b, "serbocroatian_cyrillic_capital_letter_chje" },
 	{ 0x040c, "macedonian_cyrillic_capital_letter_kje" },
-	{ 0x00ad, "soft_hyphen" },
+	{ 0x00ad, "hyphen" },
 	{ 0x040e, "bielorussian_cyrillic_capital_letter_short_u" },
 	{ 0x040f, "cyrillic_capital_letter_dze" },
 	{ 0x0410, "cyrillic_capital_letter_a" }, 			/* 0260 */
@@ -863,7 +864,7 @@ static sym iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x045a, "cyrillic_small_letter_nje" },
 	{ 0x045b, "serbocroatian_cyrillic_small_letter_chje" },
 	{ 0x045c, "macedonian_cyrillic_small_letter_kje" },
-	{ 0x00a7, "paragraph_sign" },
+	{ 0x00a7, "section" },
 	{ 0x045e, "bielorussian_cyrillic_small_letter_short_u" }, 	/* printing error in ECMA-113 */
 	{ 0x045f, "cyrillic_small_letter_dze" }
 };
@@ -896,7 +897,7 @@ static sym iso_8859_7_syms[] = { /* 160-255 */
 	{ 0x0388, "Epsilonaccent" },
 	{ 0x0389, "Etaaccent" },
 	{ 0x038a, "Iotaaccent" },
-	{ 0x00bb, "rightanglequote" },
+	{ 0x00bb, "guillemotright" },
 	{ 0x038c, "Omicronaccent" },
 	{ 0x00bd, "onehalf" },
 	{ 0x038e, "Upsilonaccent" },
@@ -978,7 +979,7 @@ static sym iso_8859_8_syms[] = {
 	{ 0x00a7, "" },
 	{ 0x00a8, "" },
 	{ 0x00a9, "" },
-	{ 0x00d7, "multiplication" },
+	{ 0x00d7, "multiply" },
 	{ 0x00ab, "" },
 	{ 0x00ac, "" },
 	{ 0x00ad, "" },
@@ -1122,6 +1123,7 @@ static sym iso_8859_9_syms[] = { /* latin-5 */
 
 #include "koi8.syms.h"
 #include "cp1250.syms.h"
+#include "thai.syms.h"
 #include "ethiopic.syms.h"
 #include "sami.syms.h"
 
@@ -1497,6 +1499,20 @@ static const char *sticky_syms[] = {
 	"SCtrlR"
 };
 
+/* Keysyms whose KTYP is KT_BRL. */
+
+static const char *brl_syms[] = {
+	"Brl_blank",
+	"Brl_dot1",
+	"Brl_dot2",
+	"Brl_dot3",
+	"Brl_dot4",
+	"Brl_dot5",
+	"Brl_dot6",
+	"Brl_dot7",
+	"Brl_dot8"
+};
+
 #define E(x) { x, sizeof(x) / sizeof(x[0]) }
 
 syms_entry syms[] = {
@@ -1512,7 +1528,9 @@ syms_entry syms[] = {
 	E(ascii_syms),		/* KT_ASCII */
 	E(lock_syms),		/* KT_LOCK */
 	{ 0, 0 },		/* KT_LETTER */
-	E(sticky_syms)		/* KT_SLOCK */
+	E(sticky_syms),		/* KT_SLOCK */
+	{ 0, 0 },		/*  */
+	E(brl_syms)		/* KT_BRL */
 };
 
 #undef E
@@ -1565,7 +1583,13 @@ synonyms[] = {
 	{ "dead_caron",         "dead_circumflex" },
 	{ "dead_breve",         "dead_tilde" },
 	{ "dead_doubleacute",   "dead_tilde" },
+/* turkish */
+	{ "Idotabove",          "Iabovedot" },
+	{ "dotlessi",           "idotless" },
 /* cyrillic */
+	{ "no-break_space",     "nobreakspace" },
+	{ "paragraph_sign",     "section" },
+	{ "soft_hyphen",        "hyphen" },
 	{ "bielorussian_cyrillic_capital_letter_i", "ukrainian_cyrillic_capital_letter_i" },
 	{ "cyrillic_capital_letter_kha", "cyrillic_capital_letter_ha" },
 	{ "cyrillic_capital_letter_ge", "cyrillic_capital_letter_ghe" },
@@ -1583,7 +1607,9 @@ synonyms[] = {
 	{ "cyrillic_small_letter_yeri", "cyrillic_small_letter_yeru" },
 	{ "cyrillic_small_letter_reversed_e", "cyrillic_small_letter_e" },
 	{ "cyrillic_small_letter_ii", "cyrillic_small_letter_i" },
-	{ "cyrillic_small_letter_short_ii", "cyrillic_small_letter_short_i" }
+	{ "cyrillic_small_letter_short_ii", "cyrillic_small_letter_short_i" },
+/* iso-8859-7 */
+	{ "rightanglequote",    "guillemotright" }
 };
 
 const int syms_size = sizeof(syms) / sizeof(syms_entry);
@@ -1594,6 +1620,7 @@ struct cs {
     sym *charnames;
     int start;
 } charsets[] = {
+    { "", NULL, 256 },
     { "iso-8859-1",	latin1_syms, 160 },
     { "iso-8859-2",	latin2_syms, 160 },
     { "iso-8859-3",	latin3_syms, 160 },
@@ -1608,6 +1635,7 @@ struct cs {
     { "cp-1250",	cp1250_syms, 128 },
     { "koi8-r",		koi8_syms, 128 },
     { "koi8-u",		koi8_syms, 128 },
+    { "tis-620",	tis_620_syms, 160 },		/* thai */
     { "iso-10646-18",	iso_10646_18_syms, 159 },	/* ethiopic */
     { "iso-ir-197",	iso_ir_197_syms, 160 },		/* sami */
     { "iso-ir-209",	iso_ir_209_syms, 160 },		/* sami */
@@ -1629,7 +1657,7 @@ list_charsets(FILE *f) {
 		fprintf(f, "%s{", mm[j]);
 		ct = 0;
 		lth = strlen(mm[j]);
-		for(i=0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
+		for(i=1; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
 			if(!strncmp(charsets[i].charset, mm[j], lth)) {
 				if(ct++)
 					fprintf(f, ",");
@@ -1638,7 +1666,7 @@ list_charsets(FILE *f) {
 		}
 		fprintf(f, "}");
 	}
-	for(i=0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
+	for(i=1; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
 		for (j=0; j<sizeof(mm)/sizeof(mm[0]); j++) {
 			lth = strlen(mm[j]);
 			if(!strncmp(charsets[i].charset, mm[j], lth))
@@ -1660,8 +1688,11 @@ set_charset(const char *charset) {
 		return 0;
 	}
 
-	for (i = 0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
+	for (i = 1; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
 		if (!strcasecmp(charsets[i].charset, charset)) {
+			charsets[0].charset = charsets[i].charset;
+			charsets[0].charnames = charsets[i].charnames;
+			charsets[0].start = charsets[i].start;
 			p = charsets[i].charnames;
 			for (i = charsets[i].start; i < 256; i++,p++) {
 				if(p->name[0])
@@ -1677,10 +1708,17 @@ set_charset(const char *charset) {
 }
 
 const char *
-unicodetoksym(int code) {
+codetoksym(int code) {
 	int i, j;
 	sym *p;
 
+	if (KTYP(code) == KT_META)
+		return NULL;
+	if (KTYP(code) == KT_LETTER)
+		code = K(KT_LATIN, KVAL(code));
+	if (KTYP(code) < syms_size)
+		return syms[KTYP(code)].table[KVAL(code)];
+	code = code ^ 0xf000;
 	if (code < 0)
 		return NULL;
 	if (code < 0x80)
@@ -1697,25 +1735,40 @@ unicodetoksym(int code) {
 
 /* Functions for loadkeys. */
 
-int unicode_used = 0;
-
 int
 ksymtocode(const char *s) {
 	int i;
-	int j, jmax;
+	int j;
 	int keycode;
+	int save_prefer_unicode;
+	int syms_start = 0;
 	sym *p;
 
+	if (!s) {
+		fprintf(stderr, "%s\n", _("null symbol found"));
+		return -1;
+	}
+
 	if (!strncmp(s, "Meta_", 5)) {
+		/* Temporarily set prefer_unicode to ensure that keycode is
+		   right. */
+		save_prefer_unicode = prefer_unicode;
+		prefer_unicode = 0;
 		keycode = ksymtocode(s+5);
+		prefer_unicode = save_prefer_unicode;
 		if (KTYP(keycode) == KT_LATIN)
 			return K(KT_META, KVAL(keycode));
 		/* fall through to error printf */
 	}
 
-	for (i = 0; i < syms_size; i++) {
-		jmax = ((i == 0 && prefer_unicode) ? 128 : syms[i].size);
-		for (j = 0; j < jmax; j++)
+	if (prefer_unicode) {
+		for (j = 0; j < 0x80; j++)
+			if (!strcmp(s,iso646_syms[j]))
+				return (j ^ 0xf000);
+		syms_start = 1;
+	}
+	for (i = syms_start; i < syms_size; i++) {
+		for (j = 0; j < syms[i].size; j++)
 			if (!strcmp(s,syms[i].table[j]))
 				return K(i, j);
 	}
@@ -1729,8 +1782,7 @@ ksymtocode(const char *s) {
 			p = charsets[i].charnames;
 			for (j = charsets[i].start; j < 256; j++, p++)
 				if (!strcmp(s,p->name)) {
-					unicode_used = 1;
-					return (p->uni ^ 0xf000); /* %%% */
+					return (p->uni ^ 0xf000);
 				}
 		}
 	} else /* if (!chosen_charset) */ {
@@ -1782,38 +1834,32 @@ ksymtocode(const char *s) {
 }
 
 int
-unicodetocode(int code) {
-	const char *s;
-
-	s = unicodetoksym(code);
-	if (s)
-		return ksymtocode(s);
-	else {
-		unicode_used = 1;
-		return (code ^ 0xf000); /* %%% */
+add_number(int code)
+{
+	const char * kc;
+	if (KTYP(code) == KT_META)
+		return code;
+	if (prefer_unicode && KTYP(code) >= syms_size) {
+		if ((code ^ 0xf000) < 0x80)
+			return K(KT_LATIN, code ^ 0xf000);
+		else
+			return code;
 	}
+	if (!prefer_unicode && KTYP(code) < syms_size)
+		return code;
+	kc = codetoksym(code);
+	if (kc == NULL)
+		return code;
+	else
+		return ksymtocode(kc);
 }
 
 int
 add_capslock(int code)
 {
-	char buf[7];
-	const char *p;
-
 	if (KTYP(code) == KT_LATIN)
 		return K(KT_LETTER, KVAL(code));
-	if (KTYP(code) >= syms_size) {
-		if ((p = unicodetoksym(code ^ 0xf000)) == NULL) {
-			sprintf(buf, "U+%04x", code ^ 0xf000);
-			p = buf;
-		}
-	} else {
-		sprintf(buf, "0x%04x", code);
-		p = buf;
-	}
-#if 0
-	/* silence the common usage  dumpkeys | loadkeys -u  */
-	fprintf(stderr, _("plus before %s ignored\n"), p);
-#endif
-	return code;
+	if (KTYP(code) >= syms_size && (code ^ 0xf000) < 0x80)
+		return K(KT_LETTER, code ^ 0xf000);
+	return add_number(code);
 }

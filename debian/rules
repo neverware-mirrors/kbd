@@ -15,17 +15,36 @@ sbindir=${tmpdir}/sbin
 ubindir=${tmpdir}/usr/bin
 usbindir=${tmpdir}/usr/sbin
 docdir=${tmpdir}/usr/share/doc/${package}
+udebdir=${debdir}/kbd-udeb
 
 QUILT := quilt --quiltrc=debian/patches/quiltrc
 
+configure: configure-stamp
 configure-stamp:
 	${topdir}/configure --prefix=/usr \
 		--datadir=/usr/share --mandir=/usr/share/man
 	touch $@
 
-build: build-stamp
-build-stamp: patch configure-stamp
+build-udeb: build-udeb-stamp
+build-udeb-stamp: patch configure
 	dh_testdir
+	rm src/*.o
+	rm src/kbd_mode src/loadkeys
+	make -C src CFLAGS="-Os -g -Wall" ARCH=${ARCH} loadkeys kbd_mode
+	mv src/loadkeys src/loadkeys-udeb
+	mv src/kbd_mode src/kbd_mode-udeb
+	rm src/*.o
+	touch $@
+
+build: build-stamp
+build-stamp: patch configure
+	dh_testdir
+	rm -f src/*.o
+	rm -f src/kbd_mode src/loadkeys
+	make -C src CFLAGS="-Os -g -Wall" ARCH=${ARCH} loadkeys kbd_mode
+	mv src/loadkeys .
+	mv src/kbd_mode .
+	rm -f src/*.o
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH}
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH} -C contrib codepage splitfont vcstime
 	touch $@
@@ -36,6 +55,7 @@ clean1:
 	dh_testroot
 	rm -f build-stamp configure-stamp \
 	  contrib/codepage contrib/splitfont contrib/vcstime
+	rm -f loadkeys kbd_mode
 	-make reallyclean ARCH=${ARCH}
 	dh_clean
 
@@ -45,22 +65,22 @@ install: build-stamp
 	dh_clean
 	dh_installdirs -a
 
-	# Now it seems like most of this is already provided by prefix mechanism.
-	# make install-progs install-man DESTDIR=${tmpdir} ARCH=${ARCH}
+# Now it seems like most of this is already provided by prefix mechanism.
+# make install-progs install-man DESTDIR=${tmpdir} ARCH=${ARCH}
 	make DESTDIR=${tmpdir} LOADKEYS_BINDIR=${tmpdir}/bin ARCH=${ARCH} install-progs install-man
 	-@find ${topdir}/data/*_Z -name '\.svn' -exec rm -rf {} \; 2>/dev/null
 
-     	# install contribs
+# install contribs
 	install -m 755 ${topdir}/contrib/codepage ${ubindir}
 	install -m 755 ${topdir}/contrib/splitfont ${ubindir}
 	install -m 755 ${topdir}/contrib/vcstime ${usbindir}
 
-     	# install misc
+# install misc
 	install -m 755 ${topdir}/src/screendump ${ubindir}
 	install -m 755 ${topdir}/src/setlogcons ${ubindir}
 	install -m 755 ${topdir}/src/setvesablank ${usbindir}
 
-     	# correct locations
+# correct locations
 	mv ${ubindir}/kbdrate ${sbindir}
 	mv ${ubindir}/kbd_mode ${bindir}
 	mv ${ubindir}/setfont ${bindir}
@@ -68,9 +88,14 @@ install: build-stamp
 	mv ${ubindir}/openvt ${bindir}
 	mv ${ubindir}/chvt ${bindir}
 
-     	# open compat symlink
+# open compat symlink
 	ln -s openvt ${bindir}/open
 	ln -s openvt.1 ${tmpdir}/usr/share/man/man1/open.1
+
+# install files for the udeb
+	install -m 755 ${topdir}/loadkeys ${udebdir}/bin
+	install -m 755 ${topdir}/kbd_mode ${udebdir}/bin
+
 
 binary-indep:
 	dh_testdir
@@ -81,10 +106,10 @@ binary-arch:	install
 	dh_installdocs -a -X.svn
 	mv ${tmpdir}/usr/share/doc/kbd/utf/invalid_name "${tmpdir}/usr/share/doc/kbd/utf/♪♬"
 
-     	# do not install the FAQ/HOWTO (already in doc-linux)
+# do not install the FAQ/HOWTO (already in doc-linux)
 	rm ${docdir}/kbd.FAQ*
 	install -m 755 ${topdir}/data/keymaps/i386/mk_modmap ${ubindir}
-    	# some deb-specific files
+# some deb-specific files
 	install -m 644 debian/conffiles.d/config ${tmpdir}/etc/kbd/
 	install -m 644 debian/conffiles.d/remap ${tmpdir}/etc/kbd/
 

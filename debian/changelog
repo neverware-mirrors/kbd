@@ -25,7 +25,9 @@ kbd (1.12-18) UNRELEASED; urgency=low
   * Install kbd_mode and setfont in /bin rather than in /usr/bin so the
     administrator be able to set up the font in case of emergency and use
     the keyboard in utf-8 mode.
-
+  * Add an udeb with loadkeys and kbd_mode.  A patch was provided by Frans
+    Pop and was modified to give a -Os option to the compiler.
+  
  -- Anton Zinoviev <zinoviev@debian.org>  Mon, 14 May 2007 18:34:54 +0300
 
 kbd (1.12-17) unstable; urgency=low

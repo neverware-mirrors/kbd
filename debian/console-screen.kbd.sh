@@ -5,7 +5,6 @@
 # Required-Stop:     $local_fs $remote_fs
 # Default-Start:     S 2 3 4 5
 # Default-Stop:      0 1 6
-#
 # Description: Set console screen modes and fonts
 # Short-Description:    Prepare console
 ### END INIT INFO
