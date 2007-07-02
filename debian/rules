@@ -29,10 +29,11 @@ build-udeb: build-udeb-stamp
 build-udeb-stamp: patch configure
 	dh_testdir
 	rm src/*.o
-	rm src/kbd_mode src/loadkeys
-	make -C src CFLAGS="-Os -g -Wall" ARCH=${ARCH} loadkeys kbd_mode
+	rm src/kbd_mode src/loadkeys src/setfont
+	make -C src CFLAGS="-Os -g -Wall" ARCH=${ARCH} loadkeys kbd_mode setfont
 	mv src/loadkeys src/loadkeys-udeb
 	mv src/kbd_mode src/kbd_mode-udeb
+	mv src/setfont src/setfont-udeb
 	rm src/*.o
 	touch $@
 
@@ -40,10 +41,11 @@ build: build-stamp
 build-stamp: patch configure
 	dh_testdir
 	rm -f src/*.o
-	rm -f src/kbd_mode src/loadkeys
-	make -C src CFLAGS="-Os -g -Wall" ARCH=${ARCH} loadkeys kbd_mode
+	rm -f src/kbd_mode src/loadkeys src/setfont
+	make -C src CFLAGS="-Os -g -Wall" ARCH=${ARCH} loadkeys kbd_mode setfont
 	mv src/loadkeys .
 	mv src/kbd_mode .
+	mv src/setfont .
 	rm -f src/*.o
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH}
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH} -C contrib codepage splitfont vcstime
@@ -55,7 +57,7 @@ clean1:
 	dh_testroot
 	rm -f build-stamp configure-stamp \
 	  contrib/codepage contrib/splitfont contrib/vcstime
-	rm -f loadkeys kbd_mode
+	rm -f loadkeys kbd_mode setfont
 	-make reallyclean ARCH=${ARCH}
 	dh_clean
 
@@ -95,6 +97,7 @@ install: build-stamp
 # install files for the udeb
 	install -m 755 ${topdir}/loadkeys ${udebdir}/bin
 	install -m 755 ${topdir}/kbd_mode ${udebdir}/bin
+	install -m 755 ${topdir}/setfont ${udebdir}/bin
 
 
 binary-indep:
