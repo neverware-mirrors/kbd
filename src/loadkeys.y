@@ -74,7 +74,6 @@ extern int set_charset(const char *charset);
 extern char *xstrdup(char *);
 int key_buf[MAX_NR_KEYMAPS];
 int mod;
-extern int unicode_used;
 int private_error_ct = 0;
 
 extern int rvalct;
@@ -227,13 +226,15 @@ rvalue1		: rvalue
 			}
 		;
 rvalue		: NUMBER
-			{$$=$1;}
+			{$$=add_number($1);}
+		| LITERAL
+			{$$=add_number($1);}
 		| UNUMBER
-			{$$=($1 ^ 0xf000); unicode_used=1;}
+			{$$=add_number($1);}
                 | PLUS NUMBER
                         {$$=add_capslock($2);}
-		| LITERAL
-			{$$=$1;}
+                | PLUS UNUMBER
+                        {$$=add_capslock($2);}
                 | PLUS LITERAL
                         {$$=add_capslock($2);}
 		;
@@ -262,6 +263,7 @@ usage(void) {
 char **args;
 int optd = 0;
 int optm = 0;
+int optu = 0;
 int opts = 0;
 int verbose = 0;
 int quiet = 0;
@@ -283,6 +285,8 @@ main(unsigned int argc, char *argv[]) {
 		{ NULL, 0, NULL, 0 }
 	};
 	int c;
+	int fd;
+	int mode;
 
 	set_progname(argv[0]);
 
@@ -303,6 +307,7 @@ main(unsigned int argc, char *argv[]) {
 				break;
 			case 'u':
 				set_charset("unicode");
+				optu = 1;
 				break;
 			case 'q':
 				quiet = 1;
@@ -318,8 +323,20 @@ main(unsigned int argc, char *argv[]) {
 		}
 	}
 
+	if (!optm) {
+		fd = getfd(NULL);
+		if (!optu) {
+			if (ioctl(fd, KDGKBMODE, &mode)) {
+				perror("KDGKBMODE");
+				fprintf(stderr, _("loadkeys: error reading keyboard mode\n"));
+				exit(1);
+			}
+			if (mode == K_UNICODE)
+				set_charset("unicode");
+		}
+	}
+
 	args = argv + optind - 1;
-	unicode_used = 0;
 	yywrap();	/* set up the first input file, if any */
 	if (yyparse() || private_error_ct) {
 		fprintf(stderr, _("syntax error in map file\n"));
@@ -766,15 +783,6 @@ defkeys(int fd) {
 	int i,j,fail;
 	int oldm;
 
-	if (unicode_used) {
-	     /* Switch keyboard mode for a moment -
-		do not complain about errors.
-		Do not attempt a reset if the change failed. */
-	     if (ioctl(fd, KDGKBMODE, &oldm)
-	        || (oldm != K_UNICODE && ioctl(fd, KDSKBMODE, K_UNICODE)))
-		  oldm = K_UNICODE;
-	}
-
 	for(i=0; i<MAX_NR_KEYMAPS; i++) {
 	    if (key_map[i]) {
 		for(j=0; j<NR_KEYS; j++) {
@@ -838,16 +846,6 @@ defkeys(int fd) {
 		    }
 		}
 	    }
-	}
-
-	if(unicode_used && oldm != K_UNICODE) {
-	     if (ioctl(fd, KDSKBMODE, oldm)) {
-		  fprintf(stderr, _("%s: failed to restore keyboard mode\n"),
-			  progname);
-	     }
-	     fprintf(stderr, _("%s: warning: this map uses Unicode symbols\n"
-		             "    (perhaps you want to do `kbd_mode -u'?)\n"),
-		     progname);
 	}
 	return ct;
 }
