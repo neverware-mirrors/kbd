@@ -256,7 +256,8 @@ got_vtno:
       }
       close(1);
       close(2);
-      close(consfd);
+      if (consfd > 2)
+	 close(consfd);
       dup(fd);
       dup(fd);
 
