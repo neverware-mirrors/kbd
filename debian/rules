@@ -86,6 +86,8 @@ install: build-stamp
 	mv ${ubindir}/fgconsole ${bindir}
 	mv ${ubindir}/openvt ${bindir}
 	mv ${ubindir}/chvt ${bindir}
+	mv ${ubindir}/dumpkeys ${bindir}
+	mv ${ubindir}/unicode_start ${bindir}
 
 # open compat symlink
 	ln -s openvt ${bindir}/open
