@@ -151,14 +151,14 @@ rm -f conftest conftest.c
 #
 # 2. For lib/nls.h: do we have <libintl.h> and gettext() ?
 #
-echo '
+cat > conftest.c <<EOT
 #include <libintl.h>
 main(int a, char **v){
   if (a == -1)  /* false */
         gettext("There is no gettext man page\n");
   exit(0);
 }
-' > conftest.c
+EOT
 eval $compile
 if [ $nls = 1 ]; then
 	if test -s conftest && ./conftest 2>/dev/null; then

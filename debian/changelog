@@ -1,3 +1,11 @@
+kbd (1.12-19.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix FTBFS with /bin/sh -> dash by using cat to create conftest.c files,
+    instead of relying on echo doing the right thing [tm]. (Closes: #459156)
+
+ -- Marc 'HE' Brockschmidt <he@debian.org>  Sun, 09 Mar 2008 10:44:02 +0100
+
 kbd (1.12-19) unstable; urgency=low
 
   * Apply a patch by Colin Watson to add setfont to the udeb.
