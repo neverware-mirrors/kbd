@@ -55,7 +55,7 @@ SHCMDS  = unicode_start unicode_stop
 WARN	= -Wall -Wmissing-prototypes -Wstrict-prototypes
 DEFS	= -DDATADIR=\"$(DATA_DIR)\"
 CFLAGS  = -O2
-LDFLAGS = -s
+LDFLAGS =
 
 CC	= gcc
 YACC	= bison -y
@@ -72,14 +72,14 @@ old:	$(OLDPROGS)
 
 install:	all
 	install -d -m 0755 $(BINDIR) $(LOADKEYS_BINDIR)
-	install -s -m 0755 $(setowner) $(PROGS) $(OLDPROGS) $(BINDIR)
-#	install -s -m 0755 $(setowner) $(MISC) $(BINDIR)
+	install -m 0755 $(setowner) $(PROGS) $(OLDPROGS) $(BINDIR)
+#	install -m 0755 $(setowner) $(MISC) $(BINDIR)
 	install -c -m 0755 $(setowner) $(SHCMDS) $(BINDIR)
 	for i in psfaddtable psfgettable psfstriptable; do \
 		rm -f $(BINDIR)/$$i; ln -s psfxtable $(BINDIR)/$$i; \
 	done
 	rm -f $(BINDIR)/loadkeys
-	install -s -m 0755 $(setowner) loadkeys $(LOADKEYS_BINDIR)
+	install -m 0755 $(setowner) loadkeys $(LOADKEYS_BINDIR)
 	@echo "You may also want to add psf.magic to /usr/lib/magic"
 
 

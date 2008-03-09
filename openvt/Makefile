@@ -1,7 +1,7 @@
 
 CC=gcc
 CFLAGS=-O2 -Wall -ansi
-LDFLAGS=$(CFLAGS) -s 
+LDFLAGS=$(CFLAGS)
 
 SRC=openvt.c
 OBJ=openvt.o getfd.o
