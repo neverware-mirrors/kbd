@@ -135,7 +135,7 @@ main (int argc, char **argv) {
 		}
 	}
 
-	if (argc != 1)
+	if (optind < argc)
 		usage();
 
 	fd = getfd(console);
