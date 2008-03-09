@@ -1,3 +1,25 @@
+kbd (1.12-20) UNRELEASED; urgency=low
+
+  * Acknowledge changes from non-maintainer upload by Marc 'HE' Brockschmidt,
+    closes: #459156.
+  * Remove debian/patches directory and build dependency on quilt.  Package
+    maintenance now happens in a Git repository.
+  * Make openvt pay attention to its child’s exit status.  Patch by Jim Paris,
+    closes: #190386.
+  * Avoid openvt messing up the child’s I/O caused by closing a standard file
+    descriptor.  Patch by Jim Paris, closes: #190385.
+  * Handle the CapsShift modifier understood by Linux kernels since 2.6.24.
+    Patch by Samuel Thibault, closes: #452103.
+  * Bump Standards-Version to 3.7.3.
+  * Move dumpkeys and unicode_start to /bin.  This avoids problems when /usr
+    is not yet mounted when /etc/init.d/keymap.sh (package console-common) is
+    executed.  Thanks to Christian Perrier, Denis Barbier and others,
+    closes: #261801.
+  * Make upstream makefile not strip binaries to enable the nostrip build
+    option, closes: #437248.
+
+ -- Michael Schutte <m.schutte.jr@gmail.com>  Sun, 09 Mar 2008 12:58:32 +0100
+
 kbd (1.12-19.1) unstable; urgency=low
 
   * Non-maintainer upload.
