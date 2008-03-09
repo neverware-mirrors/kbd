@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Console utilities maintainers <pkg-kbd-devel@lists.alioth.debian.org>
 Uploaders: Denis Barbier <barbier@debian.org>, Anton Zinoviev <zinoviev@debian.org>
 Build-Depends: debhelper (>= 4), linuxdoc-tools, bison, flex | flex-old, gettext
-Standards-Version: 3.7.2
+Standards-Version: 3.7.3
 
 Package: kbd
 Architecture: any
