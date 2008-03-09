@@ -17,8 +17,6 @@ usbindir=${tmpdir}/usr/sbin
 docdir=${tmpdir}/usr/share/doc/${package}
 udebdir=${debdir}/kbd-udeb
 
-QUILT := quilt --quiltrc=debian/patches/quiltrc
-
 configure: configure-stamp
 configure-stamp:
 	${topdir}/configure --prefix=/usr \
@@ -26,7 +24,7 @@ configure-stamp:
 	touch $@
 
 build-udeb: build-udeb-stamp
-build-udeb-stamp: patch configure
+build-udeb-stamp: configure
 	dh_testdir
 	rm src/*.o
 	rm src/kbd_mode src/loadkeys src/setfont
@@ -38,7 +36,7 @@ build-udeb-stamp: patch configure
 	touch $@
 
 build: build-stamp
-build-stamp: patch configure
+build-stamp: configure
 	dh_testdir
 	rm -f src/*.o
 	rm -f src/kbd_mode src/loadkeys src/setfont
@@ -51,8 +49,7 @@ build-stamp: patch configure
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH} -C contrib codepage splitfont vcstime
 	touch $@
 
-clean: clean1 unpatch
-clean1:
+clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp \
@@ -129,20 +126,9 @@ binary-arch:	install
 
 # Below here is fairly generic really
 
-patch: patch-stamp
-patch-stamp:
-	$(QUILT) push -a || test $$? = 2
-	touch $@
-
-unpatch:
-	$(QUILT) pop -a || test $$? = 2
-	rm -rf .pc
-	rm -f patch-stamp
-
 deb:
 	dpkg-buildpackage -rfakeroot -i'/\.svn'
 
 binary: binary-indep binary-arch
 
-.PHONY: binary binary-arch binary-indep clean checkroot build install patch unpatch \
-	clean1
+.PHONY: binary binary-arch binary-indep clean checkroot build install
