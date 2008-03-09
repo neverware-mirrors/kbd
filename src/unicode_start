@@ -45,8 +45,17 @@ printf '\033%%G'
 # have a Unicode map attached, or explicitly specified, e.g.,
 # by giving `def.uni' as a second argument.
 
-DEFAULT_UNICODE_FONT=LatArCyrHeb-16
 # Also drdos8x16 is a good candidate.
+for DEFAULT_UNICODE_FONT in \
+	/usr/share/consolefonts/Uni1-VGA16.psf* \
+	/usr/share/consolefonts/LatArCyrHeb-16.psf* \
+	/usr/share/consolefonts/default*.psf* \
+	/usr/share/consolefonts/*.psf*
+do
+	if [ -f "$DEFAULT_UNICODE_FONT" ]; then
+		break
+	fi
+done
 
 case $# in
 	2)
@@ -56,7 +65,7 @@ case $# in
 		setfont $1
 		;;
 	0)
-		setfont $DEFAULT_UNICODE_FONT
+		setfont "$DEFAULT_UNICODE_FONT"
 		;;
 	*)
 		echo "usage: unicode_start [font [unicode map]]"
