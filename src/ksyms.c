@@ -1602,6 +1602,7 @@ struct cs {
     sym *charnames;
     int start;
 } charsets[] = {
+    { "", NULL, 256 },
     { "iso-8859-1",	latin1_syms, 160 },
     { "iso-8859-2",	latin2_syms, 160 },
     { "iso-8859-3",	latin3_syms, 160 },
@@ -1637,7 +1638,7 @@ list_charsets(FILE *f) {
 		fprintf(f, "%s{", mm[j]);
 		ct = 0;
 		lth = strlen(mm[j]);
-		for(i=0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
+		for(i=1; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
 			if(!strncmp(charsets[i].charset, mm[j], lth)) {
 				if(ct++)
 					fprintf(f, ",");
@@ -1646,7 +1647,7 @@ list_charsets(FILE *f) {
 		}
 		fprintf(f, "}");
 	}
-	for(i=0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
+	for(i=1; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
 		for (j=0; j<sizeof(mm)/sizeof(mm[0]); j++) {
 			lth = strlen(mm[j]);
 			if(!strncmp(charsets[i].charset, mm[j], lth))
@@ -1668,8 +1669,11 @@ set_charset(const char *charset) {
 		return 0;
 	}
 
-	for (i = 0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
+	for (i = 1; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
 		if (!strcasecmp(charsets[i].charset, charset)) {
+			charsets[0].charset = charsets[i].charset;
+			charsets[0].charnames = charsets[i].charnames;
+			charsets[0].start = charsets[i].start;
 			p = charsets[i].charnames;
 			for (i = charsets[i].start; i < 256; i++,p++) {
 				if(p->name[0])
