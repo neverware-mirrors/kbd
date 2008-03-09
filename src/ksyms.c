@@ -1483,7 +1483,8 @@ static const char *lock_syms[] = {
 	"ShiftL_Lock",
 	"ShiftR_Lock",
 	"CtrlL_Lock",
-	"CtrlR_Lock"
+	"CtrlR_Lock",
+	"CapsShift_Lock"
 };
 
 /* Keysyms whose KTYP is KT_SLOCK. */
@@ -1496,7 +1497,8 @@ static const char *sticky_syms[] = {
 	"SShiftL",
 	"SShiftR",
 	"SCtrlL",
-	"SCtrlR"
+	"SCtrlR",
+	"SCapsShift"
 };
 
 /* Keysyms whose KTYP is KT_BRL. */
