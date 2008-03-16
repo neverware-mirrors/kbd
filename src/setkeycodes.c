@@ -33,8 +33,8 @@ main(int argc, char **argv) {
 	set_progname(argv[0]);
 
 	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
+	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+	textdomain(PACKAGE_NAME);
 
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 		print_version_and_exit();
@@ -56,6 +56,11 @@ main(int argc, char **argv) {
 		/* Test is OK up to 2.5.31--later kernels have more keycodes */
 		if (a.scancode > 255 || a.keycode > 127)
 			usage(_("code outside bounds"));
+
+		/* Both fields are unsigned int, so can be large;
+		   for current kernels the correct test might be
+		     (a.scancode > 255 || a.keycode > 239)
+		   but we can leave testing to the kernel. */
 #endif
 		if (ioctl(fd,KDSETKEYCODE,&a)) {
 			perror("KDSETKEYCODE");

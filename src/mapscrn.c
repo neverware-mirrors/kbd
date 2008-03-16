@@ -21,17 +21,18 @@
 void saveoldmap(int fd, char *omfil);
 void loadnewmap(int fd, char *mfil);
 
-static int ctoi (unsigned char *);
+static int ctoi (char *);
 
 /* search for the map file in these directories (with trailing /) */
 static char *mapdirpath[] = { "", DATADIR "/" TRANSDIR "/", 0 };
-static char *mapsuffixes[] = { "", ".acm", ".trans", "_to_uni.trans", 0 };
+static char *mapsuffixes[] = { "", ".trans", "_to_uni.trans", ".acm", 0 };
 
 #ifdef MAIN
 #include "getfd.h"
 #include "version.h"
 
 int verbose = 0;
+int debug = 0;
 
 int
 main(int argc, char *argv[]) {
@@ -40,8 +41,8 @@ main(int argc, char *argv[]) {
 	set_progname(argv[0]);
 
 	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
+	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+	textdomain(PACKAGE_NAME);
 
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 	    print_version_and_exit();
@@ -125,7 +126,7 @@ readnewmapfromfile(int fd, char *mfil, char *buf, unsigned short *ubuf) {
 	FILE *fp;
 	struct stat stbuf;
 	int u = 0;
-	int lineno;
+	int lineno = 0;
 
 	if ((fp = findfile(mfil, mapdirpath, mapsuffixes)) == NULL) {
 	        fprintf(stderr, _("mapscrn: cannot open map file _%s_\n"),
@@ -209,23 +210,23 @@ loadnewmap(int fd, char *mfil) {
  * ('x', x a single byte or a utf8 sequence).
  */
 int
-ctoi(unsigned char *s) {
+ctoi(char *s) {
 	int i;
 
 	if ((strncmp(s,"0x",2) == 0) && 
 	    (strspn(s+2,"0123456789abcdefABCDEF") == strlen(s+2)))
-		sscanf(s+2,"%x",&i);
+		(void)sscanf(s+2,"%x",&i);
 
 	else if ((*s == '0') &&
 		 (strspn(s,"01234567") == strlen(s)))
-		sscanf(s,"%o",&i);
+		(void)sscanf(s,"%o",&i);
 
 	else if (strspn(s,"0123456789") == strlen(s)) 
-		sscanf(s,"%d",&i);
+		(void)sscanf(s,"%d",&i);
 
 	else if ((strncmp(s,"U+",2) == 0) && strlen(s) == 6 &&
 		 (strspn(s+2,"0123456789abcdefABCDEF") == 4))
-		sscanf(s+2,"%x",&i);
+		(void)sscanf(s+2,"%x",&i);
 
 	else if ((strlen(s) == 3) && (s[0] == '\'') && (s[2] == '\''))
 		i=s[1];

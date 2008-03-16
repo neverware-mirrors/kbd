@@ -113,10 +113,13 @@ get_bind(u_char index, u_char table) {
 	ke.kb_index = index;
 	ke.kb_table = table;
 	if (ioctl(fd, KDGKBENT, (unsigned long)&ke)) {
-		perror("KDGKBENT");
-		fprintf(stderr, _("KDGKBENT error at index %d in table %d\n"),
-			index, table);
-		exit(1);
+		if (index < 128) {
+			perror("KDGKBENT");
+			fprintf(stderr, _("KDGKBENT error at index %d in table %d\n"),
+				index, table);
+			exit(1);
+		} else
+			return -1;
 	}
 	return ke.kb_value;
 }
@@ -126,6 +129,7 @@ print_keysym(int code, char numeric) {
 	int t;
 	int v;
 	const char *p;
+	int plus;
 
 	printf(" ");
 	t = KTYP(code);
@@ -137,18 +141,20 @@ print_keysym(int code, char numeric) {
 			printf("U+%04x          ", code ^ 0xf000);
 		return;
 	}
+	plus = 0;
 	if (t == KT_LETTER) {
 		t = KT_LATIN;
 		printf("+");
+		plus++;
 	}
 	if (!numeric && t < syms_size && v < syms[t].size &&
 	    (p = syms[t].table[v])[0])
-		printf("%-16s", p);
+		printf("%-*s", 16 - plus, p);
 	else if (!numeric && t == KT_META && v < 128 && v < syms[0].size &&
 		 (p = syms[0].table[v])[0])
 		printf("Meta_%-11s", p);
 	else
-		printf("0x%04x          ", code);
+		printf("0x%04x         %s", code, plus ? "" : " ");
 }
 
 static char
@@ -359,6 +365,8 @@ dump_keys(char table_shape, char numeric) {
 		       int buf0, buf1, type;
 
 		       buf0 = get_bind(i, j);
+		       if (buf0 == -1)
+			   break;
 		       type = KTYP(buf0);
 		       if ((type == KT_LATIN || type == KT_LETTER)
 			   && KVAL(buf0) < 128) {
@@ -384,6 +392,8 @@ no_shorthands:
 	for (i = 1; i < nr_keys; i++) {
 	    for (j = 0; j < keymapnr; j++)
 	      buf[j] = get_bind(i, good_keymap[j]);
+	    if (buf[0] == -1)
+		break;
 
 	    if (table_shape == FULL_TABLE) {
 		printf("keycode %3d =", i);
@@ -489,7 +499,7 @@ static void
 dump_funcs(void) {
 	int i;
 	struct kbsentry fbuf;
-	char *p;
+	unsigned char *p;
 
 	for (i = 0; i < MAX_NR_FUNC; i++) {
 		fbuf.kb_func = i;
@@ -573,8 +583,8 @@ main (int argc, char *argv[]) {
 	set_progname(argv[0]);
 
 	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
+	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+	textdomain(PACKAGE_NAME);
 
 	while ((c = getopt_long(argc, argv,
 		short_opts, long_opts, NULL)) != -1) {

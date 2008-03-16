@@ -3,7 +3,6 @@
 keymaps 0-2,4-6,8,12
 include "qwertz-layout"
 include "linux-with-alt-and-altgr"
-	plain keycode  83 = KP_Comma
 strings as usual
 
 keycode   1 = Escape           Escape
@@ -42,7 +41,7 @@ keycode  13 = asciicircum      grave            asciitilde
 	alt     keycode  13 = Meta_equal
 keycode  14 = Delete           Delete
 	alt     keycode  14 = Meta_Delete
-keycode  15 = Tab              Tab
+keycode  15 = Tab              Meta_Tab
 	alt     keycode  15 = Meta_Tab
 keycode  26 =
 	altgr   keycode  26 = bracketleft

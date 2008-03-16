@@ -50,6 +50,10 @@ and provide one explicitly.
 Load a given font (here a 512-glyph font combining several
 character sets) and indicate that one's local character set
 is ISO 8859-2.
+.LP
+Note: if a font has more than 256 glyphs, only 8 out of 16 colors
+can be used simultaneously. It can make console perception worse
+(loss of intensity and even some colors).
 
 .SH "FONT FORMATS"
 The standard Linux font format is the PSF font.
@@ -211,6 +215,12 @@ Be verbose.
 .TP
 .B \-V
 Print version and exit.
+
+.SH NOTE
+PC video hardware allows one to use the "intensity" bit
+either to indicate brightness, or to address 512 (instead of 256)
+glyphs in the font. So, if the font has more than 256 glyphs,
+the console will be reduced to 8 (instead of 16) colors.
 
 .SH FILES
 .I @datadir@/consolefonts

@@ -39,10 +39,11 @@ int
 main(int argc, char *argv[])
 {
 
-   int opt, pid;
+   int opt, pid, i;
    struct vt_stat vtstat;
    int vtno     = -1;
-   int fd       = -1;
+   int fd0      = -1;
+   int fd1      = -1;
    int consfd   = -1;
    char optc	= FALSE;
    char show    = FALSE;
@@ -55,6 +56,10 @@ main(int argc, char *argv[])
    char as_user = FALSE;
    char vtname[sizeof VTNAME + 2]; /* allow 999 possible VTs */
    char *cmd = NULL, *def_cmd = NULL, *username = NULL;
+
+   setlocale(LC_ALL, "");
+   bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+   textdomain(PACKAGE_NAME);
 
    /*
     * I don't like using getopt for this, but otherwise this gets messy.
@@ -105,7 +110,15 @@ main(int argc, char *argv[])
       }
    }
 
-   consfd = getfd();
+    for (i=0; i<3; i++) {
+	struct stat st;
+	if (fstat(i, &st) == -1 && open("/dev/null", O_RDWR) == -1) {
+		perror("open(/dev/null) failed");
+		return EXIT_FAILURE;
+	}
+    }
+
+   consfd = getfd(NULL);
    if (consfd < 0) {
       fprintf(stderr,
 	      _("Couldnt get a file descriptor referring to the console\n"));
@@ -140,7 +153,7 @@ main(int argc, char *argv[])
    sprintf(vtname, VTNAME, vtno);
 
    /* Can we open the vt we want? */
-   if ((fd = open(vtname, O_RDWR)) == -1) {
+   if ((fd0 = open(vtname, O_RDWR)) == -1) {
       int errsv = errno;
       if (!optc) {
 	      /* We found vtno ourselves - it is free according
@@ -151,7 +164,7 @@ main(int argc, char *argv[])
 	      for (i=vtno+1; i<16; i++) {
 		      if((vtstat.v_state & (1<<i)) == 0) {
 			      sprintf(vtname, VTNAME, i);
-			      if ((fd = open(vtname, O_RDWR)) >= 0) {
+			      if ((fd0 = open(vtname, O_RDWR)) >= 0) {
 				      vtno = i;
 				      goto got_vtno;
 			      }
@@ -164,7 +177,6 @@ main(int argc, char *argv[])
       return(5);
    }
 got_vtno:
-   close(fd);
 
    /* Maybe we are suid root, and the -c option was given.
       Check that the real user can access this VT.
@@ -181,7 +193,10 @@ got_vtno:
    else {
 	   if (!geteuid()) {
 		   uid_t uid = getuid();
-		   chown(vtname, uid, getgid());
+		   if (chown(vtname, uid, getgid()) == -1) {
+			perror("chown");
+			return(5);
+		   }
 		   setuid(uid);
 	   }
 
@@ -229,7 +244,7 @@ got_vtno:
       close(0);			/* so that new vt becomes stdin */
 
       /* and grab new one */
-      if ((fd = open(vtname, O_RDWR)) == -1) { /* strange ... */
+      if ((fd1 = open(vtname, O_RDWR)) == -1) { /* strange ... */
         int errsv = errno;
 	fprintf(stderr, _("\nopenvt: could not open %s R/W (%s)\n"),
 		vtname, strerror(errsv));
@@ -238,7 +253,7 @@ got_vtno:
       }
 
       if (show) {
-         if (ioctl(fd, VT_ACTIVATE, vtno)) {
+         if (ioctl(fd1, VT_ACTIVATE, vtno)) {
             int errsv = errno;
 	    fprintf(stderr, "\nopenvt: could not activate vt %d (%s)\n",
 		    vtno, strerror(errsv));
@@ -246,7 +261,7 @@ got_vtno:
 	    _exit (1); /* probably fd does not refer to a tty device file */
 	 }
 
-	 if (ioctl(fd, VT_WAITACTIVE, vtno)){
+	 if (ioctl(fd1, VT_WAITACTIVE, vtno)){
             int errsv = errno;
 	    fprintf(stderr, "\nopenvt: activation interrupted? (%s)\n",
 		    strerror(errsv));
@@ -256,10 +271,20 @@ got_vtno:
       }
       close(1);
       close(2);
+      close(fd0);
       if (consfd > 2)
-	 close(consfd);
-      dup(fd);
-      dup(fd);
+         close(consfd);
+      if ((dup(fd1) == -1) || (dup(fd1) == -1)) {
+	perror("dup");
+	fflush(stderr);
+	_exit (1);
+      }
+
+      if (ioctl(fd1, TIOCSCTTY, (char *)1)) {
+	perror("ioctl TIOCSCTTY");
+	fflush(stderr);
+	_exit (1);
+      }
 
       /* slight problem: after "openvt -su" has finished, the
 	 utmp entry is not removed */

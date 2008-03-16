@@ -21,7 +21,8 @@ is_a_console(int fd) {
 	char arg;
 
 	arg = 0;
-	return (ioctl(fd, KDGKBTYPE, &arg) == 0
+	return (isatty (fd)
+		&& ioctl(fd, KDGKBTYPE, &arg) == 0
 		&& ((arg == KB_101) || (arg == KB_84)));
 }
 
@@ -34,9 +35,9 @@ open_a_console(const char *fnam) {
 	 * do not matter. But setfont:activatemap() does a write.
 	 */
 	fd = open(fnam, O_RDWR);
-	if (fd < 0 && errno == EACCES)
+	if (fd < 0)
 		fd = open(fnam, O_WRONLY);
-	if (fd < 0 && errno == EACCES)
+	if (fd < 0)
 		fd = open(fnam, O_RDONLY);
 	if (fd < 0)
 		return -1;

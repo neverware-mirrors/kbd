@@ -1,3 +1,34 @@
+Changes for 1.14 (legion)
+
+o Use autoconf for build system.
+o Build system:
+  - Add --enable-nls option.
+  - Add --enable-optional-progs option.
+o Keymaps:
+  - Add OLPC (One Laptop Per Child) keymaps
+  - Add more romanian keymaps (Vitezslav Crhonek)
+  - Add another ukrainian keymap
+  - Add Belarusian (Belarus) keymaps
+  - Add Kazakh keymap
+  - Add Kyrgyz keymap
+  - Add Bashkir (Russia) keymap
+  - Add Tatar keymaps
+  - Add more russian keymaps
+o Fonts:
+  - Add unicode fonts (UniCyrExt_8x16.psf, UniCyr_8x14.psf, UniCyr_8x16.psf,
+    UniCyr_8x8.psf)
+  - Add Lat2-Terminus16 font
+  - Fix sun12x22 font unicode mapping table (Vitezslav Crhonek)
+o Programs:
+  - Add '.acm' suffix for compatibility with console-tools
+
+Changes for 1.13
+
+o Programs:
+  - fix findfile so that it does not find directories
+  - kbdrate: fix for sparc
+o New translations: cs.po, de.po
+
 Changes for 1.12
 
 o Programs:

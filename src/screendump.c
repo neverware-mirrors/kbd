@@ -38,8 +38,8 @@ main(int argc, char **argv) {
     set_progname(argv[0]);
 
     setlocale(LC_ALL, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
+    bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+    textdomain(PACKAGE_NAME);
 
     if (argc == 2 && !strcmp(argv[1], "-V"))
 	print_version_and_exit();
@@ -144,7 +144,7 @@ try_ioctl:
 	}
 
 	outbuf = xmalloc(rows*(cols+1));
-	p = screenbuf + 2;
+	p = ((char *)screenbuf) + 2;
 	q = outbuf;
         for (i=0; i<rows; i++) {
 	    for (j=0; j<cols; j++)

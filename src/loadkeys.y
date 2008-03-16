@@ -20,6 +20,7 @@
 #include <sys/ioctl.h>
 #include <linux/kd.h>
 #include <linux/keyboard.h>
+#include <unistd.h>		/* readlink */
 #include "paths.h"
 #include "getfd.h"
 #include "findfile.h"
@@ -62,12 +63,12 @@ static void killkey(int index, int table);
 static void compose(int diacr, int base, int res);
 static void do_constant(void);
 static void do_constant_key (int, u_short);
-static void loadkeys(void);
+static void loadkeys(char *console, int *warned);
 static void mktable(void);
 static void strings_as_usual(void);
-static void keypad_as_usual(char *keyboard);
-static void function_keys_as_usual(char *keyboard);
-static void consoles_as_usual(char *keyboard);
+/* static void keypad_as_usual(char *keyboard); */
+/* static void function_keys_as_usual(char *keyboard); */
+/* static void consoles_as_usual(char *keyboard); */
 static void compose_as_usual(char *charset);
 static void lkfatal0(const char *, int);
 extern int set_charset(const char *charset);
@@ -78,10 +79,12 @@ int private_error_ct = 0;
 
 extern int rvalct;
 extern struct kbsentry kbs_buf;
+int yyerror(const char *s);
 extern void lkfatal(const char *s);
 extern void lkfatal1(const char *s, const char *s2);
 
 #include "ksyms.h"
+int yylex (void);
 %}
 
 %%
@@ -101,7 +104,7 @@ line		: EOL
 		;
 charsetline	: CHARSET STRLITERAL EOL
 			{
-			    set_charset(kbs_buf.kb_string);
+			    set_charset((char *) kbs_buf.kb_string);
 			}
 		;
 altismetaline	: ALT_IS_META EOL
@@ -116,7 +119,7 @@ usualstringsline: STRINGS AS USUAL EOL
 		;
 usualcomposeline: COMPOSE AS USUAL FOR STRLITERAL EOL
 			{
-			    compose_as_usual(kbs_buf.kb_string);
+			    compose_as_usual((char *) kbs_buf.kb_string);
 			}
 		  | COMPOSE AS USUAL EOL
 			{
@@ -167,7 +170,7 @@ singleline	:	{ mod = 0; }
 			}
 		| PLAIN KEYCODE NUMBER EQUALS rvalue EOL
 			{
-			    addkey($4, 0, $6);
+			    addkey($3, 0, $5);
 			}
 		;
 modifiers	: modifiers modifier
@@ -252,6 +255,8 @@ usage(void) {
 "valid options are:\n"
 "\n"
 "	-c --clearcompose clear kernel compose table\n"
+"	-C <cons1,cons2,...>\n"
+"	--console=<...>   Indicate console device(s) to be used.\n"
 "	-d --default	  load \"" DEFMAP "\"\n"
 "	-h --help	  display this help text\n"
 "	-m --mktable      output a \"defkeymap.c\" to stdout\n"
@@ -271,10 +276,11 @@ int quiet = 0;
 int nocompose = 0;
 
 int
-main(unsigned int argc, char *argv[]) {
-	const char *short_opts = "cdhmsuqvV";
+main(int argc, char *argv[]) {
+	const char *short_opts = "cC:dhmsuqvV";
 	const struct option long_opts[] = {
 		{ "clearcompose", no_argument, NULL, 'c' },
+		{ "console",    1, NULL, 'C' },
 	        { "default",    no_argument, NULL, 'd' },
 		{ "help",	no_argument, NULL, 'h' },
 		{ "mktable",    no_argument, NULL, 'm' },
@@ -288,6 +294,8 @@ main(unsigned int argc, char *argv[]) {
 	int c;
 	int fd;
 	int mode;
+	char *console = NULL;
+        int warned = 0;
 
 	set_progname(argv[0]);
 
@@ -296,6 +304,9 @@ main(unsigned int argc, char *argv[]) {
 		switch (c) {
 		        case 'c':
 		                nocompose = 1;
+				break;
+		        case 'C':
+				console = optarg;
 				break;
 		        case 'd':
 		    		optd = 1;
@@ -348,8 +359,26 @@ main(unsigned int argc, char *argv[]) {
 	do_constant();
 	if(optm)
 	        mktable();
+	else if (console)
+	  {
+	    char *buf = strdup(console);	/* make writable */
+	    char *e, *s = buf;
+	    while (*s)
+	      {
+	        while (      *s == ' ' || *s == '\t' || *s == ',') s++;
+		e = s;
+		while (*e && *e != ' ' && *e != '\t' && *e != ',') e++;
+		char c = *e;
+		*e = '\0';
+		if (verbose) printf("%s\n", s);
+	        loadkeys(s, &warned);
+		*e = c;
+		s = e;
+	      }
+	    free(buf);
+	  }
 	else
-	        loadkeys();
+	  loadkeys(NULL, &warned);
 	exit(0);
 }
 
@@ -528,7 +557,7 @@ FILE *find_incl_file(char *s) {
 		char *user_dir[2] = { 0, 0 };
 		while(ev) {
 			char *t = index(ev, ':');
-			char sv;
+			char sv = 0;
 			if (t) {
 				sv = *t;
 				*t = 0;
@@ -551,11 +580,10 @@ FILE *find_incl_file(char *s) {
 
 void
 open_include(char *s) {
-	char *t, *te;
 
 	if (verbose)
 		/* start reading include file */
-		fprintf(stderr, _("switching to %s\n"), s);
+		fprintf(stdout, _("switching to %s\n"), s);
 
 	lk_push();
 
@@ -631,8 +659,8 @@ yywrap(void) {
 	*/
       gotf:
 	filename = xstrdup(pathname);
-	if (!quiet)
-		fprintf(stderr, _("Loading %s\n"), pathname);
+	if (!quiet && !optm)
+		fprintf(stdout, _("Loading %s\n"), pathname);
 	if (first_file) {
 		yyin = f;
 		first_file = 0;
@@ -675,8 +703,10 @@ static void
 addkey(int index, int table, int keycode) {
 	int i;
 
-	if (keycode == -1)
-		return;
+	if (keycode == CODE_FOR_UNKNOWN_KSYM)
+	  /* is safer not to be silent in this case, 
+	   * it can be caused by coding errors as well. */
+	        lkfatal0(_("addkey called with bad keycode %d"), keycode);
         if (index < 0 || index >= NR_KEYS)
 	        lkfatal0(_("addkey called with bad index %d"), index);
         if (table < 0 || table >= MAX_NR_KEYMAPS)
@@ -705,7 +735,6 @@ addkey(int index, int table, int keycode) {
 	     int alttable = table | M_ALT;
 	     int type = KTYP(keycode);
 	     int val = KVAL(keycode);
-	     char *p;
 	     if (alttable != table && defining[alttable] &&
 		 (!keymap_was_set[alttable] ||
 		  !(keymap_was_set[alttable])[index]) &&
@@ -747,7 +776,7 @@ addfunc(struct kbsentry kbs) {
 			while(*p++);
 		}
 	func_table[x] = p;
-        sh = strlen(kbs.kb_string) + 1;
+        sh = strlen((char *) kbs.kb_string) + 1;
 	if (fp + sh > func_buf + sizeof(func_buf)) {
 	        fprintf(stderr,
 			_("%s: addfunc: func_buf overflow\n"), progname);
@@ -758,7 +787,7 @@ addfunc(struct kbsentry kbs) {
 	r = fp;
 	while (q > p)
 	        *--r = *--q;
-	strcpy(p, kbs.kb_string);
+	strcpy(p, (char *) kbs.kb_string);
 	for (i = x + 1; i < MAX_NR_FUNC; i++)
 	        if (func_table[i])
 		        func_table[i] += sh;
@@ -778,7 +807,7 @@ compose(int diacr, int base, int res) {
 }
 
 static int
-defkeys(int fd) {
+defkeys(int fd, char *cons, int *warned) {
 	struct kbentry ke;
 	int ct = 0;
 	int i,j,fail;
@@ -848,6 +877,28 @@ defkeys(int fd) {
 		}
 	    }
 	}
+
+	if(unicode_used && oldm != K_UNICODE) {
+	     if (ioctl(fd, KDSKBMODE, oldm)) {
+		  fprintf(stderr, _("%s: failed to restore keyboard mode\n"),
+			  progname);
+	     }
+
+	     if (!warned++)
+	       {
+		     int kd_mode = -1;
+		     if (ioctl(fd, KDGETMODE, &kd_mode) || (kd_mode != KD_GRAPHICS))
+		       {
+			 /*
+			  * It is okay for the graphics console to have a non-unicode mode.
+			  * only talk about other consoles
+			  */
+			 fprintf(stderr, _("%s: warning: this map uses Unicode symbols, %s mode=%d\n"
+				     "    (perhaps you want to do `kbd_mode -u'?)\n"),
+			     progname, cons ? cons : "NULL", kd_mode);
+		       }
+	       }
+	}
 	return ct;
 }
 
@@ -886,7 +937,7 @@ deffuncs(int fd){
         for (i = 0; i < MAX_NR_FUNC; i++) {
 	    kbs_buf.kb_func = i;
 	    if ((p = func_table[i])) {
-		strcpy(kbs_buf.kb_string, p);
+		strcpy((char *) kbs_buf.kb_string, p);
 		if (ioctl(fd, KDSKBSENT, (unsigned long)&kbs_buf))
 		  fprintf(stderr, _("failed to bind string '%s' to function %s\n"),
 			  ostr(kbs_buf.kb_string), syms[KT_FN].table[kbs_buf.kb_func]);
@@ -980,25 +1031,28 @@ do_constant (void) {
 }
 
 static void
-loadkeys (void) {
+loadkeys (char *console, int *warned) {
         int fd;
-        int keyct, funcct, diacct;
+        int keyct, funcct, diacct = 0;
 
-	fd = getfd(NULL);
-	keyct = defkeys(fd);
+	fd = getfd(console);
+	keyct = defkeys(fd, console, warned);
 	funcct = deffuncs(fd);
-	if (accent_table_size > 0 || nocompose)
-		diacct = defdiacs(fd);
 	if (verbose) {
 	        printf(_("\nChanged %d %s and %d %s.\n"),
 		       keyct, (keyct == 1) ? _("key") : _("keys"),
 		       funcct, (funcct == 1) ? _("string") : _("strings"));
-		if (accent_table_size > 0 || nocompose)
+	}
+	if (accent_table_size > 0 || nocompose) {
+	  diacct = defdiacs(fd);
+	  if (verbose) {
 			printf(_("Loaded %d compose %s.\n"), diacct,
 			       (diacct == 1) ? _("definition") : _("definitions"));
-		else
-			printf(_("(No change in compose definitions.)\n"));
+	  }
 	}
+	else
+	  if (verbose)
+	    printf(_("(No change in compose definitions.)\n"));
 }
 
 static void strings_as_usual(void) {
@@ -1021,7 +1075,7 @@ static void strings_as_usual(void) {
 	for (i=0; i<30; i++) if(stringvalues[i]) {
 		struct kbsentry ke;
 		ke.kb_func = i;
-		strncpy(ke.kb_string, stringvalues[i], sizeof(ke.kb_string));
+		strncpy((char *) ke.kb_string, stringvalues[i], sizeof(ke.kb_string));
 		ke.kb_string[sizeof(ke.kb_string)-1] = 0;
 		addfunc(ke);
 	}
@@ -1117,7 +1171,6 @@ static void
 mktable () {
 	int i, imax, j;
 
-	struct kbsentry kbs;
 	u_char *p;
 	int maxfunc;
 	unsigned int keymap_count = 0;

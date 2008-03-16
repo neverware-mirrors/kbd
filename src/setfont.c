@@ -48,6 +48,7 @@ extern void disactivatemap(int fd);
 
 int verbose = 0;
 int force = 0;
+int debug = 0;
 
 /* search for the font in these directories (with trailing /) */
 char *fontdirpath[] = { "", DATADIR "/" FONTDIR "/", 0 };
@@ -92,8 +93,8 @@ usage(void)
 "    -v         Be verbose.\n"
 "    -C <cons>  Indicate console device to be used.\n"
 "    -V         Print version and exit.\n"
-"Files are loaded from the current directory or /usr/lib/kbd/*/.\n"
-));
+"Files are loaded from the current directory or %s/*/.\n"
+), DATADIR);
 	exit(EX_USAGE);
 }
 
@@ -109,8 +110,8 @@ main(int argc, char *argv[]) {
 	set_progname(argv[0]);
 
 	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
+	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+	textdomain(PACKAGE_NAME);
 
 	ifiles[0] = mfil = ufil = Ofil = ofil = omfil = oufil = NULL;
 	iunit = hwunit = 0;
@@ -188,6 +189,19 @@ main(int argc, char *argv[]) {
 
 	fd = getfd(console);
 
+	int kd_mode = -1;
+	if (!ioctl(fd, KDGETMODE, &kd_mode) && (kd_mode == KD_GRAPHICS))
+	  {
+	    /*
+	     * PIO_FONT will fail on a console which is in foreground and in KD_GRAPHICS mode.
+	     * 2005-03-03, jw@suse.de.
+	     */
+	    if (verbose)
+	      printf("setfont: graphics console %s skipped\n", console?console:"");
+	    close(fd);
+	    return 0;
+	  }
+
 	if (!ifilct && !mfil && !ufil &&
 	    !Ofil && !ofil && !omfil && !oufil && !restore)
 	  /* reset to some default */
@@ -234,7 +248,7 @@ static int erase_mode = 1;
 static void
 do_loadfont(int fd, char *inbuf, int width, int height, int hwunit,
 	    int fontsize, char *pathname) {
-	char *buf;
+	unsigned char *buf;
 	int i, buflen;
 	int bytewidth = (width+7)/8;
 	int charsize = height * bytewidth;
@@ -331,15 +345,28 @@ do_loadtable(int fd, struct unicode_list *uclistheads, int fontsize) {
 	up = xmalloc(maxct * sizeof(struct unipair));
 	for (i = 0; i < fontsize; i++) {
 		ul = uclistheads[i].next;
+		if (debug) printf ("char %03x:", i);
 		while(ul) {
 			us = ul->seq;
 			if (us && ! us->next) {
 				up[ct].unicode = us->uc;
 				up[ct].fontpos = i;
 				ct++;
+				if (debug) printf (" %04x", us->uc);
 			}
+			else
+				if (debug) {
+					printf (" seq: <");
+					while (us) {
+						printf (" %04x", us->uc);
+						us = us->next;
+					}
+					printf (" >");
+				}
 			ul = ul->next;
+			if (debug) printf (",");
 		}
+		if (debug) printf ("\n");
 	}
 	if (ct != maxct) {
 		char *u = _("%s: bug in do_loadtable\n");
@@ -398,8 +425,10 @@ loadnewfonts(int fd, char **ifiles, int ifilct,
 			fprintf(stderr, _("When loading several fonts, all "
 					  "must be psf fonts - %s isn't\n"),
 				pathname);
+			fpclose(fpi);
 			exit(EX_DATAERR);
 		}
+		fpclose(fpi);		// avoid zombies, jw@suse.de (#88501)
 		bytewidth = (width+7) / 8;
 		height = fontbuflth / (bytewidth * fontsize);
 		if (verbose)
@@ -483,6 +512,7 @@ loadnewfont(int fd, char *ifil, int iunit, int hwunit, int no_m, int no_u) {
 	if(readpsffont(fpi, &inbuf, &inputlth, &fontbuf, &fontbuflth,
 		       &width, &fontsize, 0,
 		       no_u ? NULL : &uclistheads) == 0) {
+		fpclose(fpi);
 		/* we've got a psf font */
 		bytewidth = (width+7) / 8;
 		height = fontbuflth / (bytewidth * fontsize);
@@ -497,6 +527,7 @@ loadnewfont(int fd, char *ifil, int iunit, int hwunit, int no_m, int no_u) {
 #endif
 		return;
 	}
+	fpclose(fpi);		// avoid zombies, jw@suse.de (#88501)
 
 	/* instructions to combine fonts? */
 	{ char *combineheader = "# combine partial fonts\n";
@@ -608,7 +639,7 @@ do_saveoldfont(int fd, char *ofil, FILE *fpo, int unimap_follows,
 
 /* this is the max font size the kernel is willing to handle */
 #define MAXFONTSIZE	65536
-	char buf[MAXFONTSIZE];
+	unsigned char buf[MAXFONTSIZE];
 
 	int i, ct, width, height, bytewidth, charsize, kcharsize;
 

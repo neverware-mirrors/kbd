@@ -58,6 +58,19 @@ For			for|For|FOR
 On			on|On|ON
 To                      to|To|TO
 %%
+%{
+/* To protect from wrong code in the higher level parser (loadkeys.y), 
+ * make sure we do not return a sensible value if we
+ * do not intend to. (So wrong code would crash, or issue an error message.
+ * I mean the code like the one for PLAIN handling in past loadkeys.y.
+ * What to choose as the "bad" value: 0, -1?.. 
+ * Well, make it equal to CODE_FOR_UNKNOWN_KSYM as the most efficient thing.
+ */
+#define YYLVAL_UNDEF CODE_FOR_UNKNOWN_KSYM
+/* Every time yylex is called, initialize the associated
+ * yylval to YYLVAL_UNDEF. Then it might be overwritten by specific rules. */
+  yylval = YYLVAL_UNDEF;
+%}
 {Include}               {BEGIN(INCLSTR);}
 <INCLSTR>\"[^"\n]+\"	{ int l; char *s;
 			 l = strlen(yytext);
@@ -106,7 +119,7 @@ To                      to|To|TO
 '\\{Octa}'              {yylval = strtol(yytext+2,NULL,8); return(CCHAR);}
 '\\.'                   {yylval = yytext[2]; return(CCHAR);}
 '.'                     {yylval = yytext[1]; return(CCHAR);}
-\"			{p=kbs_buf.kb_string;
+\"			{p=(char *) kbs_buf.kb_string;
 				pmax=p+sizeof(kbs_buf.kb_string)-1;
 				BEGIN(STR);}
 <STR>\\{Octa}		{if(p>=pmax)stringovfl();*p++=strtol(yytext+1,NULL,8);}

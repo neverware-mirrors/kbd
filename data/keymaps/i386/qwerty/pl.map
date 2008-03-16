@@ -10,6 +10,7 @@ charset "iso-8859-2"
 keymaps 0-4,6,8,9,12
 include "linux-with-alt-and-altgr"
 strings as usual
+alt_is_meta
 
 keycode   1 = Escape
 	alt     keycode   1 = Meta_Escape
@@ -48,6 +49,7 @@ keycode  13 = equal            plus
 keycode  14 = Delete
 	alt     keycode  14 = Meta_Delete
 keycode  15 = Tab
+	shift	keycode  15 = Meta_Tab
 	alt     keycode  15 = Meta_Tab
 keycode  16 = q
 keycode  17 = w

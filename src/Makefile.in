@@ -1,35 +1,16 @@
-include ../make_include
-
-PREFIX = @prefix@
+prefix         = @prefix@
+exec_prefix    = @exec_prefix@
+bindir         = @bindir@
+datarootdir    = @datarootdir@
+OPTIONAL_PROGS = @OPTIONAL_PROGS@
 
 # Something like /usr/lib/kbd or /usr/share/kbd
-ifndef DATA_DIR
 DATA_DIR = @datadir@
-endif
 
-ifndef BINDIR
-BINDIR = $(DESTDIR)$(PREFIX)/bin
-endif
-
-# Maybe we want to use a qwertz keyboard before /usr is mounted
-ifndef LOADKEYS_BINDIR
-ifeq ($(PREFIX), /usr)
-  LOADKEYS_BINDIR = $(DESTDIR)/bin
-else
-  LOADKEYS_BINDIR = $(DESTDIR)$(PREFIX)/bin
-endif
-endif
-
-# Omit the "-o root" when installing elsewhere
-ifeq "$(DESTDIR)" ""
-  setowner = -o root
-else
-  setowner =
-endif
-
+OLDPROGS= mapscrn loadunimap
 PROGS   = dumpkeys loadkeys showkey setfont showconsolefont \
 	  setleds setmetamode kbd_mode chvt deallocvt \
-	  psfxtable kbdrate fgconsole
+	  psfxtable kbdrate fgconsole openvt
 
 # probably also getkeycodes and setkeycodes are arch-specific;
 # they will work on an alpha, though, and perhaps be dummy on a sun
@@ -43,23 +24,18 @@ ifeq ($(ARCH), i386)
 PROGS += resizecons
 endif
 
-OLDPROGS= mapscrn loadunimap
-
 # Not installed by default
-MISC    = screendump setlogcons setvesablank spawn_console spawn_login \
-	  getunimap clrunimap outpsfheader setpalette
+ifdef OPTIONAL_PROGS
+PROGS += screendump setlogcons setvesablank spawn_console spawn_login \
+	 getunimap clrunimap outpsfheader setpalette
+endif
 
 # Installed by default
 SHCMDS  = unicode_start unicode_stop
 
-WARN	= -Wall -Wmissing-prototypes -Wstrict-prototypes
+WARN	= -Wall -Wmissing-prototypes -Wstrict-prototypes -Wunused-function \
+	-Wunused-label -Wunused-variable -Wunused-value
 DEFS	= -DDATADIR=\"$(DATA_DIR)\"
-CFLAGS  = -O2
-LDFLAGS =
-
-CC	= gcc
-YACC	= bison -y
-LEX	= flex -8
 
 .c.o:
 	$(CC) -c $(WARN) $(CFLAGS) $(DEFS) $<
@@ -70,23 +46,21 @@ progs:	$(PROGS)
 
 old:	$(OLDPROGS)
 
-install:	all
-	install -d -m 0755 $(BINDIR) $(LOADKEYS_BINDIR)
-	install -m 0755 $(setowner) $(PROGS) $(OLDPROGS) $(BINDIR)
-#	install -m 0755 $(setowner) $(MISC) $(BINDIR)
-	install -c -m 0755 $(setowner) $(SHCMDS) $(BINDIR)
+# don't change 4711 to 0711 - this is the setuid target
+setuid:
+	chmod 4711 $(bindir)/openvt
+
+install: all
+	install -d -m 0755 $(bindir)
+	install -s -m 0755 $(PROGS) $(OLDPROGS) $(SHCMDS) $(bindir)
 	for i in psfaddtable psfgettable psfstriptable; do \
-		rm -f $(BINDIR)/$$i; ln -s psfxtable $(BINDIR)/$$i; \
+		rm -f $(bindir)/$$i; ln -s psfxtable $(bindir)/$$i; \
 	done
-	rm -f $(BINDIR)/loadkeys
-	install -m 0755 $(setowner) loadkeys $(LOADKEYS_BINDIR)
 	@echo "You may also want to add psf.magic to /usr/lib/magic"
 
-
 # loadkeys.o: separate rule since the flex output does not permit -Wall
-loadkeys.o:	loadkeys.c analyze.c
+loadkeys.o: loadkeys.c analyze.c
 	$(CC) -c $(CFLAGS) $(DEFS) $<
-
 
 # mapscrn and loadunimap are now part of setfont
 # but can be compiled separately, if desired
@@ -99,10 +73,12 @@ main_loadunimap.o: loadunimap.c paths.h
 $(OLDPROGS): %: main_%.o findfile.o psffontop.o utf8.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
-
-clean reallyclean spotless distclean:
+clean reallyclean spotless:
 	rm -f core *.o analyze.c loadkeys.c
 	rm -f $(PROGS) $(OLDPROGS) $(MISC) *~
+
+distclean: clean
+	rm -f Makefile
 
 $(PROGS): %: %.o
 
@@ -141,6 +117,7 @@ psffontop.o psfxtable.o setfont.o: psffontop.h
 
 loadunimap.o psffontop.o utf8.o: utf8.h
 
+openvt.o: openvt.h
 chvt.o deallocvt.o dumpkeys.o getkeycodes.o getunimap.o kbd_mode.o: version.h
 kbdrate.o loadkeys.o loadunimap.o mapscrn.o psfxtable.o resizecons.o: version.h
 screendump.o setfont.o setkeycodes.o setleds.o setmetamode.o: version.h
@@ -163,7 +140,7 @@ loadkeys mapscrn setfont resizecons loadunimap: findfile.o xmalloc.o
 
 chvt clrunimap deallocvt dumpkeys fgconsole getkeycodes getunimap: getfd.o
 kbd_mode loadkeys loadunimap mapscrn resizecons setkeycodes setfont: getfd.o
-setpalette showconsolefont setlogcons setvesablank showkey: getfd.o
+setpalette showconsolefont setlogcons setvesablank showkey openvt: getfd.o
 
 setfont: mapscrn.o loadunimap.o kdmapop.o kdfontop.o psffontop.o utf8.o
 
@@ -172,3 +149,5 @@ loadunimap: utf8.o
 getunimap mapscrn clrunimap loadunimap showconsolefont: kdmapop.o
 
 catwithfont showconsolefont: kdfontop.o
+
+openvt: openvt.o

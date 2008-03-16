@@ -63,8 +63,8 @@ beats rebuilding the kernel!
   1999-03-17
   Linux/SPARC modifications by Jeffrey Connell <ankh@canuck.gen.nz>:
   It seems that the KDKBDREP ioctl is not available on this platform.
-  However, Linux/SPARC has its own ioctl for this, with yet another
-  different measurement system.  Thus, try for KIOCSRATE, too.
+  However, Linux/SPARC has its own ioctl for this (since 2.1.30),
+  with yet another measurement system.  Thus, try for KIOCSRATE, too.
 
 */
 
@@ -83,11 +83,16 @@ beats rebuilding the kernel!
 /* usually defined in <linux/kd.h> */
 #define KDKBDREP        0x4B52  /* set keyboard delay/repeat rate;
 				 * actually used values are returned */
-struct kbd_repeat {
+#endif
+
+/* Equal to kernel version, but field names vary. */
+struct my_kbd_repeat {
         int delay;        /* in msec; <= 0: don't change */
         int period;       /* in msec; <= 0: don't change */
+			  /* earlier this field was misnamed "rate" */
 };
-#endif
+
+#include <signal.h>
 
 #include "nls.h"
 #include "version.h"
@@ -103,9 +108,12 @@ static int valid_delays[] = { 250, 500, 750, 1000 };
 
 static int
 KDKBDREP_ioctl_ok(double rate, int delay, int silent) {
-	/* This ioctl is defined in <linux/kd.h> but is not
-	   implemented anywhere - must be in some m68k patches. */
-	struct kbd_repeat kbdrep_s;
+	/*
+	 * This ioctl is defined in <linux/kd.h> but is not
+	 * implemented anywhere - must be in some m68k patches.
+	 * Since 2.4.9 also on i386.
+	 */
+	struct my_kbd_repeat kbdrep_s;
 
 	/* don't change, just test */
 	kbdrep_s.period = -1;
@@ -148,6 +156,25 @@ KDKBDREP_ioctl_ok(double rate, int delay, int silent) {
 		printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
 			rate, kbdrep_s.delay );
 
+	kbdrep_s.period = -1;
+	kbdrep_s.delay = -1;
+	if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
+		if (errno == EINVAL)
+			return 0;
+		perror( "ioctl(KDKBDREP)" );
+		exit( 1 );
+	}
+	printf("old delay %d, period %d\n",
+	       kbdrep_s.delay, kbdrep_s.period);
+	if (kbdrep_s.period == 0)
+		rate = 0;
+	else
+		rate = 1000.0 / (double) kbdrep_s.period;
+
+	if (!silent)
+		printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
+			rate, kbdrep_s.delay );
+
 	return 1;			/* success! */
 }
 
@@ -163,10 +190,10 @@ KIOCSRATE_ioctl_ok(double rate, int delay, int silent) {
 		exit( 1 );
 	}
 
-	kbdrate_s.period = (int) (rate + 0.5);  /* round up */
+	kbdrate_s.rate = (int) (rate + 0.5);  /* round up */
 	kbdrate_s.delay = delay * HZ / 1000;  /* convert ms to Hz */
-	if (kbdrate_s.period > 50)
-		kbdrate_s.period = 50;
+	if (kbdrate_s.rate > 50)
+		kbdrate_s.rate = 50;
 
 	if (ioctl( fd, KIOCSRATE, &kbdrate_s )) {
 		perror( "ioctl(KIOCSRATE)" );
@@ -176,12 +203,18 @@ KIOCSRATE_ioctl_ok(double rate, int delay, int silent) {
 
 	if (!silent)
 		printf( "Typematic Rate set to %d cps (delay = %d ms)\n",
-			kbdrate_s.period, kbdrate_s.delay * 1000 / HZ );
+			kbdrate_s.rate, kbdrate_s.delay * 1000 / HZ );
 
 	return 1;
 #else /* no KIOCSRATE */
 	return 0;
 #endif /* KIOCSRATE */
+}
+
+static void
+sigalrmhandler( int sig ) {
+	fprintf( stderr, "kbdrate: Failed waiting for kbd controller!\n" );
+	raise( SIGINT );
 }
 
 int
@@ -205,8 +238,8 @@ main( int argc, char **argv ) {
 	set_progname(argv[0]);
 
 	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
+	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+	textdomain(PACKAGE_NAME);
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")))
@@ -259,23 +292,40 @@ main( int argc, char **argv ) {
 		exit( 1 );
 	}
 
+	signal( SIGALRM, sigalrmhandler );
+	alarm( 3 );
+
 	do {
 		lseek( fd, 0x64, 0 );
-		read( fd, &data, 1 );
+		if (read( fd, &data, 1 ) == -1) {
+			perror( "read" );
+			exit( 1 );
+		}
 	} while ((data & 2) == 2 );  /* wait */
 
 	lseek( fd, 0x60, 0 );
 	data = 0xf3;                 /* set typematic rate */
-	write( fd, &data, 1 );
+	if (write( fd, &data, 1 ) == -1) {
+		perror( "write" );
+		exit( 1 );
+	}
 
 	do {
 		lseek( fd, 0x64, 0 );
-		read( fd, &data, 1 );
+		if (read( fd, &data, 1 ) == -1) {
+			perror( "read" );
+			exit( 1 );
+		}
 	} while ((data & 2) == 2 );  /* wait */
+
+	alarm( 0 );
 
 	lseek( fd, 0x60, 0 );
 	sleep( 1 );
-	write( fd, &value, 1 );
+	if (write( fd, &value, 1 ) == -1) {
+		perror( "write" );
+		exit( 1 );
+	}
 
 	close( fd );
 

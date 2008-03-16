@@ -224,8 +224,8 @@ handle_codepage(int more_to_come) {
 	}
 	if (optL) {
 	    int t = CPEntryHeader.device_type;
-	    printf("CPEntryHeader: size=%d dev=%d [%s] name=%8.8s \
-codepage=%d\n\t\tres=%6.6s nxt=%ld off_font=%ld\n\n",
+	    printf("CPEntryHeader: size=%d dev=%d [%s] name=%8.8s "
+"codepage=%d\n\t\tres=%6.6s nxt=%ld off_font=%ld\n\n",
 		   CPEntryHeader.size,
 		   t, (t==1) ? "screen" : (t==2) ? "printer" : "?",
 		   CPEntryHeader.device_name,

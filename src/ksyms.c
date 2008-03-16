@@ -1760,6 +1760,11 @@ ksymtocode(const char *s) {
 		prefer_unicode = save_prefer_unicode;
 		if (KTYP(keycode) == KT_LATIN)
 			return K(KT_META, KVAL(keycode));
+
+		/* Avoid error messages for Meta_acute with UTF-8 */
+		else if(prefer_unicode)
+		        return (0);
+
 		/* fall through to error printf */
 	}
 
@@ -1832,7 +1837,7 @@ ksymtocode(const char *s) {
 
 	fprintf(stderr, _("unknown keysym '%s'\n"), s);
 
-	return -1;
+	return CODE_FOR_UNKNOWN_KSYM;
 }
 
 int

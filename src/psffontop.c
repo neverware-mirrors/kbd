@@ -10,6 +10,7 @@
 #include "psf.h"
 #include "psffontop.h"
 #include "utf8.h"
+#include "paths.h"
 
 extern char *progname;
 
@@ -32,16 +33,18 @@ addpair(struct unicode_list *up, unsigned int uc) {
 
 static void
 addseq(struct unicode_list *up, unsigned int uc) {
-	struct unicode_list *ul;
 	struct unicode_seq *us;
+	struct unicode_seq *usl;
+	struct unicode_list *ul = up->prev;
 
-	ul = up->prev;
+	usl = ul->seq;
+	while (usl->next) usl = usl->next;
 	us = xmalloc(sizeof(struct unicode_seq));
 	us->uc = uc;
-	us->prev = ul->seq->prev;
-	us->prev->next = us;
+	us->prev = usl;
 	us->next = NULL;
-	ul->seq->prev = us;
+	usl->next = us;
+	//ul->seq->prev = us;
 }
 
 static unsigned int
@@ -67,8 +70,8 @@ assemble_ucs2(char **inptr, int cnt) {
 		exit(EX_DATAERR);
 	}
 
-	u1 = (unsigned char)*(*inptr)++;
-	u2 = (unsigned char)*(*inptr)++;
+	u1 = (unsigned char) *(*inptr)++;
+	u2 = (unsigned char) *(*inptr)++;
 	return (u1 | (u2 << 8));
 }
 
@@ -188,7 +191,7 @@ readpsffont(FILE *fontf, char **allbufp, int *allszp,
 	 * just read the entire file.
 	 */
 	if (fontf) {
-		inputbuflth = 16384; 	/* random */
+		inputbuflth = MAXFONTSIZE/4; 	/* random */
 		inputbuf = xmalloc(inputbuflth);
 		n = 0;
 
@@ -364,6 +367,13 @@ appendunicode(FILE *fp, unsigned int uc, int utf8) {
 		perror("appendunimap");
 		exit(1);
 	}
+	if (debug) {
+		printf ("(");
+		if (!utf8)
+			printf ("U+");
+		while (n < 6) printf ("%02x ", out[n++]);
+		printf (")");
+	}
 }
 
 void
@@ -435,7 +445,7 @@ writepsffontheader(FILE *ofil, int width, int height, int fontlen,
 }
 
 
-void
+int
 writepsffont(FILE *ofil, char *fontbuf, int width, int height, int fontlen,
 	     int psftype, struct unicode_list *uclistheads) {
 	int bytewidth, charsize, flags, utf8, i;
@@ -453,8 +463,13 @@ writepsffont(FILE *ofil, char *fontbuf, int width, int height, int fontlen,
 	writepsffontheader(ofil, width, height, fontlen, &psftype, flags);
 	utf8 = (psftype == 2);
 
-	fwrite(fontbuf, charsize, fontlen, ofil);
-	if (uclistheads != NULL) {
+	if ((fwrite(fontbuf, charsize, fontlen, ofil)) != fontlen) {
+		fprintf(stderr, _("Cannot write font file"));
+		exit(EX_IOERR);
+	}
+
+	/* unimaps: -1 => do nothing: caller will append map */
+	if (uclistheads != NULL && uclistheads != (struct unicode_list*)-1) {
 		struct unicode_list *ul;
 		struct unicode_seq *us;
 
@@ -473,5 +488,6 @@ writepsffont(FILE *ofil, char *fontbuf, int width, int height, int fontlen,
 			appendseparator(ofil, 0, utf8);
 		}
 	}
+	return utf8;
 }
 
