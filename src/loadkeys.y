@@ -878,27 +878,6 @@ defkeys(int fd, char *cons, int *warned) {
 	    }
 	}
 
-	if(unicode_used && oldm != K_UNICODE) {
-	     if (ioctl(fd, KDSKBMODE, oldm)) {
-		  fprintf(stderr, _("%s: failed to restore keyboard mode\n"),
-			  progname);
-	     }
-
-	     if (!warned++)
-	       {
-		     int kd_mode = -1;
-		     if (ioctl(fd, KDGETMODE, &kd_mode) || (kd_mode != KD_GRAPHICS))
-		       {
-			 /*
-			  * It is okay for the graphics console to have a non-unicode mode.
-			  * only talk about other consoles
-			  */
-			 fprintf(stderr, _("%s: warning: this map uses Unicode symbols, %s mode=%d\n"
-				     "    (perhaps you want to do `kbd_mode -u'?)\n"),
-			     progname, cons ? cons : "NULL", kd_mode);
-		       }
-	       }
-	}
 	return ct;
 }
 
