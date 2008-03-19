@@ -19,8 +19,10 @@ udebdir=${debdir}/kbd-udeb
 
 configure: configure-stamp
 configure-stamp:
+	autoconf
 	${topdir}/configure --prefix=/usr \
-		--datadir=/usr/share --mandir=/usr/share/man
+		--datadir=/usr/share --mandir=/usr/share/man \
+		--enable-nls
 	touch $@
 
 build-udeb: build-udeb-stamp
@@ -46,15 +48,17 @@ build-stamp: configure
 	mv src/setfont .
 	rm -f src/*.o
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH}
+	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH} -C src screendump setlogcons setvesablank
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH} -C contrib codepage splitfont vcstime
 	touch $@
 
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp configure-stamp \
-	  contrib/codepage contrib/splitfont contrib/vcstime
+	rm -f build-stamp configure-stamp
 	rm -f loadkeys kbd_mode setfont
+	rm -f contrib/codepage contrib/splitfont contrib/vcstime
+	rm -f src/setvesablank src/screendump src/setlogcons
 	-make reallyclean ARCH=${ARCH}
 	dh_clean
 
@@ -63,9 +67,6 @@ install: build-stamp
 	dh_testroot
 	dh_clean
 	dh_installdirs -a
-
-# Now it seems like most of this is already provided by prefix mechanism.
-# make install-progs install-man DESTDIR=${tmpdir} ARCH=${ARCH}
 	make DESTDIR=${tmpdir} LOADKEYS_BINDIR=${tmpdir}/bin ARCH=${ARCH} install-progs install-man
 	-@find ${topdir}/data/*_Z -name '\.svn' -exec rm -rf {} \; 2>/dev/null
 
@@ -105,6 +106,7 @@ binary-indep:
 binary-arch:	install
 	dh_testdir -a
 	dh_testroot -a
+	dh_installman -pkbd
 	dh_installdocs -a -X.svn
 	mv ${tmpdir}/usr/share/doc/kbd/utf/invalid_name "${tmpdir}/usr/share/doc/kbd/utf/♪♬"
 
