@@ -3,6 +3,7 @@ kbd (1.14-1) UNRELEASED; urgency=low
   * Acknowledge changes from non-maintainer upload by Marc 'HE' Brockschmidt,
     closes: #459156.
   * New upstream version.
+  * Added myself to uploaders, closes: #446030
   * Remove debian/patches directory and build dependency on quilt.  Package
     maintenance now happens in a Git repository.
   * Make openvt pay attention to its child’s exit status.  Patch by Jim Paris,
