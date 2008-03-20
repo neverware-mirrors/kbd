@@ -70,6 +70,10 @@ install: build-stamp
 	make DESTDIR=${tmpdir} LOADKEYS_BINDIR=${tmpdir}/bin ARCH=${ARCH} install-progs install-man
 	-@find ${topdir}/data/*_Z -name '\.svn' -exec rm -rf {} \; 2>/dev/null
 
+# install translations
+	make DESTDIR=${tmpdir} ARCH=${ARCH} -C po install
+	-find ${tmpdir}/usr/share/locale -type d -empty -delete
+
 # install contribs
 	install -m 755 ${topdir}/contrib/codepage ${ubindir}
 	install -m 755 ${topdir}/contrib/splitfont ${ubindir}
