@@ -319,11 +319,12 @@ got_vtno:
 		   vtno);
 	   return(8);
 	 }
-	 if (WIFEXITED(status))
-	    return WEXITSTATUS(status);
-	 else
-	    return 127;
       }
+
+      if (WIFEXITED(status))
+	 return WEXITSTATUS(status);
+      else
+	 return 127;
    }
 
    return 0;
