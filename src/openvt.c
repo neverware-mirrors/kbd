@@ -304,6 +304,8 @@ got_vtno:
 
    if ( do_wait ) {
       wait(&status);
+      if (!direct_exec)
+	 close(fd0);
       if (show) { /* Switch back... */
 	 if (ioctl(consfd, VT_ACTIVATE, vtstat.v_active)) {
 	    perror("VT_ACTIVATE");
