@@ -22,8 +22,9 @@ kbd (1.14-1) UNRELEASED; urgency=low
   * The Debian copyright file is now available in machine-readable format.
     The passage about kbd’s history was removed from it; upstream’s CREDITS
     file is shipped instead, as it includes the same information.
+  * Added Vcs-Git and Vcs-Browser fields to debian/control.
 
- -- Michael Schutte <m.schutte.jr@gmail.com>  Sun, 23 Mar 2008 15:30:40 +0100
+ -- Michael Schutte <m.schutte.jr@gmail.com>  Mon, 24 Mar 2008 15:25:24 +0100
 
 kbd (1.12-19.1) unstable; urgency=low
 
