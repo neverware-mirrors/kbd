@@ -1,3 +1,18 @@
+Changes for 1.14.1 (legion)
+
+o Build system:
+  - Fix computing of the host-system type.
+  - Fix options handling (thanks for the help to Mike Frysinger).
+  - Fix DESTDIR handling.
+o Programs:
+  - unicode_{start,stop}: To run loadkeys is allowed only to root.
+o Keymaps:
+  - Add Norwegian dvorak keymap.
+  - Add turkish F (trf) keyboard map.
+  - Fix turkish Q (trq) keyboard map (Ozgur Murat Homurlu).
+  - Move qwerty/cz.map -> qwertz/cz.map.
+  - include/*euro.map: Change 'currency' to 'euro' symbol.
+
 Changes for 1.14 (legion)
 
 o Use autoconf for build system.
