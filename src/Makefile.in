@@ -72,7 +72,7 @@ $(OLDPROGS): %: main_%.o findfile.o psffontop.o utf8.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
 clean reallyclean spotless:
-	rm -f core *.o analyze.c loadkeys.c
+	rm -f core *.o
 	rm -f $(PROGS) $(OLDPROGS) $(MISC) *~
 
 distclean: clean
