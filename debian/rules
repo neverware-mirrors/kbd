@@ -68,7 +68,6 @@ install: build-stamp
 	dh_clean
 	dh_installdirs -a
 	make DESTDIR=${tmpdir} LOADKEYS_BINDIR=${tmpdir}/bin ARCH=${ARCH} install-progs install-man
-	-@find ${topdir}/data/*_Z -name '\.svn' -exec rm -rf {} \; 2>/dev/null
 
 # install translations
 	make DESTDIR=${tmpdir} ARCH=${ARCH} -C po install
@@ -111,7 +110,7 @@ binary-arch:	install
 	dh_testdir -a
 	dh_testroot -a
 	dh_installman -pkbd
-	dh_installdocs -a -X.svn
+	dh_installdocs -a -X.git
 	mv ${tmpdir}/usr/share/doc/kbd/utf/invalid_name "${tmpdir}/usr/share/doc/kbd/utf/♪♬"
 
 # do not install the FAQ/HOWTO (already in doc-linux)
@@ -135,7 +134,7 @@ binary-arch:	install
 # Below here is fairly generic really
 
 deb:
-	dpkg-buildpackage -rfakeroot -i'/\.svn'
+	dpkg-buildpackage -rfakeroot -i'/\.git'
 
 binary: binary-indep binary-arch
 
