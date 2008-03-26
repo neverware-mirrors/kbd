@@ -12,7 +12,7 @@ MAN1DIRS = man1
 MAN5DIRS = man5
 MAN8DIRS = man8
 
-ifdef OPTIONAL_PROGS
+ifeq ($(OPTIONAL_PROGS),yes)
 MAN1DIRS += man1misc
 MAN8DIRS += man8misc
 endif
