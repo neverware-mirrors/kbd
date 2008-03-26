@@ -49,10 +49,10 @@ setuid:
 	chmod 4711 $(bindir)/openvt
 
 install: all
-	install -d -m 0755 $(DESTDIR)/$(bindir)
-	install -m 0755 $(PROGS) $(OLDPROGS) $(SHCMDS) $(DESTDIR)/$(bindir)
+	install -d -m 0755 $(bindir)
+	install -m 0755 $(PROGS) $(OLDPROGS) $(SHCMDS) $(bindir)
 	for i in psfaddtable psfgettable psfstriptable; do \
-		rm -f $(DESTDIR)/$(bindir)/$$i; ln -s psfxtable $(DESTDIR)/$(bindir)/$$i; \
+		rm -f $(bindir)/$$i; ln -s psfxtable $(bindir)/$$i; \
 	done
 	@echo "You may also want to add psf.magic to /usr/lib/magic"
 
