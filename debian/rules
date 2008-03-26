@@ -59,7 +59,7 @@ clean:
 	rm -f loadkeys kbd_mode setfont
 	rm -f contrib/codepage contrib/splitfont contrib/vcstime
 	rm -f src/setvesablank src/screendump src/setlogcons
-	[ ! -f Makefile ] || make reallyclean ARCH=${ARCH}
+	[ ! -f Makefile ] || make reallyclean ARCH=${ARCH} KEYCODES_PROGS=yes RESIZECONS_PROGS=yes
 	dh_clean
 
 install: build-stamp
