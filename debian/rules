@@ -47,7 +47,7 @@ build-stamp: configure
 	mv src/kbd_mode .
 	mv src/setfont .
 	rm -f src/*.o
-	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH} KEYCODES_PROGS=yes RESIZECONS_PROGS=yes
+	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH}
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH} -C src screendump setlogcons setvesablank
 	make CFLAGS="-O2 -g -Wall" ARCH=${ARCH} -C contrib codepage splitfont vcstime
 	touch $@
@@ -59,7 +59,7 @@ clean:
 	rm -f loadkeys kbd_mode setfont
 	rm -f contrib/codepage contrib/splitfont contrib/vcstime
 	rm -f src/setvesablank src/screendump src/setlogcons
-	[ ! -f Makefile ] || make reallyclean ARCH=${ARCH} KEYCODES_PROGS=yes RESIZECONS_PROGS=yes
+	[ ! -f Makefile ] || make reallyclean ARCH=${ARCH}
 	dh_clean
 
 install: build-stamp
@@ -67,7 +67,7 @@ install: build-stamp
 	dh_testroot
 	dh_clean
 	dh_installdirs -a
-	make DESTDIR=${tmpdir} ARCH=${ARCH} KEYCODES_PROGS=yes RESIZECONS_PROGS=yes install-progs install-man
+	make DESTDIR=${tmpdir} LOADKEYS_BINDIR=${tmpdir}/bin ARCH=${ARCH} install-progs install-man
 
 # install translations
 	make DESTDIR=${tmpdir} ARCH=${ARCH} -C po install
