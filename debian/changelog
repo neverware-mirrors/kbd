@@ -1,4 +1,4 @@
-kbd (1.14.1-1) UNRELEASED; urgency=low
+kbd (1.14.1-1) unstable; urgency=low
 
   * Acknowledge changes from non-maintainer upload by Marc 'HE' Brockschmidt,
     closes: #459156.
@@ -25,7 +25,7 @@ kbd (1.14.1-1) UNRELEASED; urgency=low
     file is shipped instead, as it includes the same information.
   * Added Vcs-Git and Vcs-Browser fields to debian/control.
 
- -- Michael Schutte <m.schutte.jr@gmail.com>  Wed, 26 Mar 2008 21:24:54 +0100
+ -- Michael Schutte <m.schutte.jr@gmail.com>  Thu, 03 Apr 2008 20:09:37 +0200
 
 kbd (1.12-19.1) unstable; urgency=low
 
