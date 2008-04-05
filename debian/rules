@@ -92,6 +92,7 @@ install: build-stamp
 	mv ${ubindir}/chvt ${bindir}
 	mv ${ubindir}/dumpkeys ${bindir}
 	mv ${ubindir}/unicode_start ${bindir}
+	mv ${ubindir}/loadkeys ${bindir}
 
 # open compat symlink
 	ln -s openvt ${bindir}/open
