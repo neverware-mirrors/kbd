@@ -58,13 +58,6 @@ Files: src/chvt.c, src/clrunimap.c, src/deallocvt.c, src/fgconsole.c,
        mentioned above)
 Copyright: © 1994–1999 Andries E. Brouwer
 
-Files: doc/kbd.FAQ.*
-Copyright: © 1994–1999 Andries E. Brouwer
-License: other
- This document may be distributed under the terms set forth in the LDP license
- at http://metalab.unc.edu/LDP/COPYRIGHT.html or
- ftp://www.win.tue.nl/pub/linux/LDP/COPYRIGHT.txt.
-
 Files: man/man1misc/splitfont.1, man/man1/openvt.1, man/man8misc/setlogcons.8,
        man/man8misc/vcstime.8 (and changes to files mentioned above)
 Copyright: © 2007–2008 Alexey Gladkov <gladkov.alexey@gmail.com>
