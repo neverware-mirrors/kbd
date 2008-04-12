@@ -1,3 +1,11 @@
+kbd (1.14.1-2) UNRELEASED; urgency=low
+
+  * Initialize all consoles in console-screen.kbd.sh, closes: #443606.  This
+    partially reverts a change done in 1.12-15 (see the third changelog entry
+    for this version).
+
+ -- Michael Schutte <m.schutte.jr@gmail.com>  Sat, 12 Apr 2008 12:26:31 +0200
+
 kbd (1.14.1-1) unstable; urgency=low
 
   * Acknowledge changes from non-maintainer upload by Marc 'HE' Brockschmidt,
