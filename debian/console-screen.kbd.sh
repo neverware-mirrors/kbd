@@ -112,14 +112,7 @@ setup ()
         [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
 
-    if [ "$RUNLEVEL" = S ]; then
-        LIST_CONSOLES=0
-    elif [ -z "$LIST_CONSOLES" ]; then
-        #  Wait for getty to provide TTYs
-        sleep 3
-        LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep 'tty[0-9]*$' | awk -F: '{printf "%s ", $1}'`
-    fi
-
+    LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep 'tty[0-9]*$' | awk -F: '{printf "%s ", $1}'`
 
     # Global default font+map
     if [ "${CONSOLE_FONT}" ]; then
