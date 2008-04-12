@@ -112,7 +112,7 @@ setup ()
         [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
 
-    LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep 'tty[0-9]*$' | awk -F: '{printf "%s ", $1}'`
+    LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep -e '\<tty[0-9]*\>' | awk -F: '{printf "%s ", $1}'`
 
     # Global default font+map
     if [ "${CONSOLE_FONT}" ]; then
