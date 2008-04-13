@@ -14,6 +14,8 @@
 # default font and map.
 # (c) 1997 Yann Dirson
 
+[ -x /bin/setupcon ] && exit 0
+
 PKG=kbd
 if [ -r /etc/$PKG/config ]; then
     . /etc/$PKG/config
