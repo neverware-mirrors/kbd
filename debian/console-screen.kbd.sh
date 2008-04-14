@@ -2,7 +2,7 @@
 ### BEGIN INIT INFO
 # Provides:          console-screen
 # Required-Start:    $local_fs $remote_fs
-# Required-Stop:     $local_fs $remote_fs
+# Required-Stop:
 # Default-Start:     S
 # Default-Stop:
 # Description: Set console screen modes and fonts
