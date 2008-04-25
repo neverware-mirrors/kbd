@@ -98,6 +98,10 @@ install: build-stamp
 	ln -s openvt ${bindir}/open
 	ln -s openvt.1 ${tmpdir}/usr/share/man/man1/open.1
 
+# loadkeys and dumpkeys compat symlinks
+	ln -s /bin/loadkeys ${ubindir}/loadkeys
+	ln -s /bin/dumpkeys ${ubindir}/dumpkeys
+
 # install files for the udeb
 	install -m 755 ${topdir}/loadkeys ${udebdir}/bin
 	install -m 755 ${topdir}/kbd_mode ${udebdir}/bin
