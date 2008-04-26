@@ -98,7 +98,7 @@ install: build-stamp
 	ln -s openvt ${bindir}/open
 	ln -s openvt.1 ${tmpdir}/usr/share/man/man1/open.1
 
-# loadkeys and dumpkeys compat symlinks
+# loadkeys and dumpkeys compat symlinks (see #261801)
 	ln -s /bin/loadkeys ${ubindir}/loadkeys
 	ln -s /bin/dumpkeys ${ubindir}/dumpkeys
 
