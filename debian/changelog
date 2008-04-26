@@ -1,15 +1,15 @@
 kbd (1.14.1-2) unstable; urgency=low
 
-  * Create compatibility symlinks for loadkeys and dumpkeys to avoid an error
-    in console-data’s postinst, closes: #261801.
   * Initialize all consoles in console-screen.kbd.sh, not only the first one;
     closes: #443606.  This partially reverts a change done in 1.12-15 (see the
     third changelog entry for that version).
   * Adjust LSB headers of init script to update-rc.d params, closes: #476097.
   * debian/console-screen.kbd.sh: Don’t do anything if setupcon is present.
     console-setup will do the setup, anyway.
+  * Create symlinks for loadkeys and dumpkeys in /usr/bin for better
+    compatibility with console-tools.
 
- -- Michael Schutte <m.schutte.jr@gmail.com>  Fri, 25 Apr 2008 15:16:52 +0200
+ -- Michael Schutte <m.schutte.jr@gmail.com>  Sat, 26 Apr 2008 11:08:57 +0200
 
 kbd (1.14.1-1) unstable; urgency=low
 
