@@ -4,12 +4,12 @@ kbd (1.14.1-2) unstable; urgency=low
     closes: #443606.  This partially reverts a change done in 1.12-15 (see the
     third changelog entry for that version).
   * Adjust LSB headers of init script to update-rc.d params, closes: #476097.
-  * debian/console-screen.kbd.sh: Don’t do anything if setupcon is present.
-    console-setup will do the setup, anyway.
+  * debian/console-screen.kbd.sh: Don’t set fonts and keymaps if setupcon is
+    present.  console-setup will run right afterwards, anyway.
   * Create symlinks for loadkeys and dumpkeys in /usr/bin for better
     compatibility with console-tools.  See #261801.
 
- -- Michael Schutte <m.schutte.jr@gmail.com>  Sat, 26 Apr 2008 15:48:27 +0200
+ -- Michael Schutte <m.schutte.jr@gmail.com>  Sat, 26 Apr 2008 16:04:57 +0200
 
 kbd (1.14.1-1) unstable; urgency=low
 

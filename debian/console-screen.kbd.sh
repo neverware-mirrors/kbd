@@ -14,8 +14,6 @@
 # default font and map.
 # (c) 1997 Yann Dirson
 
-[ -x /bin/setupcon ] && exit 0
-
 PKG=kbd
 if [ -r /etc/$PKG/config ]; then
     . /etc/$PKG/config
@@ -41,6 +39,10 @@ done
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 SETFONT_OPT="-v"
 
+if which setupcon >/dev/null
+then
+    HAVE_SETUPCON=yes
+fi
 
 # set DEVICE_PREFIX depending on devfs/udev
 if [ -d /dev/vc ]; then
@@ -117,7 +119,7 @@ setup ()
     LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep -e '\<tty[0-9]*\>' | awk -F: '{printf "%s ", $1}'`
 
     # Global default font+map
-    if [ "${CONSOLE_FONT}" ]; then
+    if [ -z "${HAVE_SETUPCON}" -a "${CONSOLE_FONT}" ]; then
         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up general console font"
         sfm="${FONT_MAP}" && [ "$sfm" ] && sfm="-u $sfm"
         acm="${CONSOLE_MAP}" && [ "$acm" ] && acm="-m $acm"
@@ -138,7 +140,7 @@ setup ()
 
     # Per-VC font+sfm
     PERVC_FONTS="`set | grep "^CONSOLE_FONT_vc[0-9]*="  | tr -d \' `"
-    if [ "${PERVC_FONTS}"  ]; then
+    if [ -z "${HAVE_SETUPCON}" -a "${PERVC_FONTS}" ]; then
         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC fonts"
         for font in ${PERVC_FONTS}
         do
@@ -161,7 +163,7 @@ setup ()
 
     # Per-VC ACMs
     PERVC_ACMS="`set | grep "^CONSOLE_MAP_vc[0-9]*="  | tr -d \' `"
-    if [ "${PERVC_ACMS}" ]; then
+    if [ -z "${HAVE_SETUPCON}" -a "${PERVC_ACMS}" ]; then
         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
         for acm in ${PERVC_ACMS}
           do
@@ -212,7 +214,7 @@ setup ()
     fi
 
     # Allow user to remap keys on the console
-    if [ -r /etc/$PKG/remap ]; then
+    if [ -z "${HAVE_SETUPCON}" -a -r /etc/$PKG/remap ]; then
         dumpkeys < ${DEVICE_PREFIX}1 | sed -f /etc/$PKG/remap | loadkeys --quiet
     fi
 
