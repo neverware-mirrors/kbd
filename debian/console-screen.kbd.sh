@@ -71,14 +71,14 @@ unicode_start_stop ()
     fi
     CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
     if [ "$CHARMAP" = "UTF-8" -a -z "$(eval echo \$CONSOLE_MAP\$CONSOLE_MAP_vc$vc)" ]; then
-	action=unicode_start
+        action=unicode_start
     else
-	action=unicode_stop
+        action=unicode_stop
     fi
     if [ "${CONSOLE_FONT}" ]; then
-	$action "${CONSOLE_FONT}" < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+        $action "${CONSOLE_FONT}" < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
     else
-	$action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
+        $action < ${DEVICE_PREFIX}$vc > ${DEVICE_PREFIX}$vc 2> /dev/null || true
     fi
 }
 
@@ -104,11 +104,11 @@ setup ()
     # start vcstime
     if [ "${DO_VCSTIME}" = "yes" ] && which vcstime >/dev/null; then
         # Different device name for 2.6 kernels and devfs
-	if [ `uname -r | cut -f 2 -d .` = 6 ] && [ -e /dev/.devfsd ]; then
-	    VCSTIME_OPT="-2 /dev/vcsa0"
-	else
-	    VCSTIME_OPT=""
-	fi
+        if [ `uname -r | cut -f 2 -d .` = 6 ] && [ -e /dev/.devfsd ]; then
+            VCSTIME_OPT="-2 /dev/vcsa0"
+        else
+            VCSTIME_OPT=""
+        fi
         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Starting clock on text console"
         vcstime ${VCSTIME_OPT} &
         [ "$VERBOSE" != "no" ] && log_action_end_msg 0
@@ -119,15 +119,15 @@ setup ()
     # Global default font+map
     if [ "${CONSOLE_FONT}" ]; then
         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up general console font"
-	sfm="${FONT_MAP}" && [ "$sfm" ] && sfm="-u $sfm"
-	acm="${CONSOLE_MAP}" && [ "$acm" ] && acm="-m $acm"
+        sfm="${FONT_MAP}" && [ "$sfm" ] && sfm="-u $sfm"
+        acm="${CONSOLE_MAP}" && [ "$acm" ] && acm="-m $acm"
     
         # Set for the first 6 VCs (as they are allocated in /etc/inittab)
         for vc in $LIST_CONSOLES
         do
             if ! ( unicode_start_stop $vc \
-	           && setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm ${CONSOLE_FONT} $acm )
-	    then
+                   && setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm ${CONSOLE_FONT} $acm )
+            then
                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
                 break
             fi
@@ -149,8 +149,8 @@ setup ()
             eval sfm=\${FONT_MAP_vc${vc}}
             [ "$sfm" ] && sfm="-u $sfm"
             if ! ( unicode_start_stop $vc \
-	           && setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font )
-	    then
+                   && setfont -C ${DEVICE_PREFIX}$vc ${SETFONT_OPT} $sfm $font )
+            then
                 [ "$VERBOSE" != "no" ] && log_action_end_msg 1
                 break
             fi
@@ -162,18 +162,18 @@ setup ()
     # Per-VC ACMs
     PERVC_ACMS="`set | grep "^CONSOLE_MAP_vc[0-9]*="  | tr -d \' `"
     if [ "${PERVC_ACMS}" ]; then
-	[ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
-	for acm in ${PERVC_ACMS}
-	  do
-	  # extract VC and ACM_FONTNAME info from variable setting
-	  vc=`echo $acm | cut -b15- | cut -d= -f1`
-	  eval acm=\$CONSOLE_MAP_vc$vc
-	  if ! setfont -C "${DEVICE_PREFIX}$vc" ${SETFONT_OPT} -m "$acm"; then
-	      [ "$VERBOSE" != "no" ] && log_action_end_msg 1
-	      break
-	  fi
-	done
-	[ "$VERBOSE" != "no" ] && log_action_end_msg 0
+        [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up per-VC ACM's"
+        for acm in ${PERVC_ACMS}
+          do
+          # extract VC and ACM_FONTNAME info from variable setting
+          vc=`echo $acm | cut -b15- | cut -d= -f1`
+          eval acm=\$CONSOLE_MAP_vc$vc
+          if ! setfont -C "${DEVICE_PREFIX}$vc" ${SETFONT_OPT} -m "$acm"; then
+              [ "$VERBOSE" != "no" ] && log_action_end_msg 1
+              break
+          fi
+        done
+        [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
     
 
