@@ -229,7 +229,12 @@ setup ()
 
 case "$1" in
     start|reload|restart|force-reload)
-        log_action_msg "Setting console screen modes and fonts"
+        if [ -n "$HAVE_SETUPCON" ]
+        then
+                log_action_msg "Setting console screen modes"
+        else
+                log_action_msg "Setting console screen modes and fonts"
+        fi
         setup
         ;;
     stop)
