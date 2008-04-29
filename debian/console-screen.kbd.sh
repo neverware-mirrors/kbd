@@ -53,7 +53,7 @@ fi
 
 # determine the system charmap
 CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
-if [ "$CHARMAP" = "UTF-8" -a -z "`eval echo \$CONSOLE_MAP\$CONSOLE_MAP_vc$vc`" ]
+if [ "$CHARMAP" = "UTF-8" -a -z "$CONSOLE_MAP" ]
 then
     UNICODE_MODE=yes
 fi
@@ -78,7 +78,7 @@ unicode_start_stop ()
             eval $var=$value
         done
     fi
-    if [ -n "$UNICODE_MODE" ]; then
+    if [ -n "$UNICODE_MODE" -a -z "`eval echo \$CONSOLE_MAP_vc$vc`" ]; then
         action=unicode_start
     else
         action=unicode_stop
