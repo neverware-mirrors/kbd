@@ -51,6 +51,13 @@ else
     DEVICE_PREFIX="/dev/tty"
 fi
 
+# determine the system charmap
+CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
+if [ "$CHARMAP" = "UTF-8" -a -z "`eval echo \$CONSOLE_MAP\$CONSOLE_MAP_vc$vc`" ]
+then
+    UNICODE_MODE=yes
+fi
+
 reset_vga_palette ()
 {
     if [ -f /proc/fb ]; then
@@ -71,8 +78,7 @@ unicode_start_stop ()
             eval $var=$value
         done
     fi
-    CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
-    if [ "$CHARMAP" = "UTF-8" -a -z "$(eval echo \$CONSOLE_MAP\$CONSOLE_MAP_vc$vc)" ]; then
+    if [ -n "$UNICODE_MODE" ]; then
         action=unicode_start
     else
         action=unicode_stop
@@ -137,6 +143,14 @@ setup ()
         [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
 
+    # Default to Unicode mode for new VTs?
+    if [ -f /sys/module/vt/parameters/default_utf8 ]; then
+        if [ -n "$UNICODE_MODE" ]; then
+            echo 1
+        else
+            echo 0
+        fi > /sys/module/vt/parameters/default_utf8
+    fi
 
     # Per-VC font+sfm
     PERVC_FONTS="`set | grep "^CONSOLE_FONT_vc[0-9]*="  | tr -d \' `"
