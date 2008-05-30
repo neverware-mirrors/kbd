@@ -1,3 +1,17 @@
+kbd (1.14.1-3) unstable; urgency=low
+
+  * Change the LSB header of /etc/init.d/console-screen.kbd.sh to provide the
+    unique name console-screen.kbd, closes: #483607.  This avoids collisions
+    when replacing console-tools with kbd (and vice versa).
+  * Remove MIA developer Denis Barbier from Uploaders, closes: #480167.
+  * Set /sys/module/vt/parameters/default_utf8 at bootup, closes: #478480.
+    This enables openvt’ing consoles in Unicode mode depending on the system
+    locale.
+  * Don’t say “Setting console screen modes and fonts” when not setting fonts,
+    to avoid confusing people.
+
+ -- Michael Schutte <m.schutte.jr@gmail.com>  Fri, 30 May 2008 16:04:24 +0200
+
 kbd (1.14.1-2) unstable; urgency=low
 
   * Initialize all consoles in console-screen.kbd.sh, not only the first one;
