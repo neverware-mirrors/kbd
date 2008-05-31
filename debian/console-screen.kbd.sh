@@ -1,6 +1,6 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          console-screen.kbd
+# Provides:          console-screen
 # Required-Start:    $local_fs $remote_fs
 # Required-Stop:
 # Default-Start:     S
