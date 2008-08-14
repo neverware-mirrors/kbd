@@ -1,3 +1,9 @@
+kbd (1.14.1-5) UNRELEASED; urgency=low
+
+  * 
+
+ -- Michael Schutte <m.schutte.jr@gmail.com>  Thu, 14 Aug 2008 10:59:03 +0200
+
 kbd (1.14.1-4) unstable; urgency=medium
 
   * Read /etc/environment or /etc/default/locale earlier in the init script,
