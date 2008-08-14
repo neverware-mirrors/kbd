@@ -294,6 +294,7 @@ got_vtno:
          execlp(cmd, def_cmd, NULL);
       else
 	 execvp(cmd, &argv[optind]);
+      perror("openvt: exec failed");
       _exit(127);		/* exec failed */
    }
 
