@@ -1718,7 +1718,7 @@ codetoksym(int code) {
 		return NULL;
 	if (KTYP(code) == KT_LETTER)
 		code = K(KT_LATIN, KVAL(code));
-	if (KTYP(code) < syms_size)
+	if (KTYP(code) < syms_size && KVAL(code) < syms[KTYP(code)].size)
 		return syms[KTYP(code)].table[KVAL(code)];
 	code = code ^ 0xf000;
 	if (code < 0)
