@@ -91,7 +91,12 @@ To                      to|To|TO
 \-			{return(DASH);}
 \,			{return(COMMA);}
 \+			{return(PLUS);}
-{Unicode}		{yylval=strtol(yytext+1,NULL,16) ^ 0xf000;return(UNUMBER);}
+{Unicode}		{yylval=strtol(yytext+1,NULL,16) ^ 0xf000;
+			 if (yylval < 0x1000)
+				lkfatal1("unicode keysym out of range: %s", yytext);
+			 else
+				return(UNUMBER);
+			}
 {Decimal}|{Octal}|{Hex}	{yylval=strtol(yytext,NULL,0);return(NUMBER);}
 <RVALUE>{Literal}	{return((yylval=ksymtocode(yytext))==-1?ERROR:LITERAL);}
 {Charset}		{return(CHARSET);}
