@@ -51,18 +51,11 @@ else
     DEVICE_PREFIX="/dev/tty"
 fi
 
-# read environment settings
-if [ -f /etc/environment ] || [ -f /etc/default/locale ]
-then
-for var in LANG LC_CTYPE LC_ALL
-do
-    value=$(egrep "^[^#]*${var}=" /etc/environment /etc/default/locale 2>/dev/null | tail -n1 | cut -d= -f2)
-    eval $var=$value
-done
-fi
-
 # determine the system charmap
-CHARMAP=`LANG=$LANG LC_ALL=$LC_ALL LC_CTYPE=$LC_CTYPE locale charmap 2>/dev/null`
+ENV_FILE=''
+[ -r /etc/environment ] && ENV_FILE="/etc/environment"
+[ -r /etc/default/locale ] && ENV_FILE="/etc/default/locale"
+[ "$ENV_FILE" ] && CHARMAP=$(set -a && . "$ENV_FILE" && locale charmap)
 if [ "$CHARMAP" = "UTF-8" -a -z "$CONSOLE_MAP" ]
 then
     UNICODE_MODE=yes
