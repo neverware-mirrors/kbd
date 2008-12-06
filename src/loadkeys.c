@@ -197,6 +197,7 @@ static void do_constant(void);
 static void do_constant_key (int, u_short);
 static void loadkeys(char *console, int *warned);
 static void mktable(void);
+static void bkeymap(void);
 static void strings_as_usual(void);
 /* static void keypad_as_usual(char *keyboard); */
 /* static void function_keys_as_usual(char *keyboard); */
@@ -207,6 +208,7 @@ extern int set_charset(const char *charset);
 extern char *xstrdup(char *);
 int key_buf[MAX_NR_KEYMAPS];
 int mod;
+extern int unicode_used;
 int private_error_ct = 0;
 
 extern int rvalct;
@@ -250,7 +252,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 254 "y.tab.c"
+#line 256 "loadkeys.c"
 
 #ifdef short
 # undef short
@@ -465,16 +467,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   83
+#define YYLAST   81
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  36
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  20
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  50
+#define YYNRULES  49
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  90
+#define YYNSTATES  89
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -527,8 +529,7 @@ static const yytype_uint8 yyprhs[] =
       19,    21,    23,    25,    27,    31,    34,    39,    46,    51,
       55,    59,    61,    65,    67,    73,    80,    87,    88,    96,
      103,   106,   108,   110,   112,   114,   116,   118,   120,   122,
-     124,   126,   132,   133,   136,   138,   140,   142,   144,   147,
-     150
+     124,   126,   132,   133,   136,   138,   140,   142,   145,   147
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -548,19 +549,17 @@ static const yytype_int8 yyrhs[] =
       12,    -1,    13,    -1,    14,    -1,    15,    -1,    16,    -1,
       17,    -1,    18,    -1,    19,    -1,     8,     4,     9,    53,
        3,    -1,    -1,    54,    53,    -1,    55,    -1,     4,    -1,
-       5,    -1,    29,    -1,    28,     4,    -1,    28,    29,    -1,
-      28,     5,    -1
+      29,    -1,    28,     4,    -1,     5,    -1,    28,     5,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    91,    91,    92,    94,    95,    96,    97,    98,    99,
-     100,   101,   102,   103,   105,   110,   115,   120,   124,   129,
-     134,   135,   137,   143,   148,   157,   161,   166,   166,   171,
-     176,   177,   179,   180,   181,   182,   183,   184,   185,   186,
-     187,   189,   222,   223,   225,   232,   234,   236,   238,   240,
-     242
+       0,    93,    93,    94,    96,    97,    98,    99,   100,   101,
+     102,   103,   104,   105,   107,   112,   117,   122,   126,   131,
+     136,   137,   139,   145,   150,   159,   163,   168,   168,   173,
+     178,   179,   181,   182,   183,   184,   185,   186,   187,   188,
+     189,   191,   224,   225,   227,   234,   236,   238,   240,   242
 };
 #endif
 
@@ -600,8 +599,7 @@ static const yytype_uint8 yyr1[] =
       38,    38,    38,    38,    39,    40,    41,    42,    42,    43,
       44,    44,    45,    45,    46,    47,    47,    49,    48,    48,
       50,    50,    51,    51,    51,    51,    51,    51,    51,    51,
-      51,    52,    53,    53,    54,    55,    55,    55,    55,    55,
-      55
+      51,    52,    53,    53,    54,    55,    55,    55,    55,    55
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -611,8 +609,7 @@ static const yytype_uint8 yyr2[] =
        1,     1,     1,     1,     3,     2,     4,     6,     4,     3,
        3,     1,     3,     1,     5,     6,     6,     0,     7,     6,
        2,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     5,     0,     2,     1,     1,     1,     1,     2,     2,
-       2
+       1,     5,     0,     2,     1,     1,     1,     2,     1,     2
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -626,9 +623,9 @@ static const yytype_uint8 yydefact[] =
        0,     0,    15,     0,    32,    33,    34,    35,    36,    37,
       38,    39,    40,     0,    31,    14,     0,    19,     0,    42,
        0,     0,     0,     0,     0,     0,    30,    22,    20,    45,
-      46,     0,    47,     0,    42,    44,     0,     0,     0,    18,
-       0,    16,     0,    48,    50,    49,    41,    43,     0,    24,
-       0,     0,     0,     0,    29,    25,    26,    17,     0,    28
+      48,     0,    46,     0,    42,    44,     0,     0,     0,    18,
+       0,    16,     0,    47,    49,    41,    43,     0,    24,     0,
+       0,     0,     0,    29,    25,    26,    17,     0,    28
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -640,25 +637,25 @@ static const yytype_int8 yydefgoto[] =
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -49
+#define YYPACT_NINF -48
 static const yytype_int8 yypact[] =
 {
-     -49,     3,   -49,   -49,   -15,     8,    17,    14,    18,   -25,
-      21,    -2,   -49,   -49,   -49,   -49,   -49,   -49,   -49,   -49,
-     -49,    41,   -49,    28,    15,    -1,   -49,    33,    57,    53,
-      11,    30,   -49,    31,   -49,   -49,   -49,   -49,   -49,   -49,
-     -49,   -49,   -49,    32,   -49,   -49,    61,   -49,     8,    10,
-      58,    43,    44,    -3,    65,    66,   -49,   -49,   -49,   -49,
-     -49,    12,   -49,    68,    10,   -49,    10,    69,     0,   -49,
-      50,   -49,    67,   -49,   -49,   -49,   -49,   -49,    71,   -49,
-      72,    74,    75,    10,   -49,   -49,   -49,   -49,    76,   -49
+     -48,     3,   -48,   -48,   -16,     8,    16,    14,    18,   -24,
+      21,    -1,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
+     -48,    38,   -48,    27,    15,    -2,   -48,    49,    55,    51,
+      35,    30,   -48,    31,   -48,   -48,   -48,   -48,   -48,   -48,
+     -48,   -48,   -48,    29,   -48,   -48,    58,   -48,     8,    10,
+      56,    43,    42,    -3,    65,    66,   -48,   -48,   -48,   -48,
+     -48,    12,   -48,    68,    10,   -48,    10,    69,     0,   -48,
+      46,   -48,    64,   -48,   -48,   -48,   -48,    71,   -48,    72,
+      73,    74,    10,   -48,   -48,   -48,   -48,    75,   -48
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -49,   -49,   -49,   -49,   -49,   -49,   -49,   -49,   -49,    34,
-     -49,   -49,   -49,   -49,   -49,    37,   -49,    19,   -49,   -48
+     -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,    32,
+     -48,   -48,   -48,   -48,   -48,    36,   -48,    17,   -48,   -47
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -668,28 +665,28 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      69,    30,    47,     2,    59,    60,     3,    31,    23,     4,
-       5,     6,    24,     7,    59,    60,    73,    74,    78,    48,
-      81,    27,    28,    29,    32,     8,    80,     9,    61,    62,
-      33,    45,    70,    10,    11,    88,    46,    52,    61,    62,
-      55,    75,    49,    34,    35,    36,    37,    38,    39,    40,
-      41,    42,    34,    35,    36,    37,    38,    39,    40,    41,
-      42,    50,    51,    53,    54,    57,    67,    66,    71,    68,
-      72,    76,    79,    82,    84,    85,    83,    86,    87,    89,
-      56,     0,    58,    77
+      69,    47,    30,     2,    59,    60,     3,    23,    31,     4,
+       5,     6,    24,     7,    59,    60,    73,    74,    48,    77,
+      27,    80,    28,    29,    32,     8,    79,     9,    61,    62,
+      45,    33,    70,    10,    11,    87,    46,    55,    61,    62,
+      34,    35,    36,    37,    38,    39,    40,    41,    42,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    49,    50,
+      51,    52,    57,    53,    54,    66,    67,    68,    71,    81,
+      72,    75,    78,    82,    83,    84,    85,    86,    88,    56,
+      58,    76
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-       3,    26,     3,     0,     4,     5,     3,    32,    23,     6,
-       7,     8,     4,    10,     4,     5,     4,     5,    66,    20,
-      68,     4,     8,     5,     3,    22,    26,    24,    28,    29,
-      32,     3,    35,    30,    31,    83,    21,    26,    28,    29,
-       8,    29,     9,    11,    12,    13,    14,    15,    16,    17,
-      18,    19,    11,    12,    13,    14,    15,    16,    17,    18,
-      19,     4,     9,    33,    33,     4,    23,     9,     3,    25,
-       4,     3,     3,    23,     3,     3,     9,     3,     3,     3,
-      43,    -1,    48,    64
+       3,     3,    26,     0,     4,     5,     3,    23,    32,     6,
+       7,     8,     4,    10,     4,     5,     4,     5,    20,    66,
+       4,    68,     8,     5,     3,    22,    26,    24,    28,    29,
+       3,    32,    35,    30,    31,    82,    21,     8,    28,    29,
+      11,    12,    13,    14,    15,    16,    17,    18,    19,    11,
+      12,    13,    14,    15,    16,    17,    18,    19,     9,     4,
+       9,    26,     4,    33,    33,     9,    23,    25,     3,    23,
+       4,     3,     3,     9,     3,     3,     3,     3,     3,    43,
+      48,    64
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -703,8 +700,8 @@ static const yytype_uint8 yystos[] =
       17,    18,    19,    50,    51,     3,    21,     3,    20,     9,
        4,     9,    26,    33,    33,     8,    51,     4,    45,     4,
        5,    28,    29,    53,    54,    55,     9,    23,    25,     3,
-      35,     3,     4,     4,     5,    29,     3,    53,    55,     3,
-      26,    55,    23,     9,     3,     3,     3,     3,    55,     3
+      35,     3,     4,     4,     5,     3,    53,    55,     3,    26,
+      55,    23,     9,     3,     3,     3,     3,    55,     3
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1519,49 +1516,49 @@ yyreduce:
   switch (yyn)
     {
         case 14:
-#line 106 "loadkeys.y"
+#line 108 "loadkeys.y"
     {
 			    set_charset((char *) kbs_buf.kb_string);
 			}
     break;
 
   case 15:
-#line 111 "loadkeys.y"
+#line 113 "loadkeys.y"
     {
 			    alt_is_meta = 1;
 			}
     break;
 
   case 16:
-#line 116 "loadkeys.y"
+#line 118 "loadkeys.y"
     {
 			    strings_as_usual();
 			}
     break;
 
   case 17:
-#line 121 "loadkeys.y"
+#line 123 "loadkeys.y"
     {
 			    compose_as_usual((char *) kbs_buf.kb_string);
 			}
     break;
 
   case 18:
-#line 125 "loadkeys.y"
+#line 127 "loadkeys.y"
     {
 			    compose_as_usual(0);
 			}
     break;
 
   case 19:
-#line 130 "loadkeys.y"
+#line 132 "loadkeys.y"
     {
 			    keymaps_line_seen = 1;
 			}
     break;
 
   case 22:
-#line 138 "loadkeys.y"
+#line 140 "loadkeys.y"
     {
 			    int i;
 			    for (i = (yyvsp[(1) - (3)]); i<= (yyvsp[(3) - (3)]); i++)
@@ -1570,14 +1567,14 @@ yyreduce:
     break;
 
   case 23:
-#line 144 "loadkeys.y"
+#line 146 "loadkeys.y"
     {
 			    addmap((yyvsp[(1) - (1)]),1);
 			}
     break;
 
   case 24:
-#line 149 "loadkeys.y"
+#line 151 "loadkeys.y"
     {
 			    if (KTYP((yyvsp[(2) - (5)])) != KT_FN)
 				lkfatal1(_("'%s' is not a function key symbol"),
@@ -1588,85 +1585,85 @@ yyreduce:
     break;
 
   case 25:
-#line 158 "loadkeys.y"
+#line 160 "loadkeys.y"
     {
 			    compose((yyvsp[(2) - (6)]), (yyvsp[(3) - (6)]), (yyvsp[(5) - (6)]));
 			}
     break;
 
   case 26:
-#line 162 "loadkeys.y"
+#line 164 "loadkeys.y"
     {
 			    compose((yyvsp[(2) - (6)]), (yyvsp[(3) - (6)]), (yyvsp[(5) - (6)]));
 			}
     break;
 
   case 27:
-#line 166 "loadkeys.y"
+#line 168 "loadkeys.y"
     { mod = 0; }
     break;
 
   case 28:
-#line 168 "loadkeys.y"
+#line 170 "loadkeys.y"
     {
 			    addkey((yyvsp[(4) - (7)]), mod, (yyvsp[(6) - (7)]));
 			}
     break;
 
   case 29:
-#line 172 "loadkeys.y"
+#line 174 "loadkeys.y"
     {
 			    addkey((yyvsp[(3) - (6)]), 0, (yyvsp[(5) - (6)]));
 			}
     break;
 
   case 32:
-#line 179 "loadkeys.y"
+#line 181 "loadkeys.y"
     { mod |= M_SHIFT;	}
     break;
 
   case 33:
-#line 180 "loadkeys.y"
+#line 182 "loadkeys.y"
     { mod |= M_CTRL;	}
     break;
 
   case 34:
-#line 181 "loadkeys.y"
+#line 183 "loadkeys.y"
     { mod |= M_ALT;		}
     break;
 
   case 35:
-#line 182 "loadkeys.y"
+#line 184 "loadkeys.y"
     { mod |= M_ALTGR;	}
     break;
 
   case 36:
-#line 183 "loadkeys.y"
+#line 185 "loadkeys.y"
     { mod |= M_SHIFTL;	}
     break;
 
   case 37:
-#line 184 "loadkeys.y"
+#line 186 "loadkeys.y"
     { mod |= M_SHIFTR;	}
     break;
 
   case 38:
-#line 185 "loadkeys.y"
+#line 187 "loadkeys.y"
     { mod |= M_CTRLL;	}
     break;
 
   case 39:
-#line 186 "loadkeys.y"
+#line 188 "loadkeys.y"
     { mod |= M_CTRLR;	}
     break;
 
   case 40:
-#line 187 "loadkeys.y"
+#line 189 "loadkeys.y"
     { mod |= M_CAPSSHIFT;	}
     break;
 
   case 41:
-#line 190 "loadkeys.y"
+#line 192 "loadkeys.y"
     {
 	    int i, j;
 
@@ -1700,47 +1697,42 @@ yyreduce:
     break;
 
   case 44:
-#line 226 "loadkeys.y"
+#line 228 "loadkeys.y"
     {
 			    if (rvalct >= MAX_NR_KEYMAPS)
-				lkfatal(_("too many keydefinitions on one line"));
+				lkfatal(_("too many key definitions on one line"));
 			    key_buf[rvalct++] = (yyvsp[(1) - (1)]);
 			}
     break;
 
   case 45:
-#line 233 "loadkeys.y"
-    {(yyval)=add_number((yyvsp[(1) - (1)]));}
+#line 235 "loadkeys.y"
+    {(yyval)=(yyvsp[(1) - (1)]);}
     break;
 
   case 46:
-#line 235 "loadkeys.y"
-    {(yyval)=add_number((yyvsp[(1) - (1)]));}
+#line 237 "loadkeys.y"
+    {(yyval)=((yyvsp[(1) - (1)]) ^ 0xf000); unicode_used=1;}
     break;
 
   case 47:
-#line 237 "loadkeys.y"
-    {(yyval)=add_number((yyvsp[(1) - (1)]));}
-    break;
-
-  case 48:
 #line 239 "loadkeys.y"
     {(yyval)=add_capslock((yyvsp[(2) - (2)]));}
     break;
 
-  case 49:
+  case 48:
 #line 241 "loadkeys.y"
-    {(yyval)=add_capslock((yyvsp[(2) - (2)]));}
+    {(yyval)=(yyvsp[(1) - (1)]);}
     break;
 
-  case 50:
+  case 49:
 #line 243 "loadkeys.y"
     {(yyval)=add_capslock((yyvsp[(2) - (2)]));}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1744 "y.tab.c"
+#line 1736 "loadkeys.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1965,24 +1957,25 @@ usage(void) {
 "\n"
 "Usage: loadkeys [option...] [mapfile...]\n"
 "\n"
-"valid options are:\n"
+"Valid options are:\n"
 "\n"
-"	-c --clearcompose clear kernel compose table\n"
-"	-C <cons1,cons2,...>\n"
-"	--console=<...>   Indicate console device(s) to be used.\n"
-"	-d --default	  load \"" DEFMAP "\"\n"
-"	-h --help	  display this help text\n"
-"	-m --mktable      output a \"defkeymap.c\" to stdout\n"
-"	-s --clearstrings clear kernel string table\n"
-"	-u --unicode      implicit conversion to Unicode\n"
-"	-v --verbose      report the changes\n"), PACKAGE_VERSION);
+"  -b --bkeymap       output a binary keymap to stdout\n"
+"  -c --clearcompose  clear kernel compose table\n"
+"  -C <cons1,cons2,...> --console=<cons1,cons2,...>\n"
+"                     the console device(s) to be used\n"
+"  -d --default       load \"%s\"\n"
+"  -h --help          display this help text\n"
+"  -m --mktable       output a \"defkeymap.c\" to stdout\n"
+"  -s --clearstrings  clear kernel string table\n"
+"  -u --unicode       implicit conversion to Unicode\n"
+"  -v --verbose       report the changes\n"), PACKAGE_VERSION, DEFMAP);
 	exit(1);
 }
 
 char **args;
+int optb = 0;
 int optd = 0;
 int optm = 0;
-int optu = 0;
 int opts = 0;
 int verbose = 0;
 int quiet = 0;
@@ -1990,8 +1983,9 @@ int nocompose = 0;
 
 int
 main(int argc, char *argv[]) {
-	const char *short_opts = "cC:dhmsuqvV";
+	const char *short_opts = "bcC:dhmsuqvV";
 	const struct option long_opts[] = {
+		{ "bkeymap",    no_argument, NULL, 'b' },
 		{ "clearcompose", no_argument, NULL, 'c' },
 		{ "console",    1, NULL, 'C' },
 	        { "default",    no_argument, NULL, 'd' },
@@ -2005,16 +1999,21 @@ main(int argc, char *argv[]) {
 		{ NULL, 0, NULL, 0 }
 	};
 	int c;
-	int fd;
-	int mode;
 	char *console = NULL;
         int warned = 0;
 
 	set_progname(argv[0]);
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+	textdomain(PACKAGE_NAME);
+
 	while ((c = getopt_long(argc, argv,
 		short_opts, long_opts, NULL)) != -1) {
 		switch (c) {
+		        case 'b':
+		                optb = 1;
+				break;
 		        case 'c':
 		                nocompose = 1;
 				break;
@@ -2032,7 +2031,6 @@ main(int argc, char *argv[]) {
 				break;
 			case 'u':
 				set_charset("unicode");
-				optu = 1;
 				break;
 			case 'q':
 				quiet = 1;
@@ -2048,20 +2046,8 @@ main(int argc, char *argv[]) {
 		}
 	}
 
-	if (!optm) {
-		fd = getfd(NULL);
-		if (!optu) {
-			if (ioctl(fd, KDGKBMODE, &mode)) {
-				perror("KDGKBMODE");
-				fprintf(stderr, _("loadkeys: error reading keyboard mode\n"));
-				exit(1);
-			}
-			if (mode == K_UNICODE)
-				set_charset("unicode");
-		}
-	}
-
 	args = argv + optind - 1;
+	unicode_used = 0;
 	yywrap();	/* set up the first input file, if any */
 	if (yyparse() || private_error_ct) {
 		fprintf(stderr, _("syntax error in map file\n"));
@@ -2070,9 +2056,11 @@ main(int argc, char *argv[]) {
 		exit(1);
 	}
 	do_constant();
-	if(optm)
+	if(optb) {
+		bkeymap();
+	} else if(optm) {
 	        mktable();
-	else if (console)
+	} else if (console)
 	  {
 	    char *buf = strdup(console);	/* make writable */
 	    char *e, *s = buf;
@@ -2141,7 +2129,7 @@ int infile_stack_ptr = 0;
 void
 lk_push(void) {
 	if (infile_stack_ptr >= MAX_INCLUDE_DEPTH)
-		lkfatal(_("includes nested too deeply"));
+		lkfatal(_("includes are nested too deeply"));
 
 	/* preserve current state */
 	infile_stack[infile_stack_ptr].filename = filename;
@@ -2526,6 +2514,15 @@ defkeys(int fd, char *cons, int *warned) {
 	int i,j,fail;
 	int oldm;
 
+	if (unicode_used) {
+	     /* Switch keyboard mode for a moment -
+		do not complain about errors.
+		Do not attempt a reset if the change failed. */
+	     if (ioctl(fd, KDGKBMODE, &oldm)
+	        || (oldm != K_UNICODE && ioctl(fd, KDSKBMODE, K_UNICODE)))
+		  oldm = K_UNICODE;
+	}
+
 	for(i=0; i<MAX_NR_KEYMAPS; i++) {
 	    if (key_map[i]) {
 		for(j=0; j<NR_KEYS; j++) {
@@ -2546,7 +2543,7 @@ defkeys(int fd, char *cons, int *warned) {
 			} else
 			  ct++;
 			if(verbose)
-			  printf("keycode %d, table %d = %d%s\n", j, i,
+			  printf(_("keycode %d, table %d = %d%s\n"), j, i,
 				 (key_map[i])[j], fail ? _("    FAILED") : "");
 			else if (fail)
 			  fprintf(stderr,
@@ -2591,6 +2588,27 @@ defkeys(int fd, char *cons, int *warned) {
 	    }
 	}
 
+	if(unicode_used && oldm != K_UNICODE) {
+	     if (ioctl(fd, KDSKBMODE, oldm)) {
+		  fprintf(stderr, _("%s: failed to restore keyboard mode\n"),
+			  progname);
+	     }
+
+	     if (!warned++)
+	       {
+		     int kd_mode = -1;
+		     if (ioctl(fd, KDGETMODE, &kd_mode) || (kd_mode != KD_GRAPHICS))
+		       {
+			 /*
+			  * It is okay for the graphics console to have a non-unicode mode.
+			  * only talk about other consoles
+			  */
+			 fprintf(stderr, _("%s: warning: this map uses Unicode symbols, %s mode=%d\n"
+				     "    (perhaps you want to do `kbd_mode -u'?)\n"),
+			     progname, cons ? cons : "NULL", kd_mode);
+		       }
+	       }
+	}
 	return ct;
 }
 
@@ -2963,5 +2981,34 @@ mktable () {
 	       accent_table_size);
 
 	exit(0);
+}
+
+static void
+bkeymap () {
+	int i, j;
+
+	u_char *p;
+	char flag, magic[] = "bkeymap";
+	unsigned short v;
+
+	if (write(1, magic, 7) == -1)
+		goto fail;
+	for (i = 0; i < MAX_NR_KEYMAPS; i++) {
+		flag = key_map[i] ? 1 : 0;
+		if (write(1, &flag, 1) == -1)
+			goto fail;
+	}
+	for (i = 0; i < MAX_NR_KEYMAPS; i++) {
+		if (key_map[i]) {
+			for (j = 0; j < NR_KEYS / 2; j++) {
+				v = key_map[i][j];
+				if (write(1, &v, 2) == -1)
+					goto fail;
+			}
+		}
+	}
+	exit(0);
+fail:	fprintf(stderr, _("Error writing map to file\n"));
+	exit(1);
 }
 

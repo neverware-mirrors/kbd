@@ -65,6 +65,7 @@ static void do_constant(void);
 static void do_constant_key (int, u_short);
 static void loadkeys(char *console, int *warned);
 static void mktable(void);
+static void bkeymap(void);
 static void strings_as_usual(void);
 /* static void keypad_as_usual(char *keyboard); */
 /* static void function_keys_as_usual(char *keyboard); */
@@ -225,7 +226,7 @@ rvalue0		:
 rvalue1		: rvalue
 			{
 			    if (rvalct >= MAX_NR_KEYMAPS)
-				lkfatal(_("too many keydefinitions on one line"));
+				lkfatal(_("too many key definitions on one line"));
 			    key_buf[rvalct++] = $1;
 			}
 		;
@@ -252,21 +253,23 @@ usage(void) {
 "\n"
 "Usage: loadkeys [option...] [mapfile...]\n"
 "\n"
-"valid options are:\n"
+"Valid options are:\n"
 "\n"
-"	-c --clearcompose clear kernel compose table\n"
-"	-C <cons1,cons2,...>\n"
-"	--console=<...>   Indicate console device(s) to be used.\n"
-"	-d --default	  load \"" DEFMAP "\"\n"
-"	-h --help	  display this help text\n"
-"	-m --mktable      output a \"defkeymap.c\" to stdout\n"
-"	-s --clearstrings clear kernel string table\n"
-"	-u --unicode      implicit conversion to Unicode\n"
-"	-v --verbose      report the changes\n"), PACKAGE_VERSION);
+"  -b --bkeymap       output a binary keymap to stdout\n"
+"  -c --clearcompose  clear kernel compose table\n"
+"  -C <cons1,cons2,...> --console=<cons1,cons2,...>\n"
+"                     the console device(s) to be used\n"
+"  -d --default       load \"%s\"\n"
+"  -h --help          display this help text\n"
+"  -m --mktable       output a \"defkeymap.c\" to stdout\n"
+"  -s --clearstrings  clear kernel string table\n"
+"  -u --unicode       implicit conversion to Unicode\n"
+"  -v --verbose       report the changes\n"), PACKAGE_VERSION, DEFMAP);
 	exit(1);
 }
 
 char **args;
+int optb = 0;
 int optd = 0;
 int optm = 0;
 int optu = 0;
@@ -277,8 +280,9 @@ int nocompose = 0;
 
 int
 main(int argc, char *argv[]) {
-	const char *short_opts = "cC:dhmsuqvV";
+	const char *short_opts = "bcC:dhmsuqvV";
 	const struct option long_opts[] = {
+		{ "bkeymap",    no_argument, NULL, 'b' },
 		{ "clearcompose", no_argument, NULL, 'c' },
 		{ "console",    1, NULL, 'C' },
 	        { "default",    no_argument, NULL, 'd' },
@@ -299,9 +303,16 @@ main(int argc, char *argv[]) {
 
 	set_progname(argv[0]);
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+	textdomain(PACKAGE_NAME);
+
 	while ((c = getopt_long(argc, argv,
 		short_opts, long_opts, NULL)) != -1) {
 		switch (c) {
+		        case 'b':
+		                optb = 1;
+				break;
 		        case 'c':
 		                nocompose = 1;
 				break;
@@ -357,9 +368,11 @@ main(int argc, char *argv[]) {
 		exit(1);
 	}
 	do_constant();
-	if(optm)
+	if(optb) {
+		bkeymap();
+	} else if(optm) {
 	        mktable();
-	else if (console)
+	} else if (console)
 	  {
 	    char *buf = strdup(console);	/* make writable */
 	    char *e, *s = buf;
@@ -428,7 +441,7 @@ int infile_stack_ptr = 0;
 void
 lk_push(void) {
 	if (infile_stack_ptr >= MAX_INCLUDE_DEPTH)
-		lkfatal(_("includes nested too deeply"));
+		lkfatal(_("includes are nested too deeply"));
 
 	/* preserve current state */
 	infile_stack[infile_stack_ptr].filename = filename;
@@ -833,7 +846,7 @@ defkeys(int fd, char *cons, int *warned) {
 			} else
 			  ct++;
 			if(verbose)
-			  printf("keycode %d, table %d = %d%s\n", j, i,
+			  printf(_("keycode %d, table %d = %d%s\n"), j, i,
 				 (key_map[i])[j], fail ? _("    FAILED") : "");
 			else if (fail)
 			  fprintf(stderr,
@@ -1250,4 +1263,33 @@ mktable () {
 	       accent_table_size);
 
 	exit(0);
+}
+
+static void
+bkeymap () {
+	int i, j;
+
+	u_char *p;
+	char flag, magic[] = "bkeymap";
+	unsigned short v;
+
+	if (write(1, magic, 7) == -1)
+		goto fail;
+	for (i = 0; i < MAX_NR_KEYMAPS; i++) {
+		flag = key_map[i] ? 1 : 0;
+		if (write(1, &flag, 1) == -1)
+			goto fail;
+	}
+	for (i = 0; i < MAX_NR_KEYMAPS; i++) {
+		if (key_map[i]) {
+			for (j = 0; j < NR_KEYS / 2; j++) {
+				v = key_map[i][j];
+				if (write(1, &v, 2) == -1)
+					goto fail;
+			}
+		}
+	}
+	exit(0);
+fail:	fprintf(stderr, _("Error writing map to file\n"));
+	exit(1);
 }
