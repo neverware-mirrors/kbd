@@ -2,20 +2,20 @@ kbd (1.15-1) UNRELEASED; urgency=low
 
   * New upstream release.
     - Adds translations for Danish, French, Swedish and Turkish.
-  * Fail cleanly on Unicode keysyms >= 0xf000, closes: #500116.
+    - Fail cleanly on Unicode keysyms >= 0xf000, closes: #500116.
+    - Print an error message when calls to exec* functions fail, closes:
+      #190387.  Patch proposed by Ian Jackson, thanks!
   * Read /etc/environment sanely, closes: #506318.  Let the shell parse
     the locale configuration files instead of using a grep | tail | cut
     pipeline to avoid reading garbage.  This is the same as #364797 in
     console-tools which was subsequently fixed by the patch proposed in
     #382115.  Thanks to Colin Watson for the idea.
-  * Print an error message when calls to exec* functions fail, closes:
-    #190387.  Patch proposed by Ian Jackson, thanks!
   * Revamp debian/rules to use debhelper 7; change control and compat
     accordingly.
   * Build-depend on flex and bison to generate analyze.c and loadkeys.c from
     analyze.l and loadkeys.y, respectively.
 
- -- Michael Schutte <m.schutte.jr@gmail.com>  Sun, 07 Dec 2008 19:11:07 +0100
+ -- Michael Schutte <m.schutte.jr@gmail.com>  Mon, 08 Dec 2008 19:22:08 +0100
 
 kbd (1.14.1-4) unstable; urgency=medium
 
