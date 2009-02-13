@@ -1866,7 +1866,7 @@ add_capslock(int code)
 {
 	if (KTYP(code) == KT_LATIN)
 		return K(KT_LETTER, KVAL(code));
-	if (KTYP(code) >= syms_size && (code ^ 0xf000) < 0x80)
-		return K(KT_LETTER, code ^ 0xf000);
+	if (KTYP(code ^ 0xf000) == KT_LATIN)
+		return K(KT_LETTER, KVAL(code ^ 0xf000));
 	return add_number(code);
 }
