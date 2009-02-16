@@ -46,6 +46,7 @@ clean:
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
 	[ ! -f po/cat-id-tbl.c.orig ] || mv po/cat-id-tbl.c.orig po/cat-id-tbl.c
+	find -name Makefile.in -not -path ./po/Makefile.in -exec rm {} \;
 	dh clean
 
 install: build-stamp
