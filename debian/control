@@ -2,7 +2,7 @@ Source: kbd
 Section: utils
 Priority: extra
 Maintainer: Console utilities maintainers <pkg-kbd-devel@lists.alioth.debian.org>
-Uploaders: Michael Schutte <m.schutte.jr@gmail.com>, Anton Zinoviev <zinoviev@debian.org>
+Uploaders: Michael Schutte <michi@uiae.at>, Anton Zinoviev <zinoviev@debian.org>
 Build-Depends: debhelper (>= 7.0.0~), autoconf, automake, linuxdoc-tools, gettext, flex, bison
 Standards-Version: 3.8.0
 Vcs-Git: git://git.debian.org/git/pkg-kbd/kbd.git

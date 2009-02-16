@@ -5,6 +5,7 @@ kbd (1.15-1) UNRELEASED; urgency=low
     - Fail cleanly on Unicode keysyms >= 0xf000, closes: #500116.
     - Print an error message when calls to exec* functions fail, closes:
       #190387.  Patch proposed by Ian Jackson, thanks!
+  * Change my e-mail address in debian/{control,copyright}.
   * Read /etc/environment sanely, closes: #506318.  Let the shell parse
     the locale configuration files instead of using a grep | tail | cut
     pipeline to avoid reading garbage.  This is the same as #364797 in
@@ -15,7 +16,7 @@ kbd (1.15-1) UNRELEASED; urgency=low
   * Build-depend on flex and bison to generate analyze.c and loadkeys.c from
     analyze.l and loadkeys.y, respectively.
 
- -- Michael Schutte <m.schutte.jr@gmail.com>  Mon, 08 Dec 2008 19:22:08 +0100
+ -- Michael Schutte <michi@uiae.at>  Mon, 08 Dec 2008 19:22:08 +0100
 
 kbd (1.14.1-4) unstable; urgency=medium
 
