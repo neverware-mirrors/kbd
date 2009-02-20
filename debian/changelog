@@ -22,8 +22,9 @@ kbd (1.15-1) unstable; urgency=low
     keymaps(5), closes: #514908.  Thanks to Frédéric Boiteux
     <fboiteux@free.fr> for the idea.
   * Point to console-data in the long description, like console-tools does.
+  * Add ${misc:Depends}.
 
- -- Michael Schutte <michi@uiae.at>  Fri, 20 Feb 2009 17:50:59 +0100
+ -- Michael Schutte <michi@uiae.at>  Fri, 20 Feb 2009 17:52:16 +0100
 
 kbd (1.14.1-4) unstable; urgency=medium
 

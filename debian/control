@@ -10,7 +10,7 @@ Vcs-Browser: http://git.debian.org/?p=pkg-kbd/kbd.git
 
 Package: kbd
 Architecture: any
-Depends: ${shlibs:Depends}, console-common | console-setup, lsb-base (>= 3.0-10)
+Depends: ${shlibs:Depends}, ${misc:Depends}, console-common | console-setup, lsb-base (>= 3.0-10)
 Recommends: console-data (>= 1999.08.29-13) | console-setup
 Provides: console-utilities, open
 Conflicts: console-utilities, kbd-data, open, util-linux (<< 2.11)
