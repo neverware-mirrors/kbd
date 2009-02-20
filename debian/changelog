@@ -21,8 +21,9 @@ kbd (1.15-1) unstable; urgency=low
   * Allow all Latin keysyms to be treated as “letter” in the sense of
     keymaps(5), closes: #514908.  Thanks to Frédéric Boiteux
     <fboiteux@free.fr> for the idea.
+  * Point to console-data in the long description, like console-tools does.
 
- -- Michael Schutte <michi@uiae.at>  Mon, 16 Feb 2009 21:09:14 +0100
+ -- Michael Schutte <michi@uiae.at>  Fri, 20 Feb 2009 17:50:59 +0100
 
 kbd (1.14.1-4) unstable; urgency=medium
 
