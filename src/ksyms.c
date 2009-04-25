@@ -1,4 +1,3 @@
-#include <linux/kd.h>
 #include <linux/keyboard.h>
 #include <stdio.h>
 #include <string.h>
@@ -1710,17 +1709,10 @@ set_charset(const char *charset) {
 }
 
 const char *
-codetoksym(int code) {
+unicodetoksym(int code) {
 	int i, j;
 	sym *p;
 
-	if (KTYP(code) == KT_META)
-		return NULL;
-	if (KTYP(code) == KT_LETTER)
-		code = K(KT_LATIN, KVAL(code));
-	if (KTYP(code) < syms_size)
-		return syms[KTYP(code)].table[KVAL(code)];
-	code = code ^ 0xf000;
 	if (code < 0)
 		return NULL;
 	if (code < 0x80)
@@ -1737,27 +1729,17 @@ codetoksym(int code) {
 
 /* Functions for loadkeys. */
 
+int unicode_used = 0;
+
 int
 ksymtocode(const char *s) {
 	int i;
-	int j;
+	int j, jmax;
 	int keycode;
-	int save_prefer_unicode;
-	int syms_start = 0;
 	sym *p;
 
-	if (!s) {
-		fprintf(stderr, "%s\n", _("null symbol found"));
-		return -1;
-	}
-
 	if (!strncmp(s, "Meta_", 5)) {
-		/* Temporarily set prefer_unicode to ensure that keycode is
-		   right. */
-		save_prefer_unicode = prefer_unicode;
-		prefer_unicode = 0;
 		keycode = ksymtocode(s+5);
-		prefer_unicode = save_prefer_unicode;
 		if (KTYP(keycode) == KT_LATIN)
 			return K(KT_META, KVAL(keycode));
 
@@ -1768,14 +1750,9 @@ ksymtocode(const char *s) {
 		/* fall through to error printf */
 	}
 
-	if (prefer_unicode) {
-		for (j = 0; j < 0x80; j++)
-			if (!strcmp(s,iso646_syms[j]))
-				return (j ^ 0xf000);
-		syms_start = 1;
-	}
-	for (i = syms_start; i < syms_size; i++) {
-		for (j = 0; j < syms[i].size; j++)
+	for (i = 0; i < syms_size; i++) {
+		jmax = ((i == 0 && prefer_unicode) ? 128 : syms[i].size);
+		for (j = 0; j < jmax; j++)
 			if (!strcmp(s,syms[i].table[j]))
 				return K(i, j);
 	}
@@ -1789,7 +1766,8 @@ ksymtocode(const char *s) {
 			p = charsets[i].charnames;
 			for (j = charsets[i].start; j < 256; j++, p++)
 				if (!strcmp(s,p->name)) {
-					return (p->uni ^ 0xf000);
+					unicode_used = 1;
+					return (p->uni ^ 0xf000); /* %%% */
 				}
 		}
 	} else /* if (!chosen_charset) */ {
@@ -1841,32 +1819,38 @@ ksymtocode(const char *s) {
 }
 
 int
-add_number(int code)
-{
-	const char * kc;
-	if (KTYP(code) == KT_META)
-		return code;
-	if (prefer_unicode && KTYP(code) >= syms_size) {
-		if ((code ^ 0xf000) < 0x80)
-			return K(KT_LATIN, code ^ 0xf000);
-		else
-			return code;
+unicodetocode(int code) {
+	const char *s;
+
+	s = unicodetoksym(code);
+	if (s)
+		return ksymtocode(s);
+	else {
+		unicode_used = 1;
+		return (code ^ 0xf000); /* %%% */
 	}
-	if (!prefer_unicode && KTYP(code) < syms_size)
-		return code;
-	kc = codetoksym(code);
-	if (kc == NULL)
-		return code;
-	else
-		return ksymtocode(kc);
 }
 
 int
 add_capslock(int code)
 {
+	char buf[7];
+	const char *p;
+
 	if (KTYP(code) == KT_LATIN)
 		return K(KT_LETTER, KVAL(code));
-	if (KTYP(code ^ 0xf000) == KT_LATIN)
-		return K(KT_LETTER, KVAL(code ^ 0xf000));
-	return add_number(code);
+	if (KTYP(code) >= syms_size) {
+		if ((p = unicodetoksym(code ^ 0xf000)) == NULL) {
+			sprintf(buf, "U+%04x", code ^ 0xf000);
+			p = buf;
+		}
+	} else {
+		sprintf(buf, "0x%04x", code);
+		p = buf;
+	}
+#if 0
+	/* silence the common usage  dumpkeys | loadkeys -u  */
+	fprintf(stderr, _("plus before %s ignored\n"), p);
+#endif
+	return code;
 }
