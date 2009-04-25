@@ -1,3 +1,9 @@
+kbd (1.15-2) UNRELEASED; urgency=low
+
+  * Not released yet.
+
+ -- Michael Schutte <michi@uiae.at>  Sat, 25 Apr 2009 12:53:44 +0200
+
 kbd (1.15-1) unstable; urgency=low
 
   * New upstream release.
