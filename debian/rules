@@ -42,6 +42,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp configure-stamp
 	[ ! -f Makefile ] || $(MAKE) distclean
+	cd src/ && rm -f analyze.c loadkeys.c
 	rm -f aclocal.m4 depcomp configure
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
