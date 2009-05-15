@@ -12,6 +12,8 @@ MOVE_TO_BIN = kbd_mode setfont fgconsole openvt chvt dumpkeys unicode_start load
 MOVE_TO_SBIN = kbdrate
 MOVE_TO_USR_SBIN = vcstime setvesablank
 
+RETAIN = src/loadkeys.c src/analyze.c po/cat-id-tbl.c
+
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
@@ -25,7 +27,7 @@ configure-stamp:
 build: build-stamp
 build-stamp: configure-stamp
 	dh_testdir
-	cp po/cat-id-tbl.c po/cat-id-tbl.c.orig
+	for ITEM in $(RETAIN); do cp $$ITEM $$ITEM.orig; done
 	cd src/ && flex -o analyze.c analyze.l
 	rm -f src/loadkeys.c
 	$(MAKE) -C src/ CFLAGS="-Os -g" $(UDEB_BINARIES)
@@ -42,11 +44,10 @@ clean:
 	dh_testroot
 	rm -f build-stamp configure-stamp
 	[ ! -f Makefile ] || $(MAKE) distclean
-	cd src/ && rm -f analyze.c loadkeys.c
 	rm -f aclocal.m4 depcomp configure
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
-	[ ! -f po/cat-id-tbl.c.orig ] || mv po/cat-id-tbl.c.orig po/cat-id-tbl.c
+	for ITEM in $(RETAIN); do [ ! -f $$ITEM.orig ] || mv $$ITEM.orig $$ITEM; done
 	find -name Makefile.in -not -path ./po/Makefile.in -exec rm {} \;
 	dh clean
 
