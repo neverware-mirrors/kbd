@@ -1641,12 +1641,14 @@ struct cs {
     { "iso-10646-18",	iso_10646_18_syms, 159 },	/* ethiopic */
     { "iso-ir-197",	iso_ir_197_syms, 160 },		/* sami */
     { "iso-ir-209",	iso_ir_209_syms, 160 },		/* sami */
+    /* When you add a new charset with a long (> 15 chars) name,
+     * please update the chosen_charset definition below. */
 };
 
 /* Functions for both dumpkeys and loadkeys. */
 
 int prefer_unicode = 0;
-static char *chosen_charset = NULL;
+static char chosen_charset[16] = "";
 
 void
 list_charsets(FILE *f) {
@@ -1695,9 +1697,7 @@ set_charset(const char *charset) {
 				if(p->name[0])
 					syms[0].table[i] = p->name;
 			}
-			if (chosen_charset)
-				free(chosen_charset);
-			chosen_charset = strdup(charset);
+			strcpy(chosen_charset, charset);
 			return 0;
 		}
 	}
@@ -1764,8 +1764,8 @@ ksymtocode(const char *s, int direction) {
 	int keycode;
 	sym *p;
 
-	if (direction < 0)
-		direction = prefer_unicode;
+	if (direction == TO_AUTO)
+		direction = prefer_unicode ? TO_UNICODE : TO_8BIT;
 
 	if (!strncmp(s, "Meta_", 5)) {
 		keycode = ksymtocode(s+5, TO_8BIT);
@@ -1773,14 +1773,14 @@ ksymtocode(const char *s, int direction) {
 			return K(KT_META, KVAL(keycode));
 
 		/* Avoid error messages for Meta_acute with UTF-8 */
-		else if(direction)
+		else if(direction == TO_UNICODE)
 		        return (0);
 
 		/* fall through to error printf */
 	}
 
 	for (i = 0; i < syms_size; i++) {
-		jmax = ((i == 0 && direction) ? 128 : syms[i].size);
+		jmax = ((i == 0 && direction == TO_UNICODE) ? 128 : syms[i].size);
 		for (j = 0; j < jmax; j++)
 			if (!strcmp(s,syms[i].table[j]))
 				return K(i, j);
@@ -1790,19 +1790,19 @@ ksymtocode(const char *s, int direction) {
 		if (!strcmp(s, synonyms[i].synonym))
 			return ksymtocode(synonyms[i].official_name, direction);
 
-	if (direction) {
+	if (direction == TO_UNICODE) {
 		for (i = 0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
 			p = charsets[i].charnames;
 			for (j = charsets[i].start; j < 256; j++, p++)
 				if (!strcmp(s,p->name))
 					return (p->uni ^ 0xf000);
 		}
-	} else /* if (!chosen_charset) */ {
+	} else /* if (!chosen_charset[0]) */ {
 		/* note: some keymaps use latin1 but with euro,
 		   so set_charset() would fail */
 		/* note: some keymaps with charset line still use
 		   symbols from more than one character set,
-		   so we cannot have the  `if (!chosen_charset)'  here */
+		   so we cannot have the  `if (!chosen_charset[0])'  here */
 
 		for (i = 0; i < 256 - 160; i++)
 			if (!strcmp(s, latin1_syms[i].name)) {
@@ -1850,19 +1850,24 @@ convert_code(int code, int direction)
 {
 	const char *ksym;
 	int unicode_forced = (direction == TO_UNICODE);
+	int input_is_unicode = (code >= 0x1000);
 	int result;
 
-	if (direction < 0)
-		direction = prefer_unicode;
+	if (direction == TO_AUTO)
+		direction = prefer_unicode ? TO_UNICODE : TO_8BIT;
 
 	if (KTYP(code) == KT_META)
 		return code;
-	else if (direction == (code >= 0x1000))
-		result = code;		/* no conversion necessary */
-	else if (code < 0x80)
-		result = direction ? (code ^ 0xf000) : code;
-	else if ((code ^ 0xf000) < 0x80)
-		result = direction ? code : (code ^ 0xf000);
+	else if ((input_is_unicode && direction == TO_UNICODE) ||
+		 (!input_is_unicode && direction == TO_8BIT))
+		/* no conversion necessary */
+		result = code;
+	else if (!input_is_unicode && code < 0x80)
+		/* convert ASCII chars without looking them up */
+		result = (direction == TO_UNICODE) ? (code ^ 0xf000) : code;
+	else if (input_is_unicode && (code ^ 0xf000) < 0x80)
+		/* same for Unicode "Basic Latin" */
+		result = (direction == TO_UNICODE) ? code : (code ^ 0xf000);
 	else {
 		/* depending on direction, this will give us either an 8-bit
 		 * K(KTYP, KVAL) or a Unicode keysym xor 0xf000 */
