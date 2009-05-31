@@ -1,8 +1,18 @@
 kbd (1.15-2) UNRELEASED; urgency=low
 
-  * Not released yet.
+  * Revert the old read_keymaps_fmt patch to loadkeys/dumpkeys (auto-converts
+    between K(KTYP, KVAL) and Unicode keysyms depending on the console mode)
+    and replace it with a new one which has been merged upstream.  See #251550
+    for an earlier discussion, closes: #524057.
+  * Bump Standards-Version to 3.8.1, no changes needed.
+  * Support Unicode compose tables, closes: #524907.
+  * Save cat-id-tbl.c, analyze.c, loadkeys.c when building and restore them in
+    debian/rules clean.
+  * showconsolefont: Print adequate space chars, closes: #528357.  On recent
+    kernels a direct-to-font space is needed if the console is in Unicode
+    mode.
 
- -- Michael Schutte <michi@uiae.at>  Sat, 25 Apr 2009 12:53:44 +0200
+ -- Michael Schutte <michi@uiae.at>  Sun, 31 May 2009 14:00:07 +0200
 
 kbd (1.15-1) unstable; urgency=low
 
