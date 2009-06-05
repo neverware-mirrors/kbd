@@ -1,11 +1,5 @@
 #!/bin/sh
 
-if [ ! -e /proc/self/fd/0 ] ; then
-   echo "Won't set ascii mode: Can't determine console type;" >&2
-   echo " Please ensure that /proc is mounted." >&2
-   exit 1
-fi
-
 TTY="`/usr/bin/tty`"
 case "$TTY" in
 	/dev/console|/dev/vc*|/dev/tty[0-9]*)

@@ -116,8 +116,7 @@ usage(void) {
 int
 main (int argc, char **argv) {
 	int c, n, cols, rows, nr, i, j, k;
-	int mode;
-	char *space, *sep, *console = NULL;
+	char *sep, *console = NULL;
 	int list[64], lth, info = 0, verbose = 0;
 
 	set_progname(argv[0]);
@@ -149,17 +148,6 @@ main (int argc, char **argv) {
 	if (optind != argc)
 		usage();
 
-	fd = getfd(console);
-
-	if (ioctl(fd, KDGKBMODE, &mode)) {
-		perror("KDGKBMODE");
-		leave(1);
-	}
-	if (mode == K_UNICODE)
-		space = "\xef\x80\xa0";	/* U+F020 (direct-to-font space) */
-	else
-		space = " ";
-
         if (info) {
 	    nr = rows = cols = 0;
 	    n = getfont(fd, NULL, &nr, &rows, &cols);
@@ -176,6 +164,8 @@ main (int argc, char **argv) {
 	    leave(0);
 	  }
 
+	fd = getfd(console);
+
 	settrivialscreenmap();
 	getoldunicodemap();
 
@@ -185,7 +175,7 @@ main (int argc, char **argv) {
 	cols = ((n > 256) ? 32 : 16);
 	nr = 64/cols;
 	rows = (n+cols-1)/cols;
-	sep = ((cols == 16) ? "%1$s%1$s" : "%1$s");
+	sep = ((cols == 16) ? "  " : " ");
 
 	for (i=0; i<rows; i++) {
 		if (i % nr == 0) {
@@ -195,12 +185,12 @@ main (int argc, char **argv) {
 					list[lth++] = k+j*rows;
 			setnewunicodemap(list, lth);
 		}
-		printf("%1$s%1$s%1$s%1$s", space);
+		printf("    ");
 		for(j=0; j < cols && i+j*rows < n; j++) {
 			putchar(BASE + (i%nr)*cols+j);
-			printf(sep, space);
+			printf(sep);
 			if (j%8 == 7)
-				printf(sep, space);
+				printf(sep);
 		}
 		putchar('\n');
 		if (i%8 == 7)

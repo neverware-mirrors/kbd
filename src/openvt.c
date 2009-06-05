@@ -52,7 +52,6 @@ main(int argc, char *argv[])
    char verbose = FALSE;
    char direct_exec	= FALSE;
    char do_wait	= FALSE;
-   int status;
    char as_user = FALSE;
    char vtname[sizeof VTNAME + 2]; /* allow 999 possible VTs */
    char *cmd = NULL, *def_cmd = NULL, *username = NULL;
@@ -272,8 +271,7 @@ got_vtno:
       close(1);
       close(2);
       close(fd0);
-      if (consfd > 2)
-         close(consfd);
+      close(consfd);
       if ((dup(fd1) == -1) || (dup(fd1) == -1)) {
 	perror("dup");
 	fflush(stderr);
@@ -304,9 +302,7 @@ got_vtno:
    }
 
    if ( do_wait ) {
-      wait(&status);
-      if (!direct_exec)
-	 close(fd0);
+      wait(NULL);
       if (show) { /* Switch back... */
 	 if (ioctl(consfd, VT_ACTIVATE, vtstat.v_active)) {
 	    perror("VT_ACTIVATE");
@@ -323,11 +319,6 @@ got_vtno:
 	   return(8);
 	 }
       }
-
-      if (WIFEXITED(status))
-	 return WEXITSTATUS(status);
-      else
-	 return 127;
    }
 
    return 0;

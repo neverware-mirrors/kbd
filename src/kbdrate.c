@@ -77,6 +77,7 @@ beats rebuilding the kernel!
 
 #ifdef __sparc__
 #include <asm/param.h>
+#include <asm/kbio.h>
 #endif
 
 #ifndef KDKBDREP

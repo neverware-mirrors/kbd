@@ -109,8 +109,6 @@ install-data-yes: all
 	  fi; \
 	done
 
-install-exec:
-
 uninstall:
 	catalogs='$(CATALOGS)'; \
 	for cat in $$catalogs; do \
