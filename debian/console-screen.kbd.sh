@@ -29,9 +29,9 @@ fi
 # file of console-tools
 for vc in '' `set | grep "^.*_vc[0-9][0-9]*="  | sed 's/^.*\(_vc[0-9][0-9]*\)=.*/\1/'`
 do
-    eval [ \"\${SCREEN_FONT$vc}\" ] && eval CONSOLE_FONT$vc=\${CONSOLE_FONT$vc:-\${SCREEN_FONT$vc}}
-    eval [ \"\${SCREEN_FONT_MAP$vc}\" ] && eval FONT_MAP$vc=\${FONT_MAP$vc:-\${SCREEN_FONT_MAP$vc}}
-    eval [ \"\${APP_CHARSET_MAP$vc}\" ] && eval CONSOLE_MAP$vc=\${CONSOLE_MAP$vc:-\${APP_CHARSET_MAP$vc}}
+    eval [ '"'\${SCREEN_FONT$vc}'"' ] && eval CONSOLE_FONT$vc=\${CONSOLE_FONT$vc:-\${SCREEN_FONT$vc}}
+    eval [ '"'\${SCREEN_FONT_MAP$vc}'"' ] && eval FONT_MAP$vc=\${FONT_MAP$vc:-\${SCREEN_FONT_MAP$vc}}
+    eval [ '"'\${APP_CHARSET_MAP$vc}'"' ] && eval CONSOLE_MAP$vc=\${CONSOLE_MAP$vc:-\${APP_CHARSET_MAP$vc}}
 done
 
 . /lib/lsb/init-functions
