@@ -219,7 +219,7 @@ setup ()
 
     # Inform gpm if present, of potential changes.
     if [ -f /var/run/gpm.pid ]; then
-        kill -WINCH `cat /var/run/gpm.pid` 2> /dev/null
+        kill -s WINCH `cat /var/run/gpm.pid` 2> /dev/null
     fi
 
     # Allow user to remap keys on the console

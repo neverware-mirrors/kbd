@@ -12,11 +12,13 @@ MOVE_TO_BIN = kbd_mode setfont fgconsole openvt chvt dumpkeys unicode_start load
 MOVE_TO_SBIN = kbdrate
 MOVE_TO_USR_SBIN = vcstime setvesablank
 
-RETAIN = src/loadkeys.c src/analyze.c po/cat-id-tbl.c
+RETAIN = src/loadkeys.c src/analyze.c po/Makefile.in po/cat-id-tbl.c
 
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
+	for ITEM in $(RETAIN); do cp $$ITEM $$ITEM.keep; done
+	dh_quilt_patch
 	aclocal
 	automake --add-missing
 	autoconf
@@ -27,7 +29,6 @@ configure-stamp:
 build: build-stamp
 build-stamp: configure-stamp
 	dh_testdir
-	for ITEM in $(RETAIN); do cp $$ITEM $$ITEM.orig; done
 	cd src/ && flex -o analyze.c analyze.l
 	rm -f src/loadkeys.c
 	$(MAKE) -C src/ CFLAGS="-Os -g" $(UDEB_BINARIES)
@@ -47,9 +48,9 @@ clean:
 	rm -f aclocal.m4 depcomp configure
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
-	for ITEM in $(RETAIN); do [ ! -f $$ITEM.orig ] || mv $$ITEM.orig $$ITEM; done
-	find -name Makefile.in -not -path ./po/Makefile.in -exec rm {} \;
-	dh clean
+	find -name Makefile.in -exec rm {} \;
+	dh clean --with=quilt
+	for ITEM in $(RETAIN); do [ ! -f $$ITEM.keep ] || mv $$ITEM.keep $$ITEM; done
 
 install: build-stamp
 	dh_testdir
@@ -88,4 +89,14 @@ binary-arch: install
 
 binary: binary-arch
 
-.PHONY: configure build clean binary-arch binary-indep binary
+TOPGIT_PATCHES = \
+	fixes/auto_convert fixes/compile_on_sparc fixes/install_exec \
+	fixes/man_kbd_mode fixes/openvt_error_handling \
+	fixes/showconsolefont_spaces fixes/splitfont_manpage \
+	fixes/unicode_start_breaks_X
+
+tg-export:
+	rm -rf debian/patches
+	tg export -b "`echo $(TOPGIT_PATCHES) | tr ' ' ','`" --quilt debian/patches
+
+.PHONY: configure build clean binary-arch binary-indep binary tg-export
