@@ -11,8 +11,13 @@ kbd (1.15-2) UNRELEASED; urgency=low
   * showconsolefont: Print adequate space chars, closes: #528357.  On recent
     kernels a direct-to-font space is needed if the console is in Unicode
     mode.
+  * Update the information regarding hardwired scancode ranges in the
+    setkeycodes(8) manpage, closes: #399531.  They don’t exist in recent
+    kernels.
+  * Replace “-” (hyphen) by “\-” (ASCII minus sign) in some manpages where
+    command line options are mentioned.
 
- -- Michael Schutte <michi@uiae.at>  Sun, 31 May 2009 14:00:07 +0200
+ -- Michael Schutte <michi@uiae.at>  Thu, 11 Jun 2009 20:15:58 +0200
 
 kbd (1.15-1) unstable; urgency=low
 

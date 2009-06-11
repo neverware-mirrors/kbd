@@ -91,9 +91,8 @@ binary: binary-arch
 
 TOPGIT_PATCHES = \
 	fixes/auto_convert fixes/compile_on_sparc fixes/install_exec \
-	fixes/man_kbd_mode fixes/openvt_error_handling \
-	fixes/showconsolefont_spaces fixes/splitfont_manpage \
-	fixes/unicode_start_breaks_X
+	fixes/man_kbd_mode fixes/manpages fixes/openvt_error_handling \
+	fixes/showconsolefont_spaces fixes/unicode_start_breaks_X
 
 tg-export:
 	rm -rf debian/patches
