@@ -1,5 +1,7 @@
 kbd (1.15-2) UNRELEASED; urgency=low
 
+  * Switch (back) to quilt, see debian/README.source.  TopGit is used to
+    manage the patches on top of Git.
   * Revert the old read_keymaps_fmt patch to loadkeys/dumpkeys (auto-converts
     between K(KTYP, KVAL) and Unicode keysyms depending on the console mode)
     and replace it with a new one which has been merged upstream.  See #251550
@@ -11,6 +13,11 @@ kbd (1.15-2) UNRELEASED; urgency=low
   * showconsolefont: Print adequate space chars, closes: #528357.  On recent
     kernels a direct-to-font space is needed if the console is in Unicode
     mode.
+  * console-screen.kbd.sh: Slightly rephrase evals to avoid quirks in Vim’s
+    syntax highlighting.  Remove the “kill -NAL” XSI-ism and replace it with
+    “kill -s NAL”.
+  * console-screen.kbd.sh: Mention console-setup when font setup is deferred,
+    closes: #532139.
   * Update the information regarding hardwired scancode ranges in the
     setkeycodes(8) manpage, closes: #399531.  They don’t exist in recent
     kernels.
