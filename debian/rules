@@ -91,7 +91,7 @@ binary: binary-arch
 
 TOPGIT_PATCHES = \
 	fixes/auto_convert fixes/compile_on_sparc fixes/install_exec \
-	fixes/manpages fixes/openvt_error_handling \
+	fixes/keysyms fixes/manpages fixes/openvt_error_handling \
 	fixes/showconsolefont_spaces fixes/unicode_start_breaks_X
 
 tg-export:
