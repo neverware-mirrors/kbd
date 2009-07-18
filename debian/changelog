@@ -6,7 +6,7 @@ kbd (1.15-2) UNRELEASED; urgency=low
     between K(KTYP, KVAL) and Unicode keysyms depending on the console mode)
     and replace it with a new one which has been merged upstream.  See #251550
     for an earlier discussion, closes: #524057.
-  * Bump Standards-Version to 3.8.1, no changes needed.
+  * Bump Standards-Version to 3.8.2.
   * Support Unicode compose tables, closes: #524907.
   * Save cat-id-tbl.c, analyze.c, loadkeys.c when building and restore them in
     debian/rules clean.
@@ -27,7 +27,7 @@ kbd (1.15-2) UNRELEASED; urgency=low
     are supported by Linux >= 2.6.23.  Thanks to Samuel Thibault
     <sthibault@debian.org> for the patch.
 
- -- Michael Schutte <michi@uiae.at>  Wed, 17 Jun 2009 20:05:33 +0200
+ -- Michael Schutte <michi@uiae.at>  Sat, 18 Jul 2009 20:23:14 +0200
 
 kbd (1.15-1) unstable; urgency=low
 
