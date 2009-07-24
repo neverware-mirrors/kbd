@@ -27,7 +27,7 @@ kbd (1.15-2) unstable; urgency=low
     are supported by Linux >= 2.6.23.  Thanks to Samuel Thibault
     <sthibault@debian.org> for the patch.
 
- -- Michael Schutte <michi@uiae.at>  Mon, 20 Jul 2009 14:58:29 +0200
+ -- Michael Schutte <michi@uiae.at>  Fri, 24 Jul 2009 13:00:49 +0200
 
 kbd (1.15-1) unstable; urgency=low
 
