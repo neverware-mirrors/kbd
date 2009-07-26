@@ -1,3 +1,10 @@
+kbd (1.15-3) UNRELEASED; urgency=low
+
+  * console-screen.kbd.sh: Add the X-Interactive LSB header to make sure the
+    script runs on a real VT on insserv-assisted init, closes: #538434.
+
+ -- Michael Schutte <michi@uiae.at>  Sun, 26 Jul 2009 21:08:56 +0200
+
 kbd (1.15-2) unstable; urgency=low
 
   * Switch (back) to quilt, see debian/README.source.  TopGit is used to

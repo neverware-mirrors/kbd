@@ -5,6 +5,7 @@
 # Required-Stop:
 # Default-Start:     S
 # Default-Stop:
+# X-Interactive:     true
 # Description: Set console screen modes and fonts
 # Short-Description:    Prepare console
 ### END INIT INFO
