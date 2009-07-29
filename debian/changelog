@@ -1,9 +1,11 @@
-kbd (1.15-3) UNRELEASED; urgency=low
+kbd (1.15-3) unstable; urgency=low
 
+  * Fix an (as of yet unreported) regression introduced by the support of the
+    composition of two UNUMBERS.
   * console-screen.kbd.sh: Add the X-Interactive LSB header to make sure the
     script runs on a real VT on insserv-assisted init, closes: #538434.
 
- -- Michael Schutte <michi@uiae.at>  Sun, 26 Jul 2009 21:08:56 +0200
+ -- Michael Schutte <michi@uiae.at>  Wed, 29 Jul 2009 09:57:22 +0200
 
 kbd (1.15-2) unstable; urgency=low
 
