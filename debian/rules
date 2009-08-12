@@ -75,7 +75,7 @@ install: build-stamp
 	for ITEM in $(UDEB_BINARIES); do install -m755 src/$$ITEM-udeb $(KBD_UDEB)/bin/$$ITEM; done
 # and the rest
 	dh install --after dh_install --before dh_installinit
-	dh_installinit --init-script=console-screen.kbd.sh -r -u"start 48 S ."
+	dh_installinit -r -u"start 48 S ."
 	dh install --after dh_installinit
 
 binary-indep:
