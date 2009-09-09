@@ -27,4 +27,6 @@ case "$1" in
         fi
 esac
 
+#DEBHELPER#
+
 # vim:sw=4:sts=4:et:
