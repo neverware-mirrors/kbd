@@ -5,8 +5,9 @@ kbd (1.15-4) unstable; urgency=low
     to their {Required,Should}-Start: headers, use the X-Start-Before: feature
     and list reverse dependencies.  This should make it possible to replace
     console-tools by kbd when insserv is installed, closes: #542225, #541161.
+  * Bump Standards-Version to 3.8.3, no changes needed.
 
- -- Michael Schutte <michi@uiae.at>  Tue, 08 Sep 2009 19:56:30 +0200
+ -- Michael Schutte <michi@uiae.at>  Wed, 09 Sep 2009 17:42:30 +0200
 
 kbd (1.15-3) unstable; urgency=low
 
