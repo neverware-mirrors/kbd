@@ -12,7 +12,7 @@ MOVE_TO_BIN = kbd_mode setfont fgconsole openvt chvt dumpkeys unicode_start load
 MOVE_TO_SBIN = kbdrate
 MOVE_TO_USR_SBIN = vcstime setvesablank
 
-RETAIN = src/loadkeys.c src/analyze.c po/Makefile.in po/cat-id-tbl.c
+RETAIN = config.h.in src/loadkeys.c src/analyze.c po/Makefile.in po/cat-id-tbl.c
 
 configure: configure-stamp
 configure-stamp:

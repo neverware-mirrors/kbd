@@ -8,9 +8,11 @@ kbd (1.15-4) unstable; urgency=low
   * Remove “.IX” lines from manual pages.  Current versions of groff don’t
     know the syntax they use, and most of them add no valuable information
     whatsoever, so removing them should not be a problem.
+  * Restore config.h.in in debian/rules clean.  It is automatically amended
+    during the build process.
   * Bump Standards-Version to 3.8.3, no changes needed.
 
- -- Michael Schutte <michi@uiae.at>  Wed, 09 Sep 2009 19:21:36 +0200
+ -- Michael Schutte <michi@uiae.at>  Wed, 09 Sep 2009 19:28:47 +0200
 
 kbd (1.15-3) unstable; urgency=low
 
