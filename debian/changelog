@@ -1,3 +1,10 @@
+kbd (1.15-5) unstable; urgency=low
+
+  * kbd.init: If Upstart is used, get TTY information from /etc/init/tty*.conf
+    rather than /etc/inittab, closes: #549317.
+
+ -- Michael Schutte <michi@uiae.at>  Sun, 04 Oct 2009 13:42:45 +0200
+
 kbd (1.15-4) unstable; urgency=low
 
   * Rename the console-screen.kbd.sh init script to kbd and change its LSB

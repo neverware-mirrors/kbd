@@ -119,7 +119,13 @@ setup ()
         [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
 
-    LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep -e '\<tty[0-9]*\>' | awk -F: '{printf "%s ", $1}'`
+    if [ -d /etc/init ] && which initctl >/dev/null; then
+	    # Upstart
+	    LIST_CONSOLES=`cd /etc/init; find -name 'tty*.conf' -printf '%f ' | sed -e 's/[^0-9 ]//g'`
+    else
+	    # traditional SysV init
+	    LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep -e '\<tty[0-9]*\>' | awk -F: '{printf "%s ", $1}'`
+    fi
 
     # Global default font+map
     if [ -z "${HAVE_SETUPCON}" -a "${CONSOLE_FONT}" ]; then
