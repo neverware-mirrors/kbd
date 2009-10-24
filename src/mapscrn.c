@@ -4,13 +4,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef __klibc__
 #include <memory.h>
+#endif
 #include <string.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <linux/kd.h>
+#include "kbd.h"
 #include "paths.h"
 #include "findfile.h"
 #include "kdmapop.h"
@@ -39,10 +42,11 @@ main(int argc, char *argv[]) {
 	int fd;
 
 	set_progname(argv[0]);
-
+#ifndef __klibc__
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
 	textdomain(PACKAGE_NAME);
+#endif
 
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 	    print_version_and_exit();
@@ -122,7 +126,7 @@ parsemap(FILE *fp, char *buf, unsigned short *ubuf, int *u, int *lineno) {
 }
 
 static int
-readnewmapfromfile(int fd, char *mfil, char *buf, unsigned short *ubuf) {
+readnewmapfromfile(attr_unused int fd, char *mfil, char *buf, unsigned short *ubuf) {
 	FILE *fp;
 	struct stat stbuf;
 	int u = 0;

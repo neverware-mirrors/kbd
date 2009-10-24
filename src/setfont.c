@@ -11,7 +11,9 @@
  */
 
 #include <stdio.h>
+#ifndef __klibc__
 #include <memory.h>
+#endif
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -67,7 +69,7 @@ findpartialfont(char *fnam) {
     return findfile(fnam, partfontdirpath, partfontsuffixes);
 }
 
-static void
+static void attr_noreturn
 usage(void)
 {
         fprintf(stderr, _(
@@ -108,10 +110,11 @@ main(int argc, char *argv[]) {
 	int restore = 0;
 
 	set_progname(argv[0]);
-
+#ifndef __klibc__
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
 	textdomain(PACKAGE_NAME);
+#endif
 
 	ifiles[0] = mfil = ufil = Ofil = ofil = omfil = oufil = NULL;
 	iunit = hwunit = 0;
@@ -247,7 +250,7 @@ static int erase_mode = 1;
 
 static void
 do_loadfont(int fd, char *inbuf, int width, int height, int hwunit,
-	    int fontsize, char *pathname) {
+	    int fontsize, char *filename) {
 	unsigned char *buf;
 	int i, buflen;
 	int bytewidth = (width+7)/8;
@@ -306,15 +309,15 @@ do_loadfont(int fd, char *inbuf, int width, int height, int hwunit,
 	}
 
 	if (verbose) {
-		if (height == hwunit && pathname)
+		if (height == hwunit && filename)
 			printf(_("Loading %d-char %dx%d font from file %s\n"),
-			       fontsize, width, height, pathname);
+			       fontsize, width, height, filename);
 		else if (height == hwunit)
 			printf(_("Loading %d-char %dx%d font\n"),
 			       fontsize, width, height);
-		else if (pathname)
+		else if (filename)
 			printf(_("Loading %d-char %dx%d (%d) font from file %s\n"),
-			       fontsize, width, height, hwunit, pathname);
+			       fontsize, width, height, hwunit, filename);
 		else
 			printf(_("Loading %d-char %dx%d (%d) font\n"),
 			       fontsize, width, height, hwunit);
@@ -725,7 +728,7 @@ saveoldfontplusunicodemap(int fd, char *Ofil) {
 static void
 send_escseq(int fd, char *seq, int n) {
 	if (write(fd, seq, n) != n)  /* maybe fd is read-only */
-		printf(seq);
+		printf("%s", seq);
 }
 
 void

@@ -13,7 +13,7 @@
 #include "nls.h"
 #include "version.h"
 
-static void
+static void attr_noreturn
 usage(void)
 {
     fprintf(stderr, _(
@@ -41,7 +41,7 @@ report(int meta) {
       default:
 	s = _("Strange mode for Meta key?\n");
     }
-    printf(s);
+    printf("%s", s);
 }
 
 struct meta {
@@ -64,10 +64,11 @@ main(int argc, char **argv) {
     struct meta *mp;
 
     set_progname(argv[0]);
-
+#ifndef __klibc__
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE_NAME, LOCALEDIR);
     textdomain(PACKAGE_NAME);
+#endif
 
     if (argc == 2 && !strcmp(argv[1], "-V"))
 	print_version_and_exit();
@@ -85,7 +86,7 @@ main(int argc, char **argv) {
     }
 
     nmeta = 0;			/* make gcc happy */
-    for (mp = metas; mp-metas < SIZE(metas); mp++) {
+    for (mp = metas; (unsigned) (mp-metas) < SIZE(metas); mp++) {
 	if(!strcmp(argv[1], mp->name)) {
 	    nmeta = mp->val;
 	    goto fnd;

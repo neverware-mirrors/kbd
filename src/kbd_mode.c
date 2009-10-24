@@ -4,6 +4,7 @@
  * If you make \215A\201 an alias for "kbd_mode -a", and you are
  * in raw mode, then hitting F7 = (two keys) will return you to sanity.
  */
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -14,7 +15,7 @@
 #include "nls.h"
 #include "version.h"
 
-static void
+static void attr_noreturn
 usage(void){
     fprintf(stderr, _("usage: kbd_mode [-a|-u|-k|-s] [-C device]\n"));
     exit(1);
@@ -26,10 +27,11 @@ main(int argc, char *argv[]){
         char *console = NULL;
 
 	set_progname(argv[0]);
-
+#ifndef __klibc__
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
 	textdomain(PACKAGE_NAME);
+#endif
 
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 	    print_version_and_exit();

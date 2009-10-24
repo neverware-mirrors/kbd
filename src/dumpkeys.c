@@ -107,16 +107,16 @@ print_keymaps(void) {
 }
 
 static int
-get_bind(u_char index, u_char table) {
+get_bind(u_char kb_index, u_char kb_table) {
 	struct kbentry ke;
 
-	ke.kb_index = index;
-	ke.kb_table = table;
+	ke.kb_index = kb_index;
+	ke.kb_table = kb_table;
 	if (ioctl(fd, KDGKBENT, (unsigned long)&ke)) {
-		if (index < 128) {
+		if (kb_index < 128) {
 			perror("KDGKBENT");
 			fprintf(stderr, _("KDGKBENT error at index %d in table %d\n"),
-				index, table);
+				kb_index, kb_table);
 			exit(1);
 		} else
 			return -1;
@@ -126,7 +126,7 @@ get_bind(u_char index, u_char table) {
 
 static void
 print_keysym(int code, char numeric) {
-	int t;
+	unsigned int t;
 	int v;
 	const char *p;
 	int plus;
@@ -135,11 +135,10 @@ print_keysym(int code, char numeric) {
 	t = KTYP(code);
 	v = KVAL(code);
 	if (t >= syms_size) {
-		code = code ^ 0xf000;
-		if (!numeric && (p = unicodetoksym(code)) != NULL)
+		if (!numeric && (p = codetoksym(code)) != NULL)
 			printf("%-16s", p);
 		else
-			printf("U+%04x          ", code);
+			printf("U+%04x          ", code ^ 0xf000);
 		return;
 	}
 	plus = 0;
@@ -208,16 +207,28 @@ outchar (unsigned char c) {
 	printf("'");
 }
 
+#ifdef KDGKBDIACRUC
+static struct kbdiacrsuc kd;
+#else
 static struct kbdiacrs kd;
+#endif
 
 static void
 get_diacs(void) {
 	static int got_diacs = 0;
 
+#ifdef KDGKBDIACRUC
+	if(!got_diacs && ioctl(fd, KDGKBDIACRUC, (unsigned long)&kd)) {
+	    perror("KDGKBDIACRUC");
+	    exit(1);
+	}
+#else
 	if(!got_diacs && ioctl(fd, KDGKBDIACR, (unsigned long)&kd)) {
 	    perror("KDGKBDIACR");
 	    exit(1);
 	}
+#endif
+
 	got_diacs = 1;
 }
 
@@ -229,9 +240,18 @@ nr_of_diacs(void) {
 
 static void
 dump_diacs(void) {
-	int i;
+	unsigned int i;
 
 	get_diacs();
+#ifdef KDGKBDIACRUC
+	for (i = 0; i < kd.kb_cnt; i++) {
+		printf("compose ");
+		outchar(kd.kbdiacruc[i].diacr & 0xff);
+		printf(" ");
+		outchar(kd.kbdiacruc[i].base & 0xff);
+		printf(" to U+%04x\n", kd.kbdiacruc[i].result);
+	}
+#else
 	for (i = 0; i < kd.kb_cnt; i++) {
 		printf("compose ");
 		outchar(kd.kbdiacr[i].diacr);
@@ -241,8 +261,9 @@ dump_diacs(void) {
 		outchar(kd.kbdiacr[i].result);
 		printf("\n");
 	}
+#endif
 }
-#endif        
+#endif
 
 static void
 show_short_info(void) {
@@ -288,7 +309,7 @@ static struct {
 
 static void
 dump_symbols(void) {
-	int t;
+	unsigned int t;
 	int v;
 	const char *p;
 
@@ -316,7 +337,7 @@ dump_symbols(void) {
 
 static void
 print_mod(int x) {
-	int t;
+	unsigned int t;
 
 	if (!x)
 		printf("plain\t");
@@ -443,12 +464,12 @@ no_shorthands:
 		    zapped[j] = 0;
 	    if (alt_is_meta) {
 		 for(j = 0; j < keymapnr; j++) {
-		      int ka, ja, typ;
+		      int ka, ja, ktyp;
 		      k = good_keymap[j];
 		      ka = (k | M_ALT);
 		      ja = keymap_index[ka];
 		      if (k != ka && ja >= 0
-		       && ((typ=KTYP(buf[j])) == KT_LATIN || typ == KT_LETTER)
+		       && ((ktyp=KTYP(buf[j])) == KT_LATIN || ktyp == KT_LETTER)
 		       && KVAL(buf[j]) < 128) {
 			   if (buf[ja] != K(KT_META, KVAL(buf[j])))
 				fprintf(stderr, _("impossible: not meta?\n"));
@@ -526,7 +547,7 @@ dump_funcs(void) {
 	}
 }
 
-static void
+static void attr_noreturn
 usage(void) {
 	fprintf(stderr, _("dumpkeys version %s"), PACKAGE_VERSION);
 	fprintf(stderr, _("\
@@ -582,10 +603,11 @@ main (int argc, char *argv[]) {
 	char diac_only = 0;
 
 	set_progname(argv[0]);
-
+#ifndef __klibc__
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
 	textdomain(PACKAGE_NAME);
+#endif
 
 	while ((c = getopt_long(argc, argv,
 		short_opts, long_opts, NULL)) != -1) {

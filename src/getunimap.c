@@ -24,7 +24,7 @@ ud_compar(const void *u1, const void *u2){
 	return (int) fp1 - (int) fp2;
 }
 
-static void
+static void attr_noreturn
 usage(void) {
 	fprintf(stderr, _("Usage:\n\t%s [-s] [-C console]\n"), progname);
 	exit(1);
@@ -40,10 +40,11 @@ main(int argc, char **argv){
 	struct unimapdesc ud;
 
 	set_progname(argv[0]);
-
+#ifndef __klibc__
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
 	textdomain(PACKAGE_NAME);
+#endif
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")))

@@ -26,7 +26,7 @@ int fd = 0;
 int have_obuf = 0;
 int have_ounimap = 0;
 
-static void
+static void attr_noreturn
 leave(int n) {
 	if (have_obuf && loaduniscrnmap(fd,obuf)) {
 		fprintf(stderr,
@@ -58,7 +58,7 @@ settrivialscreenmap(void) {
 	}
 }
 
-static void
+static void attr_noreturn
 out_of_memory(void) {
 	fprintf(stderr, _("%s: out of memory?\n"), progname);
 	leave(1);
@@ -98,7 +98,7 @@ setnewunicodemap(int *list, int cnt) {
 		leave(1);
 }
 
-static void
+static void attr_noreturn
 usage(void) {
 	fprintf(stderr,
 		_("usage: showconsolefont -V|--version\n"
@@ -116,14 +116,16 @@ usage(void) {
 int
 main (int argc, char **argv) {
 	int c, n, cols, rows, nr, i, j, k;
-	char *sep, *console = NULL;
+	int mode;
+	char *space, *sep, *console = NULL;
 	int list[64], lth, info = 0, verbose = 0;
 
 	set_progname(argv[0]);
-
+#ifndef __klibc__
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
 	textdomain(PACKAGE_NAME);
+#endif
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")))
@@ -148,6 +150,17 @@ main (int argc, char **argv) {
 	if (optind != argc)
 		usage();
 
+	fd = getfd(console);
+
+	if (ioctl(fd, KDGKBMODE, &mode)) {
+		perror("KDGKBMODE");
+		leave(1);
+	}
+	if (mode == K_UNICODE)
+		space = "\xef\x80\xa0";	/* U+F020 (direct-to-font space) */
+	else
+		space = " ";
+
         if (info) {
 	    nr = rows = cols = 0;
 	    n = getfont(fd, NULL, &nr, &rows, &cols);
@@ -164,8 +177,6 @@ main (int argc, char **argv) {
 	    leave(0);
 	  }
 
-	fd = getfd(console);
-
 	settrivialscreenmap();
 	getoldunicodemap();
 
@@ -175,7 +186,7 @@ main (int argc, char **argv) {
 	cols = ((n > 256) ? 32 : 16);
 	nr = 64/cols;
 	rows = (n+cols-1)/cols;
-	sep = ((cols == 16) ? "  " : " ");
+	sep = ((cols == 16) ? "%1$s%1$s" : "%1$s");
 
 	for (i=0; i<rows; i++) {
 		if (i % nr == 0) {
@@ -185,12 +196,12 @@ main (int argc, char **argv) {
 					list[lth++] = k+j*rows;
 			setnewunicodemap(list, lth);
 		}
-		printf("    ");
+		printf("%1$s%1$s%1$s%1$s", space);
 		for(j=0; j < cols && i+j*rows < n; j++) {
 			putchar(BASE + (i%nr)*cols+j);
-			printf(sep);
+			printf(sep, space);
 			if (j%8 == 7)
-				printf(sep);
+				printf(sep, space);
 		}
 		putchar('\n');
 		if (i%8 == 7)

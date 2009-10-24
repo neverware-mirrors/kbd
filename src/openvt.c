@@ -25,6 +25,7 @@
  * Applied patch by damjan@legolas (-e option), aeb, 2004-01-03.
  */
 
+#include "kbd.h"
 #include "openvt.h"
 #include "nls.h"
 
@@ -159,7 +160,6 @@ main(int argc, char *argv[])
 		 to the kernel, but we cannot open it. Maybe X
 		 used it and did a chown.  Try a few vt's more
 		 before giving up. Note: the 16 is a kernel limitation. */
-	      int i;
 	      for (i=vtno+1; i<16; i++) {
 		      if((vtstat.v_state & (1<<i)) == 0) {
 			      sprintf(vtname, VTNAME, i);
@@ -231,10 +231,14 @@ got_vtno:
       /* leave current vt */
       if (!direct_exec) {
 #ifdef   ESIX_5_3_2_D
+#ifdef HAVE_SETPGRP
          if (setpgrp() < 0) {
 #else
+         if (1) {
+#endif /* HAVE_SETPGRP */
+#else
          if (setsid() < 0) {
-#endif
+#endif /* ESIX_5_3_2_D */
            int errsv = errno;
            fprintf(stderr, _("openvt: Unable to set new session (%s)\n"),
 		   strerror(errsv));
@@ -325,11 +329,12 @@ got_vtno:
 }
 
 
-void usage(int stat)
+void attr_noreturn
+usage(int ret)
 {
    fprintf(stderr, _(
      "Usage: openvt [-c vtnumber] [-f] [-l] [-u] [-s] [-v] [-w] -- command_line\n"));
-   exit (stat);
+   exit (ret);
 }
 
 /*

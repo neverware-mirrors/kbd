@@ -13,7 +13,7 @@
 #include "nls.h"
 #include "version.h"
 
-static void
+static void attr_noreturn
 usage(void) {
     fprintf(stderr, _("usage: getkeycodes\n"));
     exit(1);
@@ -21,15 +21,17 @@ usage(void) {
 
 int
 main(int argc, char **argv) {
-	int fd, sc, sc0;
+	int fd;
+	unsigned int sc, sc0;
 	struct kbkeycode a;
 	int old_kernel = 0;
 
 	set_progname(argv[0]);
-
+#ifndef __klibc__
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
 	textdomain(PACKAGE_NAME);
+#endif
 
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 		print_version_and_exit();
