@@ -29,7 +29,7 @@ configure-stamp:
 build: build-stamp
 build-stamp: configure-stamp
 	dh_testdir
-	cd src/ && flex -o analyze.c analyze.l
+	cd src/ && flex -o analyze.c analyze.l && sed -i 's/void yy_fatal_error/void attr_noreturn yy_fatal_error/' analyze.c
 	rm -f src/loadkeys.c
 	$(MAKE) -C src/ CFLAGS="-Os -g" $(UDEB_BINARIES)
 	cd src/ && for ITEM in $(UDEB_BINARIES); do mv $$ITEM $$ITEM-udeb; done
