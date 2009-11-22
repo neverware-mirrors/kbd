@@ -12,7 +12,7 @@ MOVE_TO_BIN = kbd_mode setfont fgconsole openvt chvt dumpkeys unicode_start load
 MOVE_TO_SBIN = kbdrate
 MOVE_TO_USR_SBIN = vcstime setvesablank
 
-RETAIN = config.h.in src/loadkeys.c src/analyze.c po/Makefile.in po/cat-id-tbl.c
+RETAIN = config.h.in src/loadkeys.c src/analyze.c po/Makefile.in po/cat-id-tbl.c po/kbd.pot
 
 configure: configure-stamp
 configure-stamp:
@@ -44,7 +44,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp configure-stamp
 	[ ! -f Makefile ] || $(MAKE) distclean
-	rm -f aclocal.m4 depcomp configure
+	rm -f aclocal.m4 configure
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
 	find -path ./po -prune -o -name Makefile.in -exec rm {} \;
