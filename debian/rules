@@ -47,7 +47,7 @@ clean:
 	rm -f aclocal.m4 configure
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
-	find -path ./po -prune -o -name Makefile.in -exec rm {} \;
+	find -name Makefile.in \! -path ./po/\* \! -path ./.pc/\* -exec rm {} \;
 	dh clean
 	for ITEM in $(RETAIN); do [ ! -f $$ITEM.keep ] || mv $$ITEM.keep $$ITEM; done
 
