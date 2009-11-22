@@ -4,12 +4,12 @@ kbd (1.15.1-1) UNRELEASED; urgency=low
     - The auto_convert, compile_on_sparc, keysyms, and showconsolefont_spaces
       patches have been merged.  They are removed from the .debian.tar.gz.
   * This upload converts the package to the 3.0 (quilt) source format.  The
-    Build-Dependency on quilt and patch/unpatch logic in debian/rules has been
-    removed.
+    Build-Dependency on quilt, the patch/unpatch logic in debian/rules and
+    the debian/README.source file have been removed.
   * kbd.init: If Upstart is used, get TTY information from /etc/init/tty*.conf
     rather than /etc/inittab, closes: #549317.
 
- -- Michael Schutte <michi@uiae.at>  Sun, 22 Nov 2009 18:32:16 +0100
+ -- Michael Schutte <michi@uiae.at>  Sun, 22 Nov 2009 18:38:52 +0100
 
 kbd (1.15-4) unstable; urgency=low
 

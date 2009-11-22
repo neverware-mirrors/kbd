@@ -1,5 +1,0 @@
-This package uses quilt to apply and unapply its patches to the upstream
-source.  Changes are stored as diffs in debian/patches.  Please refer to
-/usr/share/doc/quilt/README.source for some usage notes.
-
- -- Michael Schutte <michi@uiae.at>  Thu, 11 Jun 2009 20:55:53 +0200
