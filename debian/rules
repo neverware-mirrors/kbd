@@ -18,7 +18,6 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	for ITEM in $(RETAIN); do cp $$ITEM $$ITEM.keep; done
-	dh_quilt_patch
 	aclocal
 	automake --add-missing
 	autoconf
@@ -49,7 +48,7 @@ clean:
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
 	find -path ./po -prune -o -name Makefile.in -exec rm {} \;
-	dh clean --with=quilt
+	dh clean
 	for ITEM in $(RETAIN); do [ ! -f $$ITEM.keep ] || mv $$ITEM.keep $$ITEM; done
 
 install: build-stamp
