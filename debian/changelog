@@ -8,8 +8,10 @@ kbd (1.15.1-1) UNRELEASED; urgency=low
     the debian/README.source file have been removed.
   * kbd.init: If Upstart is used, get TTY information from /etc/init/tty*.conf
     rather than /etc/inittab, closes: #549317.
+  * New patch kbd_mode: Change the misleading “default (ASCII) mode” message
+    in kbd_mode to the more correct “xlate (8-bit) mode”, closes: #546712.
 
- -- Michael Schutte <michi@uiae.at>  Sun, 22 Nov 2009 18:38:52 +0100
+ -- Michael Schutte <michi@uiae.at>  Tue, 24 Nov 2009 20:44:15 +0100
 
 kbd (1.15-4) unstable; urgency=low
 
