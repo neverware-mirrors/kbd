@@ -1,3 +1,11 @@
+kbd (1.15.1-2) unstable; urgency=low
+
+  * New patch cast_align: Fix an FTBFS on some architectures caused by an
+    alignment error after casting a (char *) to a (struct psf2_header *) which
+    has members aligned to more than a byte, closes: #558492.
+
+ -- Michael Schutte <michi@uiae.at>  Tue, 01 Dec 2009 20:32:23 +0100
+
 kbd (1.15.1-1) unstable; urgency=low
 
   * New upstream release.

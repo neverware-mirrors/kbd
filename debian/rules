@@ -89,7 +89,7 @@ binary-arch: install
 binary: binary-arch
 
 TOPGIT_PATCHES = \
-	fixes/install_exec fixes/kbd_mode fixes/manpages \
+	fixes/cast_align fixes/install_exec fixes/kbd_mode fixes/manpages \
 	fixes/openvt_error_handling fixes/unicode_start_breaks_X
 
 tg-export:
