@@ -7,6 +7,7 @@
 # - whether to do screen saver/DPMS settings
 # - whether to change the keyboard rate/delay or the state of the
 #   keyboard indicators 
+# - whether to show a clock
 #
 # You can also specify per-VC settings by suffixing variable names as in
 # the examples below. This only works on framebuffer devices.
@@ -64,3 +65,6 @@ POWERDOWN_TIME=30
 
 # Turn on numlock by default
 #LEDS=+num
+
+# Display a clock in the right upper corner of the console by running vcstime
+#DO_VCSTIME=yes

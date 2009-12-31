@@ -4,8 +4,10 @@ kbd (1.15.1-3) unstable; urgency=low
     devices.  Before, only the latter file was considered in vcstime, causing
     it to fail on recent systems.
   * kbd.init: Remove some pointless code in the vcstime stanza.
+  * Mention the possibility of having vcstime run by kbd.init in
+    /etc/kbd/config.
 
- -- Michael Schutte <michi@uiae.at>  Thu, 31 Dec 2009 16:39:35 +0100
+ -- Michael Schutte <michi@uiae.at>  Thu, 31 Dec 2009 16:40:43 +0100
 
 kbd (1.15.1-2) unstable; urgency=low
 
