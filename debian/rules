@@ -90,7 +90,7 @@ binary: binary-arch
 
 TOPGIT_PATCHES = \
 	fixes/cast_align fixes/install_exec fixes/kbd_mode fixes/manpages \
-	fixes/openvt_error_handling fixes/unicode_start_breaks_X
+	fixes/openvt_error_handling fixes/unicode_start_breaks_X fixes/vcstime
 
 tg-export:
 	rm -rf debian/patches

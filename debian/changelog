@@ -1,3 +1,11 @@
+kbd (1.15.1-3) unstable; urgency=low
+
+  * New patch vcstime: /dev/vcs or /dev/vcs0 may act as console memory
+    devices.  Before, only the latter file was considered in vcstime, causing
+    it to fail on recent systems.
+
+ -- Michael Schutte <michi@uiae.at>  Thu, 31 Dec 2009 16:30:27 +0100
+
 kbd (1.15.1-2) unstable; urgency=low
 
   * New patch cast_align: Fix an FTBFS on some architectures caused by an
