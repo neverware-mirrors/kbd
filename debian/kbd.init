@@ -108,14 +108,8 @@ setup ()
 
     # start vcstime
     if [ "${DO_VCSTIME}" = "yes" ] && which vcstime >/dev/null; then
-        # Different device name for 2.6 kernels and devfs
-        if [ `uname -r | cut -f 2 -d .` = 6 ] && [ -e /dev/.devfsd ]; then
-            VCSTIME_OPT="-2 /dev/vcsa0"
-        else
-            VCSTIME_OPT=""
-        fi
         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Starting clock on text console"
-        vcstime ${VCSTIME_OPT} &
+        vcstime &
         [ "$VERBOSE" != "no" ] && log_action_end_msg 0
     fi
 
