@@ -3,7 +3,6 @@
 # Provides:          kbd
 # Required-Start:    $remote_fs
 # Required-Stop:
-# X-Start-Before:    console-cyrillic console-screen console-setup gdm kdm nodm wdm xdm
 # Default-Start:     S
 # Default-Stop:
 # X-Interactive:     true
