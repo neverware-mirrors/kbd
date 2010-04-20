@@ -42,7 +42,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp configure-stamp
 	[ ! -f Makefile ] || $(MAKE) distclean
-	rm -f aclocal.m4 configure
+	rm -rf aclocal.m4 configure config/ m4/ po/Makevars.template
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
 	find -name Makefile.in \! -path ./po/\* \! -path ./.pc/\* -exec rm {} \;
