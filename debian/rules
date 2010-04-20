@@ -18,7 +18,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	for ITEM in $(RETAIN); do cp $$ITEM $$ITEM.keep; done
-	./autogen.sh
+	autoreconf -isvf
 	./configure --prefix=/usr --datadir=/usr/share --mandir=/usr/share/man \
 		--enable-nls
 	touch $@

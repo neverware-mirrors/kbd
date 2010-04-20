@@ -5,11 +5,10 @@ kbd (1.15.2-1) unstable; urgency=low
       removed from the .debian.tar.gz.
     - Drop the install_exec patch; this problem has been fixed in this
       version’s build system.
-  * Use autogen.sh rather than calling aclocal, automake and autoconf
-    manually in debian/rules.
+  * Call autoreconf in debian/rules.
   * Minor changes to debian/copyright (most recent DEP 5 draft).
 
- -- Michael Schutte <michi@uiae.at>  Tue, 20 Apr 2010 17:44:12 +0200
+ -- Michael Schutte <michi@uiae.at>  Tue, 20 Apr 2010 18:05:12 +0200
 
 kbd (1.15.1-3) unstable; urgency=low
 
