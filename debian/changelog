@@ -8,8 +8,10 @@ kbd (1.15.2-1) unstable; urgency=low
   * Do not regenerate configure in debian/rules.
   * Minor changes to debian/copyright (most recent DEP 5 draft).
   * Bump Standards-Version to 3.8.4, no changes needed.
+  * Remove the Greek translation in gr.po.  The correct 639-1 code is
+    “el”; el.po exists as a more recent version of gr.po.
 
- -- Michael Schutte <michi@uiae.at>  Tue, 20 Apr 2010 18:39:46 +0200
+ -- Michael Schutte <michi@uiae.at>  Sat, 24 Apr 2010 12:45:36 +0200
 
 kbd (1.15.1-3) unstable; urgency=low
 

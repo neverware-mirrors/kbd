@@ -47,6 +47,7 @@ clean:
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
 	dh clean
 	for ITEM in $(RETAIN); do [ ! -f $$ITEM.keep ] || mv $$ITEM.keep $$ITEM; done
+	rm -f po/gr.po
 
 install: build-stamp
 	dh_testdir
