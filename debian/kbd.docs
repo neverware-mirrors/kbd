@@ -1,6 +1,4 @@
-doc/*
-debian/fonts.magic
-README
-debian/README.Euro
-debian/LISEZMOI.Euro
+doc/console.docs
+doc/font-formats
+doc/scancodes
 AUTHORS

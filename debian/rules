@@ -2,6 +2,7 @@
 
 TOPDIR = $(shell pwd)
 KBD = $(TOPDIR)/debian/kbd
+KBD_DOC = $(KBD)/usr/share/doc/kbd
 KBD_UDEB = $(TOPDIR)/debian/kbd-udeb
 
 UDEB_BINARIES = loadkeys kbd_mode setfont
@@ -80,8 +81,8 @@ binary-indep:
 
 binary-arch: install
 	dh binary-arch --until dh_installdocs
-# remove the docs shipped in doc-linux-{text,html}
-	rm -f $(KBD)/usr/share/doc/kbd/kbd.FAQ*
+	install -d $(KBD_DOC)/charsets
+	cp doc/iso8859.info doc/iso*.txt doc/cp*.txt $(KBD_DOC)/charsets
 	dh binary-arch --after dh_installdocs
 
 binary: binary-arch

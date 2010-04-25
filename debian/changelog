@@ -10,8 +10,12 @@ kbd (1.15.2-1) unstable; urgency=low
   * Bump Standards-Version to 3.8.4, no changes needed.
   * Remove the Greek translation in gr.po.  The correct 639-1 code is
     “el”; el.po exists as a more recent version of gr.po.
+  * Ship only selected files from the doc/ directory, as most files are
+    outdated and useless to the vast majority of users.  Remove
+    README.Euro and LISEZMOI.Euro from the debian/ directory.
+  * Register the font-formats documentation with doc-base.
 
- -- Michael Schutte <michi@uiae.at>  Sat, 24 Apr 2010 12:45:36 +0200
+ -- Michael Schutte <michi@uiae.at>  Sun, 25 Apr 2010 18:39:20 +0200
 
 kbd (1.15.1-3) unstable; urgency=low
 
