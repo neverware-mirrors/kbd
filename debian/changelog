@@ -14,8 +14,10 @@ kbd (1.15.2-1) unstable; urgency=low
     outdated and useless to the vast majority of users.  Remove
     README.Euro and LISEZMOI.Euro from the debian/ directory.
   * Register the font-formats documentation with doc-base.
+  * Convert debian/rules to the more idiomatic format with override_*
+    targets and depend on debhelper >= 7.0.50.
 
- -- Michael Schutte <michi@uiae.at>  Sun, 25 Apr 2010 18:39:20 +0200
+ -- Michael Schutte <michi@uiae.at>  Sun, 25 Apr 2010 19:28:19 +0200
 
 kbd (1.15.1-3) unstable; urgency=low
 

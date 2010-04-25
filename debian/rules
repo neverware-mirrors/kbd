@@ -5,29 +5,40 @@ KBD = $(TOPDIR)/debian/kbd
 KBD_DOC = $(KBD)/usr/share/doc/kbd
 KBD_UDEB = $(TOPDIR)/debian/kbd-udeb
 
-UDEB_BINARIES = loadkeys kbd_mode setfont
-EXTRA_BINARIES = screendump setlogcons setvesablank
-CONTRIB_BINARIES = codepage splitfont vcstime
-
-MOVE_TO_BIN = kbd_mode setfont fgconsole openvt chvt dumpkeys unicode_start loadkeys
-MOVE_TO_SBIN = kbdrate
-MOVE_TO_USR_SBIN = vcstime setvesablank
-
+# backup these files before the build process so clean can restore the
+# original tarball accurately
 RETAIN = src/loadkeys.c src/analyze.c \
 	 man/man1/dumpkeys.1 man/man1/loadkeys.1 \
 	 man/man8/loadunimap.8 man/man8/mapscrn.8 man/man8/setfont.8
 
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	for ITEM in $(RETAIN); do cp $$ITEM $$ITEM.keep; done
-	./configure --prefix=/usr --datadir=/usr/share --mandir=/usr/share/man \
-		--enable-nls
-	touch $@
+# build these twice, once optimized for size (for kbd-udeb)
+UDEB_BINARIES = loadkeys kbd_mode setfont
 
-build: build-stamp
-build-stamp: configure-stamp
-	dh_testdir
+# non-standard binaries to build
+EXTRA_BINARIES = screendump setlogcons setvesablank
+CONTRIB_BINARIES = codepage splitfont vcstime
+
+# we don’t want these in /usr/bin
+MOVE_TO_BIN = kbd_mode setfont fgconsole openvt chvt dumpkeys unicode_start loadkeys
+MOVE_TO_SBIN = kbdrate
+MOVE_TO_USR_SBIN = vcstime setvesablank
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+	dh_auto_clean
+	[ ! -f Makefile ] || $(MAKE) clean
+	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
+	cd contrib/ && rm -f $(CONTRIB_BINARIES)
+	for ITEM in $(RETAIN); do [ ! -f $$ITEM.keep ] || mv $$ITEM.keep $$ITEM; done
+	rm -f po/gr.po			# replaced by el.po
+
+override_dh_auto_configure:
+	for ITEM in $(RETAIN); do cp $$ITEM $$ITEM.keep; done
+	./configure --prefix=/usr --datadir=/usr/share --mandir=/usr/share/man --enable-nls
+
+override_dh_auto_build:
 	cd src/ && flex -o analyze.c analyze.l && sed -i 's/void yy_fatal_error/void attr_noreturn yy_fatal_error/' analyze.c
 	rm -f src/loadkeys.c
 	$(MAKE) -C src/ CFLAGS="-Os -g" $(UDEB_BINARIES)
@@ -36,25 +47,8 @@ build-stamp: configure-stamp
 	$(MAKE)
 	$(MAKE) -C src/ $(EXTRA_BINARIES)
 	$(MAKE) CFLAGS="-O2 -g" -C contrib/ $(CONTRIB_BINARIES)
-	touch $@
-	dh build --after dh_auto_build
 
-clean:
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp configure-stamp
-	[ ! -f Makefile ] || $(MAKE) clean
-	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
-	cd contrib/ && rm -f $(CONTRIB_BINARIES)
-	dh clean
-	for ITEM in $(RETAIN); do [ ! -f $$ITEM.keep ] || mv $$ITEM.keep $$ITEM; done
-	rm -f po/gr.po
-
-install: build-stamp
-	dh_testdir
-	dh_testroot
-	dh_prep
-	dh_installdirs
+override_dh_auto_install:
 # the kbd “core”
 	$(MAKE) DESTDIR=$(KBD) install-exec
 	$(MAKE) DESTDIR=$(KBD) -C po/ install
@@ -71,21 +65,14 @@ install: build-stamp
 	install -m644 debian/conffiles.d/* $(KBD)/etc/kbd/
 # prepare udeb
 	for ITEM in $(UDEB_BINARIES); do install -m755 src/$$ITEM-udeb $(KBD_UDEB)/bin/$$ITEM; done
-# and the rest
-	dh install --after dh_install --before dh_installinit
+
+override_dh_installinit:
 	dh_installinit -r -u"start 48 S ."
-	dh install --after dh_installinit
 
-binary-indep:
-# Nothing to be done
-
-binary-arch: install
-	dh binary-arch --until dh_installdocs
+override_dh_installdocs:
+	dh_installdocs
 	install -d $(KBD_DOC)/charsets
 	cp doc/iso8859.info doc/iso*.txt doc/cp*.txt $(KBD_DOC)/charsets
-	dh binary-arch --after dh_installdocs
-
-binary: binary-arch
 
 TOPGIT_PATCHES = \
 	fixes/kbd_mode fixes/manpages fixes/openvt_error_handling \
@@ -94,5 +81,3 @@ TOPGIT_PATCHES = \
 tg-export:
 	rm -rf debian/patches
 	tg export -b "`echo $(TOPGIT_PATCHES) | tr ' ' ','`" --quilt debian/patches
-
-.PHONY: configure build clean binary-arch binary-indep binary tg-export
