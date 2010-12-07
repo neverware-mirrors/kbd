@@ -7,8 +7,12 @@ kbd (1.15.2-2) unstable; urgency=low
     console-data ask the user for their preferred keyboard layout (by simply
     not installing console-data by default).  Thanks to Julien Cristau,
     closes: #606186.
+  * Package housekeeping:
+    - Upgrade Standards-Version: to 3.9.1, no changes necessary.
+    - Package-Type: no longer needs an XC- prefix.
+    - Add ${misc:Depends} to kbd-udeb as well.
 
- -- Michael Schutte <michi@uiae.at>  Tue, 07 Dec 2010 23:50:12 +0100
+ -- Michael Schutte <michi@uiae.at>  Wed, 08 Dec 2010 00:04:20 +0100
 
 kbd (1.15.2-1) unstable; urgency=low
 
