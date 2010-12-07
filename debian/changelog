@@ -2,8 +2,13 @@ kbd (1.15.2-2) unstable; urgency=low
 
   * New patch compose_as_usual: Fix the Unicode conversion of the internal
     “compose as usual” table with “loadkeys -u”, closes: #600006.
+  * Prefer console-setup over console-data and console-common.  This is part
+    of a d-i related fix and helps avoid that both console-setup-udeb and
+    console-data ask the user for their preferred keyboard layout (by simply
+    not installing console-data by default).  Thanks to Julien Cristau,
+    closes: #606186.
 
- -- Michael Schutte <michi@uiae.at>  Wed, 13 Oct 2010 16:42:17 +0200
+ -- Michael Schutte <michi@uiae.at>  Tue, 07 Dec 2010 23:50:12 +0100
 
 kbd (1.15.2-1) unstable; urgency=low
 
