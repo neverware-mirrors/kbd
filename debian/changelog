@@ -4,12 +4,14 @@ kbd (1.15.2-3) unstable; urgency=low
     closes: #591146.
   * Change my e-mail address in Uploaders:, debian/copyright and patches.
   * Update debian/copyright format to the current revision of DEP-5.
-  * Update manpages patch to document that the -e switch requires openvt to be
-    a session leader, closes: #610373.
+  * Patch manpages:
+    - Document that the -e switch requires openvt to be a session leader,
+      closes: #610373.
+    - Give in to lintian concerning the *superflous typo in mk_modmap(8).
   * Breaks: util-linux (<< 2.11) instead of conflicting with it, as per Policy
     7.6.1: This was because of kbdrate moving packages.
 
- -- Michael Schutte <michi@debian.org>  Fri, 18 Feb 2011 12:14:29 +0100
+ -- Michael Schutte <michi@debian.org>  Fri, 18 Feb 2011 12:22:15 +0100
 
 kbd (1.15.2-2) unstable; urgency=low
 
