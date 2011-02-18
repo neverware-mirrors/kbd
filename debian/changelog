@@ -6,8 +6,10 @@ kbd (1.15.2-3) unstable; urgency=low
   * Update debian/copyright format to the current revision of DEP-5.
   * Update manpages patch to document that the -e switch requires openvt to be
     a session leader, closes: #610373.
+  * Breaks: util-linux (<< 2.11) instead of conflicting with it, as per Policy
+    7.6.1: This was because of kbdrate moving packages.
 
- -- Michael Schutte <michi@debian.org>  Fri, 18 Feb 2011 11:58:35 +0100
+ -- Michael Schutte <michi@debian.org>  Fri, 18 Feb 2011 12:14:29 +0100
 
 kbd (1.15.2-2) unstable; urgency=low
 
