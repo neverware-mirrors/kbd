@@ -2,9 +2,9 @@ kbd (1.15.2-3) unstable; urgency=low
 
   * Bump Priority: to optional (while downgrading console-tools to extra),
     closes: #591146.
-  * Change my e-mail address in Uploaders: and debian/copyright.
+  * Change my e-mail address in Uploaders:, debian/copyright and patches.
 
- -- Michael Schutte <michi@debian.org>  Fri, 18 Feb 2011 11:24:05 +0100
+ -- Michael Schutte <michi@debian.org>  Fri, 18 Feb 2011 11:28:50 +0100
 
 kbd (1.15.2-2) unstable; urgency=low
 
