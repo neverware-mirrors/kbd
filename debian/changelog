@@ -1,3 +1,11 @@
+kbd (1.15.2-3) unstable; urgency=low
+
+  * Bump Priority: to optional (while downgrading console-tools to extra),
+    closes: #591146.
+  * Change my e-mail address in Uploaders: and debian/copyright.
+
+ -- Michael Schutte <michi@debian.org>  Fri, 18 Feb 2011 11:24:05 +0100
+
 kbd (1.15.2-2) unstable; urgency=low
 
   * New patch compose_as_usual: Fix the Unicode conversion of the internal
