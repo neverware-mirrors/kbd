@@ -3,8 +3,10 @@ kbd (1.15.2-3) unstable; urgency=low
   * Bump Priority: to optional (while downgrading console-tools to extra),
     closes: #591146.
   * Change my e-mail address in Uploaders:, debian/copyright and patches.
+  * Update manpages patch to document that the -e switch requires openvt to be
+    a session leader, closes: #610373.
 
- -- Michael Schutte <michi@debian.org>  Fri, 18 Feb 2011 11:28:50 +0100
+ -- Michael Schutte <michi@debian.org>  Fri, 18 Feb 2011 11:39:58 +0100
 
 kbd (1.15.2-2) unstable; urgency=low
 
