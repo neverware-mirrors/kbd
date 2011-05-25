@@ -35,24 +35,22 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@KLIBC_FALSE@am__append_1 = kbdrate chvt deallocvt openvt
-@KEYCODES_PROGS_TRUE@am__append_2 = getkeycodes setkeycodes
-@RESIZECONS_PROGS_TRUE@am__append_3 = resizecons
-@OPTIONAL_PROGS_TRUE@am__append_4 = \
-@OPTIONAL_PROGS_TRUE@	setlogcons setvesablank getunimap clrunimap outpsfheader setpalette
+@KEYCODES_PROGS_TRUE@am__append_1 = getkeycodes setkeycodes
+@RESIZECONS_PROGS_TRUE@am__append_2 = resizecons
+@OPTIONAL_PROGS_TRUE@am__append_3 = \
+@OPTIONAL_PROGS_TRUE@	setlogcons setvesablank getunimap clrunimap outpsfheader setpalette \
+@OPTIONAL_PROGS_TRUE@	screendump spawn_console spawn_login
 
-@KLIBC_FALSE@@OPTIONAL_PROGS_TRUE@am__append_5 = screendump spawn_console spawn_login
-bin_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_7)
+bin_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_5)
 subdir = src
 DIST_COMMON = $(dist_bin_SCRIPTS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in loadkeys.c
+	$(srcdir)/Makefile.in loadkeys.analyze.c loadkeys.c loadkeys.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/klibc.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
@@ -60,23 +58,22 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__EXEEXT_1 = mapscrn$(EXEEXT) loadunimap$(EXEEXT)
-@KLIBC_FALSE@am__EXEEXT_2 = kbdrate$(EXEEXT) chvt$(EXEEXT) \
-@KLIBC_FALSE@	deallocvt$(EXEEXT) openvt$(EXEEXT)
-@KEYCODES_PROGS_TRUE@am__EXEEXT_3 = getkeycodes$(EXEEXT) \
+@KEYCODES_PROGS_TRUE@am__EXEEXT_2 = getkeycodes$(EXEEXT) \
 @KEYCODES_PROGS_TRUE@	setkeycodes$(EXEEXT)
-@RESIZECONS_PROGS_TRUE@am__EXEEXT_4 = resizecons$(EXEEXT)
-@OPTIONAL_PROGS_TRUE@am__EXEEXT_5 = setlogcons$(EXEEXT) \
+@RESIZECONS_PROGS_TRUE@am__EXEEXT_3 = resizecons$(EXEEXT)
+@OPTIONAL_PROGS_TRUE@am__EXEEXT_4 = setlogcons$(EXEEXT) \
 @OPTIONAL_PROGS_TRUE@	setvesablank$(EXEEXT) getunimap$(EXEEXT) \
 @OPTIONAL_PROGS_TRUE@	clrunimap$(EXEEXT) outpsfheader$(EXEEXT) \
-@OPTIONAL_PROGS_TRUE@	setpalette$(EXEEXT)
-@KLIBC_FALSE@@OPTIONAL_PROGS_TRUE@am__EXEEXT_6 = screendump$(EXEEXT) \
-@KLIBC_FALSE@@OPTIONAL_PROGS_TRUE@	spawn_console$(EXEEXT) \
-@KLIBC_FALSE@@OPTIONAL_PROGS_TRUE@	spawn_login$(EXEEXT)
-am__EXEEXT_7 = dumpkeys$(EXEEXT) loadkeys$(EXEEXT) showkey$(EXEEXT) \
+@OPTIONAL_PROGS_TRUE@	setpalette$(EXEEXT) screendump$(EXEEXT) \
+@OPTIONAL_PROGS_TRUE@	spawn_console$(EXEEXT) \
+@OPTIONAL_PROGS_TRUE@	spawn_login$(EXEEXT)
+am__EXEEXT_5 = dumpkeys$(EXEEXT) loadkeys$(EXEEXT) showkey$(EXEEXT) \
 	setfont$(EXEEXT) showconsolefont$(EXEEXT) setleds$(EXEEXT) \
 	setmetamode$(EXEEXT) kbd_mode$(EXEEXT) psfxtable$(EXEEXT) \
-	fgconsole$(EXEEXT) $(am__EXEEXT_2) $(am__EXEEXT_3) \
-	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6)
+	fgconsole$(EXEEXT) kbdrate$(EXEEXT) chvt$(EXEEXT) \
+	deallocvt$(EXEEXT) openvt$(EXEEXT) kbdinfo$(EXEEXT) \
+	setvtrgb$(EXEEXT) $(am__EXEEXT_2) $(am__EXEEXT_3) \
+	$(am__EXEEXT_4)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 =
@@ -115,65 +112,57 @@ am_kbd_mode_OBJECTS = $(am__objects_1) kbd_mode.$(OBJEXT) \
 	$(am__objects_2)
 kbd_mode_OBJECTS = $(am_kbd_mode_OBJECTS)
 kbd_mode_LDADD = $(LDADD)
+am_kbdinfo_OBJECTS = $(am__objects_1) kbdinfo.$(OBJEXT) \
+	$(am__objects_2)
+kbdinfo_OBJECTS = $(am_kbdinfo_OBJECTS)
+kbdinfo_LDADD = $(LDADD)
 kbdrate_SOURCES = kbdrate.c
 kbdrate_OBJECTS = kbdrate.$(OBJEXT)
 kbdrate_LDADD = $(LDADD)
-am__loadkeys_SOURCES_DIST = modifiers.h nls.h paths.h version.h kbd.h \
-	loadkeys.y getfd.c getfd.h ksyms.c ksyms.h cp1250.syms.h \
-	ethiopic.syms.h koi8.syms.h sami.syms.h thai.syms.h xmalloc.c \
-	xmalloc.h findfile.c findfile.h klibc_compat.c klibc_compat.h
 am__objects_6 = findfile.$(OBJEXT)
-@KLIBC_TRUE@am__objects_7 = klibc_compat.$(OBJEXT)
-am_loadkeys_OBJECTS = $(am__objects_1) loadkeys.$(OBJEXT) \
+am_loadkeys_OBJECTS = loadkeys.$(OBJEXT) loadkeys.analyze.$(OBJEXT) \
 	$(am__objects_2) $(am__objects_4) $(am__objects_5) \
-	$(am__objects_6) $(am__objects_7)
+	$(am__objects_6)
 loadkeys_OBJECTS = $(am_loadkeys_OBJECTS)
 loadkeys_LDADD = $(LDADD)
-am__loadunimap_SOURCES_DIST = modifiers.h nls.h paths.h version.h \
-	kbd.h loadunimap.c findfile.c findfile.h psf.h psffontop.c \
-	psffontop.h utf8.c utf8.h xmalloc.c xmalloc.h getfd.c getfd.h \
-	kdmapop.c kdmapop.h klibc_compat.c klibc_compat.h
-am__objects_8 = loadunimap-findfile.$(OBJEXT)
-am__objects_9 = loadunimap-psffontop.$(OBJEXT)
-am__objects_10 = loadunimap-utf8.$(OBJEXT)
-am__objects_11 = loadunimap-xmalloc.$(OBJEXT)
-am__objects_12 = loadunimap-getfd.$(OBJEXT)
-am__objects_13 = loadunimap-kdmapop.$(OBJEXT)
-@KLIBC_TRUE@am__objects_14 = loadunimap-klibc_compat.$(OBJEXT)
+am__objects_7 = loadunimap-findfile.$(OBJEXT)
+am__objects_8 = loadunimap-psffontop.$(OBJEXT)
+am__objects_9 = loadunimap-utf8.$(OBJEXT)
+am__objects_10 = loadunimap-xmalloc.$(OBJEXT)
+am__objects_11 = loadunimap-getfd.$(OBJEXT)
+am__objects_12 = loadunimap-kdmapop.$(OBJEXT)
 am_loadunimap_OBJECTS = $(am__objects_1) \
-	loadunimap-loadunimap.$(OBJEXT) $(am__objects_8) \
-	$(am__objects_9) $(am__objects_10) $(am__objects_11) \
-	$(am__objects_12) $(am__objects_13) $(am__objects_14)
+	loadunimap-loadunimap.$(OBJEXT) $(am__objects_7) \
+	$(am__objects_8) $(am__objects_9) $(am__objects_10) \
+	$(am__objects_11) $(am__objects_12)
 loadunimap_OBJECTS = $(am_loadunimap_OBJECTS)
 loadunimap_LDADD = $(LDADD)
 loadunimap_LINK = $(CCLD) $(loadunimap_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am__objects_15 = mapscrn-findfile.$(OBJEXT)
-am__objects_16 = mapscrn-utf8.$(OBJEXT)
-am__objects_17 = mapscrn-xmalloc.$(OBJEXT)
-am__objects_18 = mapscrn-getfd.$(OBJEXT)
-am__objects_19 = mapscrn-kdmapop.$(OBJEXT)
+am__objects_13 = mapscrn-findfile.$(OBJEXT)
+am__objects_14 = mapscrn-utf8.$(OBJEXT)
+am__objects_15 = mapscrn-xmalloc.$(OBJEXT)
+am__objects_16 = mapscrn-getfd.$(OBJEXT)
+am__objects_17 = mapscrn-kdmapop.$(OBJEXT)
 am_mapscrn_OBJECTS = $(am__objects_1) mapscrn-mapscrn.$(OBJEXT) \
-	$(am__objects_15) $(am__objects_16) $(am__objects_17) \
-	$(am__objects_18) $(am__objects_19)
+	$(am__objects_13) $(am__objects_14) $(am__objects_15) \
+	$(am__objects_16) $(am__objects_17)
 mapscrn_OBJECTS = $(am_mapscrn_OBJECTS)
 mapscrn_LDADD = $(LDADD)
 mapscrn_LINK = $(CCLD) $(mapscrn_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am_openvt_OBJECTS = $(am__objects_1) openvt.$(OBJEXT) $(am__objects_2)
+am_openvt_OBJECTS = $(am__objects_1) openvt.$(OBJEXT) $(am__objects_2) \
+	$(am__objects_5)
 openvt_OBJECTS = $(am_openvt_OBJECTS)
 openvt_LDADD = $(LDADD)
 outpsfheader_SOURCES = outpsfheader.c
 outpsfheader_OBJECTS = outpsfheader.$(OBJEXT)
 outpsfheader_LDADD = $(LDADD)
-am__psfxtable_SOURCES_DIST = modifiers.h nls.h paths.h version.h kbd.h \
-	psfxtable.c psf.h psffontop.c psffontop.h xmalloc.c xmalloc.h \
-	utf8.c utf8.h getfd.c getfd.h klibc_compat.c klibc_compat.h
-am__objects_20 = psffontop.$(OBJEXT)
-am__objects_21 = utf8.$(OBJEXT)
+am__objects_18 = psffontop.$(OBJEXT)
+am__objects_19 = utf8.$(OBJEXT)
 am_psfxtable_OBJECTS = $(am__objects_1) psfxtable.$(OBJEXT) \
-	$(am__objects_20) $(am__objects_5) $(am__objects_21) \
-	$(am__objects_2) $(am__objects_7)
+	$(am__objects_18) $(am__objects_5) $(am__objects_19) \
+	$(am__objects_2)
 psfxtable_OBJECTS = $(am_psfxtable_OBJECTS)
 psfxtable_LDADD = $(LDADD)
 am_resizecons_OBJECTS = $(am__objects_1) resizecons.$(OBJEXT) \
@@ -184,17 +173,11 @@ am_screendump_OBJECTS = $(am__objects_1) screendump.$(OBJEXT) \
 	$(am__objects_5)
 screendump_OBJECTS = $(am_screendump_OBJECTS)
 screendump_LDADD = $(LDADD)
-am__setfont_SOURCES_DIST = modifiers.h nls.h paths.h version.h kbd.h \
-	setfont.c findfile.c findfile.h xmalloc.c xmalloc.h getfd.c \
-	getfd.h mapscrn.c kdmapop.c kdmapop.h psf.h psffontop.c \
-	psffontop.h utf8.c utf8.h kdfontop.c kdfontop.h loadunimap.c \
-	loadunimap.h klibc_compat.c klibc_compat.h
-am__objects_22 = loadunimap.$(OBJEXT)
+am__objects_20 = loadunimap.$(OBJEXT)
 am_setfont_OBJECTS = $(am__objects_1) setfont.$(OBJEXT) \
 	$(am__objects_6) $(am__objects_5) $(am__objects_2) \
-	mapscrn.$(OBJEXT) $(am__objects_3) $(am__objects_20) \
-	$(am__objects_21) kdfontop.$(OBJEXT) $(am__objects_22) \
-	$(am__objects_7)
+	mapscrn.$(OBJEXT) $(am__objects_3) $(am__objects_18) \
+	$(am__objects_19) kdfontop.$(OBJEXT) $(am__objects_20)
 setfont_OBJECTS = $(am_setfont_OBJECTS)
 setfont_LDADD = $(LDADD)
 am_setkeycodes_OBJECTS = $(am__objects_1) setkeycodes.$(OBJEXT) \
@@ -219,15 +202,17 @@ am_setvesablank_OBJECTS = $(am__objects_1) setvesablank.$(OBJEXT) \
 	$(am__objects_2)
 setvesablank_OBJECTS = $(am_setvesablank_OBJECTS)
 setvesablank_LDADD = $(LDADD)
+am_setvtrgb_OBJECTS = $(am__objects_1) setvtrgb.$(OBJEXT) \
+	$(am__objects_2)
+setvtrgb_OBJECTS = $(am_setvtrgb_OBJECTS)
+setvtrgb_LDADD = $(LDADD)
 am_showconsolefont_OBJECTS = $(am__objects_1) \
 	showconsolefont.$(OBJEXT) $(am__objects_2) $(am__objects_5) \
 	$(am__objects_3) kdfontop.$(OBJEXT)
 showconsolefont_OBJECTS = $(am_showconsolefont_OBJECTS)
 showconsolefont_LDADD = $(LDADD)
-am__showkey_SOURCES_DIST = modifiers.h nls.h paths.h version.h kbd.h \
-	showkey.c getfd.c getfd.h klibc_compat.c klibc_compat.h
 am_showkey_OBJECTS = $(am__objects_1) showkey.$(OBJEXT) \
-	$(am__objects_2) $(am__objects_7)
+	$(am__objects_2)
 showkey_OBJECTS = $(am_showkey_OBJECTS)
 showkey_LDADD = $(LDADD)
 spawn_console_SOURCES = spawn_console.c
@@ -266,30 +251,31 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
+LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)
 YLWRAP = $(top_srcdir)/config/ylwrap
+YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
 SOURCES = $(chvt_SOURCES) $(clrunimap_SOURCES) $(deallocvt_SOURCES) \
 	$(dumpkeys_SOURCES) $(fgconsole_SOURCES) \
 	$(getkeycodes_SOURCES) $(getunimap_SOURCES) \
-	$(kbd_mode_SOURCES) kbdrate.c $(loadkeys_SOURCES) \
-	$(loadunimap_SOURCES) $(mapscrn_SOURCES) $(openvt_SOURCES) \
-	outpsfheader.c $(psfxtable_SOURCES) $(resizecons_SOURCES) \
-	$(screendump_SOURCES) $(setfont_SOURCES) \
+	$(kbd_mode_SOURCES) $(kbdinfo_SOURCES) kbdrate.c \
+	$(loadkeys_SOURCES) $(loadunimap_SOURCES) $(mapscrn_SOURCES) \
+	$(openvt_SOURCES) outpsfheader.c $(psfxtable_SOURCES) \
+	$(resizecons_SOURCES) $(screendump_SOURCES) $(setfont_SOURCES) \
 	$(setkeycodes_SOURCES) setleds.c $(setlogcons_SOURCES) \
 	setmetamode.c $(setpalette_SOURCES) $(setvesablank_SOURCES) \
-	$(showconsolefont_SOURCES) $(showkey_SOURCES) spawn_console.c \
-	spawn_login.c
+	$(setvtrgb_SOURCES) $(showconsolefont_SOURCES) \
+	$(showkey_SOURCES) spawn_console.c spawn_login.c
 DIST_SOURCES = $(chvt_SOURCES) $(clrunimap_SOURCES) \
 	$(deallocvt_SOURCES) $(dumpkeys_SOURCES) $(fgconsole_SOURCES) \
 	$(getkeycodes_SOURCES) $(getunimap_SOURCES) \
-	$(kbd_mode_SOURCES) kbdrate.c $(am__loadkeys_SOURCES_DIST) \
-	$(am__loadunimap_SOURCES_DIST) $(mapscrn_SOURCES) \
-	$(openvt_SOURCES) outpsfheader.c $(am__psfxtable_SOURCES_DIST) \
-	$(resizecons_SOURCES) $(screendump_SOURCES) \
-	$(am__setfont_SOURCES_DIST) $(setkeycodes_SOURCES) setleds.c \
-	$(setlogcons_SOURCES) setmetamode.c $(setpalette_SOURCES) \
-	$(setvesablank_SOURCES) $(showconsolefont_SOURCES) \
-	$(am__showkey_SOURCES_DIST) spawn_console.c spawn_login.c
+	$(kbd_mode_SOURCES) $(kbdinfo_SOURCES) kbdrate.c \
+	$(loadkeys_SOURCES) $(loadunimap_SOURCES) $(mapscrn_SOURCES) \
+	$(openvt_SOURCES) outpsfheader.c $(psfxtable_SOURCES) \
+	$(resizecons_SOURCES) $(screendump_SOURCES) $(setfont_SOURCES) \
+	$(setkeycodes_SOURCES) setleds.c $(setlogcons_SOURCES) \
+	setmetamode.c $(setpalette_SOURCES) $(setvesablank_SOURCES) \
+	$(setvtrgb_SOURCES) $(showconsolefont_SOURCES) \
+	$(showkey_SOURCES) spawn_console.c spawn_login.c
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -320,8 +306,6 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
-KLCC = @KLCC@
-KLIBC = @KLIBC@
 LDFLAGS = @LDFLAGS@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
@@ -417,9 +401,9 @@ AM_CPPFLAGS = -DDATADIR=\"$(datadir)\" -DLOCALEDIR=\"$(localedir)\" $(WARNINGS) 
 
 OLDPROGS = mapscrn loadunimap
 PROGS = dumpkeys loadkeys showkey setfont showconsolefont setleds \
-	setmetamode kbd_mode psfxtable fgconsole $(am__append_1) \
-	$(am__append_2) $(am__append_3) $(am__append_4) \
-	$(am__append_5)
+	setmetamode kbd_mode psfxtable fgconsole kbdrate chvt \
+	deallocvt openvt kbdinfo setvtrgb $(am__append_1) \
+	$(am__append_2) $(am__append_3)
 dist_bin_SCRIPTS = unicode_start unicode_stop
 EXTRA_DIST = \
 	analyze.c analyze.l wctomb.c totextmode.c \
@@ -435,7 +419,6 @@ PSF_S = psf.h psffontop.c psffontop.h
 UNIM_S = loadunimap.c loadunimap.h
 UTF8_S = utf8.c utf8.h
 XMAL_S = xmalloc.c xmalloc.h
-@KLIBC_TRUE@KLIBC_S = klibc_compat.c klibc_compat.h
 chvt_SOURCES = $(ALL_S) chvt.c $(GETFD_S)
 clrunimap_SOURCES = $(ALL_S) clrunimap.c $(GETFD_S) $(KDMA_S)
 deallocvt_SOURCES = $(ALL_S) deallocvt.c $(GETFD_S)
@@ -444,26 +427,31 @@ fgconsole_SOURCES = $(ALL_S) fgconsole.c $(GETFD_S)
 getkeycodes_SOURCES = $(ALL_S) getkeycodes.c $(GETFD_S)
 getunimap_SOURCES = $(ALL_S) getunimap.c $(GETFD_S) $(KDMA_S)
 kbd_mode_SOURCES = $(ALL_S) kbd_mode.c $(GETFD_S)
-loadkeys_SOURCES = $(ALL_S) loadkeys.y $(GETFD_S) $(KSYMS_S) $(XMAL_S) $(FIND_S) $(KLIBC_S)
-loadunimap_SOURCES = $(ALL_S) loadunimap.c $(FIND_S) $(PSF_S) $(UTF8_S) $(XMAL_S) $(GETFD_S) $(KDMA_S) $(KLIBC_S)
+loadunimap_SOURCES = $(ALL_S) loadunimap.c $(FIND_S) $(PSF_S) $(UTF8_S) $(XMAL_S) $(GETFD_S) $(KDMA_S)
 mapscrn_SOURCES = $(ALL_S) mapscrn.c $(FIND_S) $(UTF8_S) $(XMAL_S) $(GETFD_S) $(KDMA_S)
-openvt_SOURCES = $(ALL_S) openvt.c openvt.h $(GETFD_S)
-psfxtable_SOURCES = $(ALL_S) psfxtable.c $(PSF_S) $(XMAL_S) $(UTF8_S) $(GETFD_S) $(KLIBC_S)
+openvt_SOURCES = $(ALL_S) openvt.c $(GETFD_S) $(XMAL_S)
+psfxtable_SOURCES = $(ALL_S) psfxtable.c $(PSF_S) $(XMAL_S) $(UTF8_S) $(GETFD_S)
 resizecons_SOURCES = $(ALL_S) resizecons.c $(GETFD_S) $(FIND_S) $(XMAL_S)
 screendump_SOURCES = $(ALL_S) screendump.c $(XMAL_S)
-setfont_SOURCES = $(ALL_S) setfont.c $(FIND_S) $(XMAL_S) $(GETFD_S) mapscrn.c $(KDMA_S) $(PSF_S) $(UTF8_S) kdfontop.c kdfontop.h $(UNIM_S) $(KLIBC_S)
+setfont_SOURCES = $(ALL_S) setfont.c $(FIND_S) $(XMAL_S) $(GETFD_S) mapscrn.c $(KDMA_S) $(PSF_S) $(UTF8_S) kdfontop.c kdfontop.h $(UNIM_S)
 setkeycodes_SOURCES = $(ALL_S) setkeycodes.c $(GETFD_S)
+setvtrgb_SOURCES = $(ALL_S) setvtrgb.c $(GETFD_S)
 setlogcons_SOURCES = $(ALL_S) setlogcons.c $(GETFD_S)
 setpalette_SOURCES = $(ALL_S) setpalette.c $(GETFD_S)
 setvesablank_SOURCES = $(ALL_S) setvesablank.c $(GETFD_S)
 showconsolefont_SOURCES = $(ALL_S) showconsolefont.c $(GETFD_S) $(XMAL_S) $(KDMA_S) kdfontop.c kdfontop.h
-showkey_SOURCES = $(ALL_S) showkey.c $(GETFD_S) $(KLIBC_S)
+showkey_SOURCES = $(ALL_S) showkey.c $(GETFD_S)
+kbdinfo_SOURCES = $(ALL_S) kbdinfo.c $(GETFD_S)
 mapscrn_CFLAGS = -DMAIN
 loadunimap_CFLAGS = -DMAIN
-all: all-am
+AM_YFLAGS = -d
+BUILT_SOURCES = loadkeys.c loadkeys.analyze.c loadkeys.h
+loadkeys_SOURCES = loadkeys.y loadkeys.analyze.l $(GETFD_S) $(KSYMS_S) $(XMAL_S) $(FIND_S)
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj .y
+.SUFFIXES: .c .l .o .obj .y
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -555,9 +543,17 @@ getunimap$(EXEEXT): $(getunimap_OBJECTS) $(getunimap_DEPENDENCIES)
 kbd_mode$(EXEEXT): $(kbd_mode_OBJECTS) $(kbd_mode_DEPENDENCIES) 
 	@rm -f kbd_mode$(EXEEXT)
 	$(LINK) $(kbd_mode_OBJECTS) $(kbd_mode_LDADD) $(LIBS)
+kbdinfo$(EXEEXT): $(kbdinfo_OBJECTS) $(kbdinfo_DEPENDENCIES) 
+	@rm -f kbdinfo$(EXEEXT)
+	$(LINK) $(kbdinfo_OBJECTS) $(kbdinfo_LDADD) $(LIBS)
 kbdrate$(EXEEXT): $(kbdrate_OBJECTS) $(kbdrate_DEPENDENCIES) 
 	@rm -f kbdrate$(EXEEXT)
 	$(LINK) $(kbdrate_OBJECTS) $(kbdrate_LDADD) $(LIBS)
+loadkeys.h: loadkeys.c
+	@if test ! -f $@; then \
+	  rm -f loadkeys.c; \
+	  $(MAKE) $(AM_MAKEFLAGS) loadkeys.c; \
+	else :; fi
 loadkeys$(EXEEXT): $(loadkeys_OBJECTS) $(loadkeys_DEPENDENCIES) 
 	@rm -f loadkeys$(EXEEXT)
 	$(LINK) $(loadkeys_OBJECTS) $(loadkeys_LDADD) $(LIBS)
@@ -603,6 +599,9 @@ setpalette$(EXEEXT): $(setpalette_OBJECTS) $(setpalette_DEPENDENCIES)
 setvesablank$(EXEEXT): $(setvesablank_OBJECTS) $(setvesablank_DEPENDENCIES) 
 	@rm -f setvesablank$(EXEEXT)
 	$(LINK) $(setvesablank_OBJECTS) $(setvesablank_LDADD) $(LIBS)
+setvtrgb$(EXEEXT): $(setvtrgb_OBJECTS) $(setvtrgb_DEPENDENCIES) 
+	@rm -f setvtrgb$(EXEEXT)
+	$(LINK) $(setvtrgb_OBJECTS) $(setvtrgb_LDADD) $(LIBS)
 showconsolefont$(EXEEXT): $(showconsolefont_OBJECTS) $(showconsolefont_DEPENDENCIES) 
 	@rm -f showconsolefont$(EXEEXT)
 	$(LINK) $(showconsolefont_OBJECTS) $(showconsolefont_LDADD) $(LIBS)
@@ -666,16 +665,16 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getkeycodes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getunimap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kbd_mode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kbdinfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kbdrate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kdfontop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kdmapop.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/klibc_compat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ksyms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadkeys.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadkeys.analyze.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-findfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-getfd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-kdmapop.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-klibc_compat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-loadunimap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-psffontop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-utf8.Po@am__quote@
@@ -701,6 +700,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setmetamode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setpalette.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setvesablank.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setvtrgb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/showconsolefont.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/showkey.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spawn_console.Po@am__quote@
@@ -820,20 +820,6 @@ loadunimap-kdmapop.obj: kdmapop.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-kdmapop.obj `if test -f 'kdmapop.c'; then $(CYGPATH_W) 'kdmapop.c'; else $(CYGPATH_W) '$(srcdir)/kdmapop.c'; fi`
 
-loadunimap-klibc_compat.o: klibc_compat.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-klibc_compat.o -MD -MP -MF $(DEPDIR)/loadunimap-klibc_compat.Tpo -c -o loadunimap-klibc_compat.o `test -f 'klibc_compat.c' || echo '$(srcdir)/'`klibc_compat.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/loadunimap-klibc_compat.Tpo $(DEPDIR)/loadunimap-klibc_compat.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='klibc_compat.c' object='loadunimap-klibc_compat.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-klibc_compat.o `test -f 'klibc_compat.c' || echo '$(srcdir)/'`klibc_compat.c
-
-loadunimap-klibc_compat.obj: klibc_compat.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-klibc_compat.obj -MD -MP -MF $(DEPDIR)/loadunimap-klibc_compat.Tpo -c -o loadunimap-klibc_compat.obj `if test -f 'klibc_compat.c'; then $(CYGPATH_W) 'klibc_compat.c'; else $(CYGPATH_W) '$(srcdir)/klibc_compat.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/loadunimap-klibc_compat.Tpo $(DEPDIR)/loadunimap-klibc_compat.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='klibc_compat.c' object='loadunimap-klibc_compat.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-klibc_compat.obj `if test -f 'klibc_compat.c'; then $(CYGPATH_W) 'klibc_compat.c'; else $(CYGPATH_W) '$(srcdir)/klibc_compat.c'; fi`
-
 mapscrn-mapscrn.o: mapscrn.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-mapscrn.o -MD -MP -MF $(DEPDIR)/mapscrn-mapscrn.Tpo -c -o mapscrn-mapscrn.o `test -f 'mapscrn.c' || echo '$(srcdir)/'`mapscrn.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/mapscrn-mapscrn.Tpo $(DEPDIR)/mapscrn-mapscrn.Po
@@ -917,6 +903,9 @@ mapscrn-kdmapop.obj: kdmapop.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='kdmapop.c' object='mapscrn-kdmapop.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-kdmapop.obj `if test -f 'kdmapop.c'; then $(CYGPATH_W) 'kdmapop.c'; else $(CYGPATH_W) '$(srcdir)/kdmapop.c'; fi`
+
+.l.c:
+	$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
 
 .y.c:
 	$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h $*.h y.output $*.output -- $(YACCCOMPILE)
@@ -1004,13 +993,15 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(PROGRAMS) $(SCRIPTS)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -1035,7 +1026,10 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-rm -f loadkeys.analyze.c
 	-rm -f loadkeys.c
+	-rm -f loadkeys.h
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
@@ -1106,7 +1100,7 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS
 
-.MAKE: install-am install-exec-am install-strip
+.MAKE: all check install install-am install-exec-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
 	clean-generic ctags distclean distclean-compile \
