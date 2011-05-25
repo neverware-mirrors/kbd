@@ -32,6 +32,7 @@ override_dh_auto_configure:
 	./configure --prefix=/usr --datadir=/usr/share --mandir=/usr/share/man --enable-nls
 
 override_dh_auto_build:
+	$(MAKE) -C po/ eo.gmo it.gmo ru.gmo
 	$(MAKE) -C src/ CFLAGS="-Os -g" $(UDEB_BINARIES)
 	cd src/ && for ITEM in $(UDEB_BINARIES); do mv $$ITEM $$ITEM-udeb; done
 	$(MAKE) -C src/ clean
