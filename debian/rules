@@ -26,6 +26,7 @@ override_dh_auto_clean:
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
 	rm -f po/gr.po			# replaced by el.po
+	rm -f po/es.po			# erroneous
 
 override_dh_auto_configure:
 	./configure --prefix=/usr --datadir=/usr/share --mandir=/usr/share/man --enable-nls
