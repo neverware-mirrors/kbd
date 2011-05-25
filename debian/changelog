@@ -5,8 +5,10 @@ kbd (1.15.3-1) UNRELEASED; urgency=low
     - Includes Dustin Kirkland’s setvtrgb utility, closes: #617416; and
       kbdinfo, vaguely based on Julien Cristau’s VT mode query code,
       closes: #618573.
+    - As the build system has become a little smarter and sensibly
+      re-builds .c from .y and .l now, simplify debian/rules.
 
- -- Michael Schutte <michi@debian.org>  Wed, 25 May 2011 20:20:39 +0200
+ -- Michael Schutte <michi@debian.org>  Wed, 25 May 2011 20:42:55 +0200
 
 kbd (1.15.2-3) unstable; urgency=low
 
