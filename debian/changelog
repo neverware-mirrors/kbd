@@ -8,8 +8,9 @@ kbd (1.15.3-1) UNRELEASED; urgency=low
     - Reflect changes to the build system in debian/rules.
     - Spanish translations had to be dropped due to problems with the
       es.po file.
+  * Upgrade Standards-Version to 3.9.2, no changes needed.
 
- -- Michael Schutte <michi@debian.org>  Wed, 25 May 2011 21:05:31 +0200
+ -- Michael Schutte <michi@debian.org>  Wed, 25 May 2011 21:06:57 +0200
 
 kbd (1.15.2-3) unstable; urgency=low
 
