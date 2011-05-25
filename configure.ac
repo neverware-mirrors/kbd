@@ -1,6 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_INIT(kbd, 1.15.2, gladkov.alexey@gmail.com)
+AC_INIT(kbd, 1.15.3, gladkov.alexey@gmail.com)
 
 AC_PREREQ(2.60)
 
@@ -11,12 +11,10 @@ AM_INIT_AUTOMAKE([1.9 -Wall])
 AC_CONFIG_SRCDIR([src/loadkeys.y])
 AC_CONFIG_HEADERS(config.h)
 
-AC_CHECK_KLIBC
-
 # Checks for programs.
-AC_PROG_YACC
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_YACC
 AC_PROG_LEX
 AC_PROG_SED
 AC_PROG_INSTALL
