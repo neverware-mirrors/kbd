@@ -1,4 +1,4 @@
-kbd (1.15.3-1) UNRELEASED; urgency=low
+kbd (1.15.3-1) unstable; urgency=low
 
   * New upstream release.
     - Drop the compose_as_usual patch (merged upstream).
@@ -11,7 +11,7 @@ kbd (1.15.3-1) UNRELEASED; urgency=low
   * Upgrade Standards-Version to 3.9.2, no changes needed.
   * Point Vcs-* to anonscm.debian.org.
 
- -- Michael Schutte <michi@debian.org>  Wed, 25 May 2011 21:42:28 +0200
+ -- Michael Schutte <michi@debian.org>  Wed, 25 May 2011 21:48:07 +0200
 
 kbd (1.15.2-3) unstable; urgency=low
 
