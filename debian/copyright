@@ -1,11 +1,11 @@
-Format: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=166
+Format: http://anonscm.debian.org/viewvc/dep/web/deps/dep5.mdwn?view=markup&pathrev=174
 Upstream-Name: kbd
 Upstream-Contact: kbd@lists.altlinux.org, Alexey Gladkov <gladkov.alexey@gmail.com>
 Source: http://ftp.kernel.org/pub/linux/utils/kbd/
 
 Files: *
 Copyright: © 1994–1999 Andries E. Brouwer,
-           © 2007–2010 Alexey Gladkov <gladkov.alexey@gmail.com>
+           © 2007–2011 Alexey Gladkov <gladkov.alexey@gmail.com>
 License: GPL-2+
  All files in this package may be freely copied under the terms
  of the GNU General Public License (GPL), version 2, or at your

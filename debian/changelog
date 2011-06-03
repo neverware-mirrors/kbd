@@ -4,8 +4,10 @@ kbd (1.15.3-2) UNRELEASED; urgency=low
     the loadkeys program caused it to read no files at all, rather than
     stdin, when called without arguments.  This broke, for instance, the
     /etc/init.d/kbd script.
+  * Point debian/copyright to the frozen revision of DEP 5, which is the
+    one now shipped in debian-policy.
 
- -- Michael Schutte <michi@debian.org>  Fri, 03 Jun 2011 12:25:22 +0200
+ -- Michael Schutte <michi@debian.org>  Fri, 03 Jun 2011 12:28:49 +0200
 
 kbd (1.15.3-1) unstable; urgency=low
 
