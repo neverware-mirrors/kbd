@@ -1,3 +1,12 @@
+kbd (1.15.3-2) UNRELEASED; urgency=low
+
+  * New patch loadkeys_stdin, taken from upstream Git: A regression in
+    the loadkeys program caused it to read no files at all, rather than
+    stdin, when called without arguments.  This broke, for instance, the
+    /etc/init.d/kbd script.
+
+ -- Michael Schutte <michi@debian.org>  Fri, 03 Jun 2011 12:25:22 +0200
+
 kbd (1.15.3-1) unstable; urgency=low
 
   * New upstream release.

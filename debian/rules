@@ -68,7 +68,7 @@ override_dh_installdocs:
 
 TOPGIT_PATCHES = \
 	fixes/kbd_mode fixes/manpages fixes/openvt_error_handling \
-	fixes/unicode_start_breaks_X
+	fixes/unicode_start_breaks_X fixes/loadkeys_stdin
 
 tg-export:
 	rm -rf debian/patches
