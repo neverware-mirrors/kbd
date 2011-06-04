@@ -25,6 +25,7 @@ override_dh_auto_clean:
 	[ ! -f Makefile ] || $(MAKE) clean
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
+	cd po/ && rm -f eo.gmo it.gmo ru.gmo
 	rm -f po/gr.po			# replaced by el.po
 	rm -f po/es.po			# erroneous
 	# force rebuilding of generated code
