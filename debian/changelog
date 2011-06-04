@@ -1,3 +1,10 @@
+kbd (1.15.3-3) unstable; urgency=low
+
+  * debian/rules clean: Force regeneration of loadkeys.c and
+    loadkeys.analyze.c, closes: #629180, #629191.
+
+ -- Michael Schutte <michi@debian.org>  Sat, 04 Jun 2011 15:07:24 +0200
+
 kbd (1.15.3-2) unstable; urgency=low
 
   * New patch loadkeys_stdin, taken from upstream Git: A regression in

@@ -27,6 +27,8 @@ override_dh_auto_clean:
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
 	rm -f po/gr.po			# replaced by el.po
 	rm -f po/es.po			# erroneous
+	# force rebuilding of generated code
+	rm -f src/loadkeys.c src/loadkeys.h src/loadkeys.analyze.c
 
 override_dh_auto_configure:
 	./configure --prefix=/usr --datadir=/usr/share --mandir=/usr/share/man --enable-nls
