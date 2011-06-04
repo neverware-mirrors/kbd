@@ -4,7 +4,7 @@ kbd (1.15.3-3) unstable; urgency=low
     loadkeys.analyze.c, closes: #629180, #629191.
   * Manually clean some .gmo files in po/.
 
- -- Michael Schutte <michi@debian.org>  Sat, 04 Jun 2011 15:16:54 +0200
+ -- Michael Schutte <michi@debian.org>  Sat, 04 Jun 2011 15:28:44 +0200
 
 kbd (1.15.3-2) unstable; urgency=low
 
