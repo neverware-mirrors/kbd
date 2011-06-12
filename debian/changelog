@@ -1,3 +1,10 @@
+kbd (1.15.3-4) UNRELEASED; urgency=low
+
+  * Remove a superfluous call to wait() in openvt.c to propagate the
+    exit code of the child process of “openvt -w”, closes: #630108.
+
+ -- Michael Schutte <michi@debian.org>  Sun, 12 Jun 2011 12:39:56 +0200
+
 kbd (1.15.3-3) unstable; urgency=low
 
   * debian/rules clean: Force regeneration of loadkeys.c and
