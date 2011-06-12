@@ -5,3 +5,4 @@ man/man8misc/mk_modmap.8
 man/man8misc/setlogcons.8
 man/man8misc/setvesablank.8
 man/man8misc/vcstime.8
+debian/kbdinfo.1
