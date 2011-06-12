@@ -1,11 +1,11 @@
-kbd (1.15.3-4) UNRELEASED; urgency=low
+kbd (1.15.3-4) unstable; urgency=low
 
   * Remove a superfluous call to wait() in openvt.c to propagate the
     exit code of the child process of “openvt -w”, closes: #630108.
   * Write and ship a manual page for the kbdinfo(1) utility introduced with
     1.15.3.
 
- -- Michael Schutte <michi@debian.org>  Sun, 12 Jun 2011 12:42:24 +0200
+ -- Michael Schutte <michi@debian.org>  Sun, 12 Jun 2011 12:49:42 +0200
 
 kbd (1.15.3-3) unstable; urgency=low
 
