@@ -1,5 +1,5 @@
 kbd_mode.diff
 manpages.diff
-openvt_close_consfd.diff
+openvt_error_handling.diff
 unicode_start_breaks_X.diff
 loadkeys_stdin.diff
