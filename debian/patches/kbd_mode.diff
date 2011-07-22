@@ -18,11 +18,11 @@ codesearch.google.com shows only the BiCon project
  src/kbd_mode.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/src/kbd_mode.c b/src/kbd_mode.c
-index 991df8d..629df09 100644
---- a/src/kbd_mode.c
-+++ b/src/kbd_mode.c
-@@ -88,7 +88,7 @@ main(int argc, char *argv[]){
+Index: devel/src/kbd_mode.c
+===================================================================
+--- devel.orig/src/kbd_mode.c	2011-07-22 19:06:53.000000000 +0200
++++ devel/src/kbd_mode.c	2011-07-22 19:07:00.000000000 +0200
+@@ -88,7 +88,7 @@
  		printf(_("The keyboard is in mediumraw (keycode) mode\n"));
  		break;
  	      case K_XLATE:
@@ -31,5 +31,3 @@ index 991df8d..629df09 100644
  		break;
  	      case K_UNICODE:
  		printf(_("The keyboard is in Unicode (UTF-8) mode\n"));
--- 
-tg: (bc022c8..) fixes/kbd_mode (depends on: upstream/master)

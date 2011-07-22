@@ -10,11 +10,11 @@ behavior is widely used, even in /etc/init.d/kbd.
  src/loadkeys.y |   33 +++++++++++++++++++++------------
  1 files changed, 21 insertions(+), 12 deletions(-)
 
-diff --git a/src/loadkeys.y b/src/loadkeys.y
-index cad0566..b70db27 100644
---- a/src/loadkeys.y
-+++ b/src/loadkeys.y
-@@ -1035,6 +1035,22 @@ rvalue		: NUMBER	{ $$ = convert_code($1, TO_AUTO);		}
+Index: devel/src/loadkeys.y
+===================================================================
+--- devel.orig/src/loadkeys.y	2011-07-22 19:06:52.000000000 +0200
++++ devel/src/loadkeys.y	2011-07-22 19:07:10.000000000 +0200
+@@ -1035,6 +1035,22 @@
  		;
  %%
  
@@ -37,7 +37,7 @@ index cad0566..b70db27 100644
  int main(int argc, char *argv[])
  {
  	const char *short_opts = "abcC:dhmsuqvV";
-@@ -1180,19 +1196,12 @@ int main(int argc, char *argv[])
+@@ -1180,19 +1196,12 @@
  		}
  
   gotf:
@@ -62,5 +62,3 @@ index cad0566..b70db27 100644
  	}
  
  	do_constant();
--- 
-tg: (bc022c8..) fixes/loadkeys_stdin (depends on: upstream/master)

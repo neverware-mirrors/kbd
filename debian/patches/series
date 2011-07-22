@@ -1,5 +1,5 @@
-kbd_mode.diff -p1
-manpages.diff -p1
-openvt_close_consfd.diff -p1
-unicode_start_breaks_X.diff -p1
-loadkeys_stdin.diff -p1
+kbd_mode.diff
+manpages.diff
+openvt_close_consfd.diff
+unicode_start_breaks_X.diff
+loadkeys_stdin.diff

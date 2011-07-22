@@ -10,11 +10,11 @@ process.  Avoid closing it again.
  src/openvt.c |    3 ++-
  1 files changed, 2 insertions(+), 1 deletions(-)
 
-diff --git a/src/openvt.c b/src/openvt.c
-index 4f47ae7..7418daa 100644
---- a/src/openvt.c
-+++ b/src/openvt.c
-@@ -385,7 +385,8 @@ main(int argc, char *argv[])
+Index: devel/src/openvt.c
+===================================================================
+--- devel.orig/src/openvt.c	2011-07-22 19:06:52.000000000 +0200
++++ devel/src/openvt.c	2011-07-22 19:07:09.000000000 +0200
+@@ -385,7 +385,8 @@
  		close(0);
  		close(1);
  		close(2);
@@ -24,5 +24,3 @@ index 4f47ae7..7418daa 100644
  
  		if ((dup2(fd, 0) == -1) || (dup2(fd, 1) == -1) || (dup2(fd, 2) == -1))
  			openvt_fatal(1, errno, "dup");
--- 
-tg: (bc022c8..) fixes/openvt_error_handling (depends on: upstream/master)

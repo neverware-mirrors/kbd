@@ -12,11 +12,11 @@ This patch originated in console-tools.
  src/unicode_stop  |    6 ++++++
  2 files changed, 19 insertions(+), 0 deletions(-)
 
-diff --git a/src/unicode_start b/src/unicode_start
-index d5234a8..7351fe0 100755
---- a/src/unicode_start
-+++ b/src/unicode_start
-@@ -13,6 +13,19 @@ esac
+Index: devel/src/unicode_start
+===================================================================
+--- devel.orig/src/unicode_start	2011-07-22 19:06:52.000000000 +0200
++++ devel/src/unicode_start	2011-07-22 19:07:10.000000000 +0200
+@@ -13,6 +13,19 @@
  
  # Enables Unicode processing in the current console.
  #
@@ -36,10 +36,10 @@ index d5234a8..7351fe0 100755
  # 1. The input side: the keyboard driver.
  
  # Set the keyboard driver in Unicode mode. (Default is ASCII mode.)
-diff --git a/src/unicode_stop b/src/unicode_stop
-index 07a8e4b..858bbc5 100755
---- a/src/unicode_stop
-+++ b/src/unicode_stop
+Index: devel/src/unicode_stop
+===================================================================
+--- devel.orig/src/unicode_stop	2011-07-22 19:06:52.000000000 +0200
++++ devel/src/unicode_stop	2011-07-22 19:07:10.000000000 +0200
 @@ -1,5 +1,11 @@
  #!/bin/sh
  
@@ -52,5 +52,3 @@ index 07a8e4b..858bbc5 100755
  TTY="`/usr/bin/tty`"
  case "$TTY" in
  	/dev/console|/dev/vc*|/dev/tty[0-9]*)
--- 
-tg: (bc022c8..) fixes/unicode_start_breaks_X (depends on: upstream/master)
