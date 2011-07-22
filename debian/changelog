@@ -2,8 +2,9 @@ kbd (1.15.3-5) UNRELEASED; urgency=low
 
   * Move away from topgit: Export the patches to debian/patches/ one
     last time and maintain them with quilt in the future.
+  * Use the occasion to make the patch headers more DEP-3-y.
 
- -- Michael Schutte <michi@debian.org>  Fri, 22 Jul 2011 18:45:08 +0200
+ -- Michael Schutte <michi@debian.org>  Fri, 22 Jul 2011 18:59:19 +0200
 
 kbd (1.15.3-4) unstable; urgency=low
 

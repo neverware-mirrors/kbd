@@ -1,11 +1,10 @@
 From: Michael Schutte <michi@debian.org>
-Subject: [PATCH] fixes/openvt_error_handling
+Subject: openvt: Don’t close consfd twice
+Forwarded: no
 
-Improved error handling for the openvt program.
-
-This closes the Debian bug #190387.
-
-Signed-off-by: Michael Schutte <michi@debian.org>
+consfd stores the file descriptor referring to the console.  In some
+cases, this will be one of the stdio fds, which are closed in the child
+process.  Avoid closing it again.
 
 ---
  src/openvt.c |    3 ++-

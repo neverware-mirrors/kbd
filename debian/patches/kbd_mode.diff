@@ -1,7 +1,7 @@
 From: Michael Schutte <michi@debian.org>
-Subject: [PATCH] fixes/kbd_mode
-
-Change misleading kbd_mode message for XLATE mode, closes: #546712.
+Subject: Change misleading kbd_mode message for XLATE mode
+Bug-Debian: http://bugs.debian.org/546712
+Forwarded: no
 
 The text said “default (ASCII) mode”, which is wrong in two respects:
 XLATE isn’t limited to 7-bit ASCII, but works with various 8-bit
@@ -13,8 +13,6 @@ an issue with this commit, though cursory research with
 codesearch.google.com shows only the BiCon project
 <http://sourceforge.net/projects/bicon/>, which does “kbd_mode | grep -q
 -i Unicode” and is thus unaffected.
-
-Signed-off-by: Michael Schutte <michi@debian.org>
 
 ---
  src/kbd_mode.c |    2 +-

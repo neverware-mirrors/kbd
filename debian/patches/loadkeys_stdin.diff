@@ -1,13 +1,10 @@
 From: Alexey Gladkov <gladkov.alexey@gmail.com>
-Subject: [PATCH] fixes/loadkeys_stdin
+Subject: Fix important regression in loadkeys
+Origin: commit:83f0743c1fed872d80a0dd31924575d9bf9c2770
 
 loadkeys from 1.15.3 introduced a regression where it doesn’t default to
 reading from stdin when started without a filename argument.  This
 behavior is widely used, even in /etc/init.d/kbd.
-
-This fix was taken from the upstream repository, commit 83f0743.
-
-Signed-off-by: Michael Schutte <michi@uiae.at>
 
 ---
  src/loadkeys.y |   33 +++++++++++++++++++++------------

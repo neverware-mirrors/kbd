@@ -1,12 +1,11 @@
-From: Michael Schutte <michi@debian.org>
-Subject: [PATCH] fixes/unicode_start_breaks_X
+From: Denis Barbier <barbier@debian.org>
+Subject: Check for X in kbd_mode
+Bug-Debian: http://bugs.debian.org/281305
 
-As described in #281305, “kbd_mode” can render X unusable.  Add checks
-to unicode_{start,stop} to avoid the problem.  The patch has been
-originally added to kbd by Denis Barbier <barbier@debian.org>, but it
-originated in console-tools.
+“kbd_mode” can render X unusable.  Add checks to unicode_{start,stop} to
+avoid the problem.
 
-Signed-off-by: Michael Schutte <michi@debian.org>
+This patch originated in console-tools.
 
 ---
  src/unicode_start |   13 +++++++++++++
