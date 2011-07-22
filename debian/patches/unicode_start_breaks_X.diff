@@ -1,0 +1,57 @@
+From: Michael Schutte <michi@debian.org>
+Subject: [PATCH] fixes/unicode_start_breaks_X
+
+As described in #281305, “kbd_mode” can render X unusable.  Add checks
+to unicode_{start,stop} to avoid the problem.  The patch has been
+originally added to kbd by Denis Barbier <barbier@debian.org>, but it
+originated in console-tools.
+
+Signed-off-by: Michael Schutte <michi@debian.org>
+
+---
+ src/unicode_start |   13 +++++++++++++
+ src/unicode_stop  |    6 ++++++
+ 2 files changed, 19 insertions(+), 0 deletions(-)
+
+diff --git a/src/unicode_start b/src/unicode_start
+index d5234a8..7351fe0 100755
+--- a/src/unicode_start
++++ b/src/unicode_start
+@@ -13,6 +13,19 @@ esac
+ 
+ # Enables Unicode processing in the current console.
+ #
++
++if [ ! -e /proc/self/fd/0 ] ; then
++   echo "Won't set unicode mode: Can't determine console type;" >&2
++   echo " Please ensure that /proc is mounted." >&2
++   exit 1
++fi
++
++readlink /proc/self/fd/0 | grep -q -e /dev/vc -e '/dev/tty[^p]' -e /dev/console
++if [ $? -eq 1 ]; then
++    echo  "Won't set unicode mode: not a VT." >&2
++    exit 1
++fi
++
+ # 1. The input side: the keyboard driver.
+ 
+ # Set the keyboard driver in Unicode mode. (Default is ASCII mode.)
+diff --git a/src/unicode_stop b/src/unicode_stop
+index 07a8e4b..858bbc5 100755
+--- a/src/unicode_stop
++++ b/src/unicode_stop
+@@ -1,5 +1,11 @@
+ #!/bin/sh
+ 
++if [ ! -e /proc/self/fd/0 ] ; then
++   echo "Won't set ascii mode: Can't determine console type;" >&2
++   echo " Please ensure that /proc is mounted." >&2
++   exit 1
++fi
++
+ TTY="`/usr/bin/tty`"
+ case "$TTY" in
+ 	/dev/console|/dev/vc*|/dev/tty[0-9]*)
+-- 
+tg: (bc022c8..) fixes/unicode_start_breaks_X (depends on: upstream/master)

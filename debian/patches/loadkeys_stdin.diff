@@ -1,0 +1,69 @@
+From: Alexey Gladkov <gladkov.alexey@gmail.com>
+Subject: [PATCH] fixes/loadkeys_stdin
+
+loadkeys from 1.15.3 introduced a regression where it doesn’t default to
+reading from stdin when started without a filename argument.  This
+behavior is widely used, even in /etc/init.d/kbd.
+
+This fix was taken from the upstream repository, commit 83f0743.
+
+Signed-off-by: Michael Schutte <michi@uiae.at>
+
+---
+ src/loadkeys.y |   33 +++++++++++++++++++++------------
+ 1 files changed, 21 insertions(+), 12 deletions(-)
+
+diff --git a/src/loadkeys.y b/src/loadkeys.y
+index cad0566..b70db27 100644
+--- a/src/loadkeys.y
++++ b/src/loadkeys.y
+@@ -1035,6 +1035,22 @@ rvalue		: NUMBER	{ $$ = convert_code($1, TO_AUTO);		}
+ 		;
+ %%
+ 
++static void parse_keymap(FILE *fd) {
++	if (!quiet && !optm)
++		fprintf(stdout, _("Loading %s\n"), pathname);
++
++	stack_push(fd, 0, pathname);
++
++	if (yyparse()) {
++		fprintf(stderr, _("syntax error in map file\n"));
++
++		if (!optm)
++			fprintf(stderr,
++				_("key bindings not changed\n"));
++		exit(EXIT_FAILURE);
++	}
++}
++
+ int main(int argc, char *argv[])
+ {
+ 	const char *short_opts = "abcC:dhmsuqvV";
+@@ -1180,19 +1196,12 @@ int main(int argc, char *argv[])
+ 		}
+ 
+  gotf:
+-		if (!quiet && !optm)
+-			fprintf(stdout, _("Loading %s\n"), pathname);
+-
+-		stack_push(f, 0, pathname);
+-
+-		if (yyparse()) {
+-			fprintf(stderr, _("syntax error in map file\n"));
++		parse_keymap(f);
++	}
+ 
+-			if (!optm)
+-				fprintf(stderr,
+-					_("key bindings not changed\n"));
+-			exit(EXIT_FAILURE);
+-		}
++	if (optind == argc) {
++		strcpy(pathname, "<stdin>");
++		parse_keymap(stdin);
+ 	}
+ 
+ 	do_constant();
+-- 
+tg: (bc022c8..) fixes/loadkeys_stdin (depends on: upstream/master)

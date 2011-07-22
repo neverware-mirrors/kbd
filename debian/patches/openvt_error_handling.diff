@@ -1,0 +1,29 @@
+From: Michael Schutte <michi@debian.org>
+Subject: [PATCH] fixes/openvt_error_handling
+
+Improved error handling for the openvt program.
+
+This closes the Debian bug #190387.
+
+Signed-off-by: Michael Schutte <michi@debian.org>
+
+---
+ src/openvt.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/src/openvt.c b/src/openvt.c
+index 4f47ae7..7418daa 100644
+--- a/src/openvt.c
++++ b/src/openvt.c
+@@ -385,7 +385,8 @@ main(int argc, char *argv[])
+ 		close(0);
+ 		close(1);
+ 		close(2);
+-		close(consfd);
++		if (consfd > 2)
++			close(consfd);
+ 
+ 		if ((dup2(fd, 0) == -1) || (dup2(fd, 1) == -1) || (dup2(fd, 2) == -1))
+ 			openvt_fatal(1, errno, "dup");
+-- 
+tg: (bc022c8..) fixes/openvt_error_handling (depends on: upstream/master)
