@@ -1,4 +1,4 @@
-kbd (1.15.3-5) UNRELEASED; urgency=low
+kbd (1.15.3-5) unstable; urgency=low
 
   * Move away from topgit: Export the patches to debian/patches/ one
     last time and maintain them with quilt in the future.
@@ -7,7 +7,7 @@ kbd (1.15.3-5) UNRELEASED; urgency=low
   * debian/copyright: List copyright holders for setvtrgb.c and set
     Format: to the frozen DEP URL.
 
- -- Michael Schutte <michi@debian.org>  Sat, 23 Jul 2011 11:26:48 +0200
+ -- Michael Schutte <michi@debian.org>  Sat, 23 Jul 2011 11:50:09 +0200
 
 kbd (1.15.3-4) unstable; urgency=low
 
