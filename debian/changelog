@@ -4,9 +4,10 @@ kbd (1.15.3-5) UNRELEASED; urgency=low
     last time and maintain them with quilt in the future.
   * Use the occasion to make the patch headers more DEP-3-y.
   * Add a manual page for setvtrgb(1) introduced in 1.15.3.
-  * debian/copyright: List copyright holders for setvtrgb.c.
+  * debian/copyright: List copyright holders for setvtrgb.c and set
+    Format: to the frozen DEP URL.
 
- -- Michael Schutte <michi@debian.org>  Sat, 23 Jul 2011 11:24:54 +0200
+ -- Michael Schutte <michi@debian.org>  Sat, 23 Jul 2011 11:26:48 +0200
 
 kbd (1.15.3-4) unstable; urgency=low
 

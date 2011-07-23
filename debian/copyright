@@ -1,4 +1,4 @@
-Format: http://anonscm.debian.org/viewvc/dep/web/deps/dep5.mdwn?view=markup&pathrev=174
+Format: http://dep.debian.net/deps/dep5
 Upstream-Name: kbd
 Upstream-Contact: kbd@lists.altlinux.org, Alexey Gladkov <gladkov.alexey@gmail.com>
 Source: http://ftp.kernel.org/pub/linux/utils/kbd/
