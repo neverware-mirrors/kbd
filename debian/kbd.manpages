@@ -6,3 +6,4 @@ man/man8misc/setlogcons.8
 man/man8misc/setvesablank.8
 man/man8misc/vcstime.8
 debian/kbdinfo.1
+debian/setvtrgb.1
