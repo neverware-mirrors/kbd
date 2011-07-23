@@ -52,6 +52,11 @@ Files: man/man1misc/splitfont.1, man/man1/openvt.1, man/man8misc/setlogcons.8,
        man/man8misc/vcstime.8
 Copyright: © 2007–2008 Alexey Gladkov <gladkov.alexey@gmail.com>
 
+Files: src/setvtrgb.c
+Copyright: © 2011 Alexey Gladkov <gladkov.alexey@gmail.com>,
+           © 2011 Canonical Ltd (Seth Forshee <seth.forshee@canonical.com>
+	                     and Dustin Kirkland <kirkland@canonical.com>)
+
 Files: debian/*
 Copyright: © 1991-2001 Yann Dirson <dirson@debian.org>,
            © 2001 Alcove <http://alcove.fr/>,
