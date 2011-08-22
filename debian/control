@@ -9,7 +9,7 @@ Vcs-Git: git://anonscm.debian.org/git/pkg-kbd/kbd.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-kbd/kbd.git
 
 Package: kbd
-Architecture: any
+Architecture: linux-any
 Depends: ${shlibs:Depends}, ${misc:Depends}, console-setup | console-common, lsb-base (>= 3.0-10)
 Recommends: console-setup | console-data (>= 1999.08.29-13)
 Provides: console-utilities, open
@@ -26,6 +26,6 @@ Description: Linux console font and keytable utilities
 Package: kbd-udeb
 Package-Type: udeb
 Section: debian-installer
-Architecture: any
+Architecture: linux-any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Linux console keyboard setup utilities
