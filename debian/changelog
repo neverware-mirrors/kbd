@@ -1,10 +1,10 @@
-kbd (1.15.3-6) UNRELEASED; urgency=low
+kbd (1.15.3-6) unstable; urgency=low
 
   * Experimentally drop reset_vga_palette from /etc/init.d/kbd, closes:
     #637277.
   * Build for Architecture: linux-any to help clean up Not-For-Us.
 
- -- Michael Schutte <michi@debian.org>  Mon, 22 Aug 2011 20:52:08 +0200
+ -- Michael Schutte <michi@debian.org>  Mon, 22 Aug 2011 20:57:00 +0200
 
 kbd (1.15.3-5) unstable; urgency=low
 
