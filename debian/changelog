@@ -1,3 +1,10 @@
+kbd (1.15.3-6) UNRELEASED; urgency=low
+
+  * Experimentally drop reset_vga_palette from /etc/init.d/kbd, closes:
+    #637277.
+
+ -- Michael Schutte <michi@debian.org>  Mon, 22 Aug 2011 20:44:44 +0200
+
 kbd (1.15.3-5) unstable; urgency=low
 
   * Move away from topgit: Export the patches to debian/patches/ one

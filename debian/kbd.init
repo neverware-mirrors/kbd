@@ -62,15 +62,6 @@ then
     UNICODE_MODE=yes
 fi
 
-reset_vga_palette ()
-{
-    if [ -f /proc/fb ]; then
-        # They have a framebuffer device.
-        # That means we have work to do...
-        echo -n "]R"
-    fi
-}
-
 unicode_start_stop ()
 {
     vc=$1
@@ -99,7 +90,6 @@ setup ()
         readlink /proc/self/fd/0 | grep -q -e /dev/vc -e '/dev/tty[^p]' -e /dev/console
         if [ $? -eq 0 ]; then
             VT="yes"
-            reset_vga_palette
         fi
     fi
 
