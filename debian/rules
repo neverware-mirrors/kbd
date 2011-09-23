@@ -32,7 +32,8 @@ override_dh_auto_clean:
 	rm -f src/loadkeys.c src/loadkeys.h src/loadkeys.analyze.c
 
 override_dh_auto_configure:
-	./configure --prefix=/usr --datadir=/usr/share --mandir=/usr/share/man --enable-nls
+	./configure --prefix=/usr --datadir=/usr/share --mandir=/usr/share/man --enable-nls \
+		$(shell dpkg-buildflags --export=configure)
 
 override_dh_auto_build:
 	$(MAKE) -C po/ eo.gmo it.gmo ru.gmo
