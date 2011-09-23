@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Console utilities maintainers <pkg-kbd-devel@lists.alioth.debian.org>
 Uploaders: Michael Schutte <michi@debian.org>, Anton Zinoviev <zinoviev@debian.org>
-Build-Depends: dpkg-dev (>= 1.16.1), debhelper (>= 7.0.50~), autoconf, automake, linuxdoc-tools, gettext, flex, bison
+Build-Depends: dpkg-dev (>= 1.16.1), debhelper (>= 8), autoconf, automake, linuxdoc-tools, gettext, flex, bison
 Standards-Version: 3.9.2
 Vcs-Git: git://anonscm.debian.org/git/pkg-kbd/kbd.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-kbd/kbd.git

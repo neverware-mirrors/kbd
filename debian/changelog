@@ -2,12 +2,13 @@ kbd (1.15.3-7) UNRELEASED; urgency=low
 
   * Use dpkg-buildflags to pass build options on to the configure
     script; build-depend on dpkg-dev >= 1.16.1 accordingly.
+  * Set debian/compat to 8 and build-depend on debhelper >= 8.
   * Fix some deviations from DEP 5 in debian/copyright.
   * Rename patch openvt_error_handling to openvt and update it to not
     exit with a zero status code if there was an invocation error,
     closes: #642324.
 
- -- Michael Schutte <michi@debian.org>  Fri, 23 Sep 2011 22:02:37 +0200
+ -- Michael Schutte <michi@debian.org>  Fri, 23 Sep 2011 22:05:49 +0200
 
 kbd (1.15.3-6) unstable; urgency=low
 
