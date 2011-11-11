@@ -1,4 +1,4 @@
-Format: http://dep.debian.net/deps/dep5
+Format: http://anonscm.debian.org/gitweb/?p=dbnpolicy/policy.git;a=blob;f=copyright-format/copyright-format.xml;h=d6790aa3b85319f561586ba4a71b9770ae21ac73
 Upstream-Name: kbd
 Upstream-Contact: kbd@lists.altlinux.org, Alexey Gladkov <gladkov.alexey@gmail.com>
 Source: http://ftp.kernel.org/pub/linux/utils/kbd/

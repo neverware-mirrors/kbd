@@ -2,8 +2,10 @@ kbd (1.15.3-8) UNRELEASED; urgency=low
 
   * Trigger font setup when any of CONSOLE_FONT, CONSOLE_MAP, or FONT_MAP are
     present in /etc/kbd/config, closes: #647153.
+  * Point Format: in debian/copyright to the relevant file in the gitweb for
+    the Debian Policy Manual.
 
- -- Michael Schutte <michi@debian.org>  Fri, 11 Nov 2011 23:53:42 +0100
+ -- Michael Schutte <michi@debian.org>  Sat, 12 Nov 2011 00:15:40 +0100
 
 kbd (1.15.3-7) unstable; urgency=low
 
