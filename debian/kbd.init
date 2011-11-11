@@ -111,7 +111,7 @@ setup ()
     fi
 
     # Global default font+map
-    if [ -z "${HAVE_SETUPCON}" -a "${CONSOLE_FONT}" ]; then
+    if [ -z "${HAVE_SETUPCON}" -a "${CONSOLE_FONT}${CONSOLE_MAP}${FONT_MAP}" ]; then
         [ "$VERBOSE" != "no" ] && log_action_begin_msg "Setting up general console font"
         sfm="${FONT_MAP}" && [ "$sfm" ] && sfm="-u $sfm"
         acm="${CONSOLE_MAP}" && [ "$acm" ] && acm="-m $acm"
