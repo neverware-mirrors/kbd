@@ -1,6 +1,6 @@
 kbd (1.15.3-8) UNRELEASED; urgency=low
 
-  * Set debian/compat to 9 and build-depend on debhelper >= 8.9.0.
+  * Set debian/compat to 9 and build-depend on debhelper >= 9.
   * Support cross-building, closes: #670653.  Thanks to Colin Watson
     <cjwatson@ubuntu.com> for the patch.
     - Allow the gettext build-dep to be satisfied by a package of any
@@ -17,7 +17,7 @@ kbd (1.15.3-8) UNRELEASED; urgency=low
   * Provide a no-op “status” option for /etc/init.d/kbd.
   * Bump Standards-Version: to 3.9.3, no changes necessary.
 
- -- Michael Schutte <michi@debian.org>  Sat, 28 Apr 2012 11:42:06 +0200
+ -- Michael Schutte <michi@debian.org>  Sat, 28 Apr 2012 11:46:43 +0200
 
 kbd (1.15.3-7) unstable; urgency=low
 
