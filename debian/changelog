@@ -1,4 +1,4 @@
-kbd (1.15.3-8) UNRELEASED; urgency=low
+kbd (1.15.3-8) unstable; urgency=low
 
   * Set debian/compat to 9 and build-depend on debhelper >= 9.
   * Support cross-building, closes: #670653.  Thanks to Colin Watson
@@ -17,7 +17,7 @@ kbd (1.15.3-8) UNRELEASED; urgency=low
   * Provide a no-op “status” option for /etc/init.d/kbd.
   * Bump Standards-Version: to 3.9.3, no changes necessary.
 
- -- Michael Schutte <michi@debian.org>  Sat, 28 Apr 2012 11:46:43 +0200
+ -- Michael Schutte <michi@debian.org>  Sat, 28 Apr 2012 11:47:07 +0200
 
 kbd (1.15.3-7) unstable; urgency=low
 
