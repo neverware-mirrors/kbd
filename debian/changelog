@@ -1,5 +1,12 @@
 kbd (1.15.3-8) UNRELEASED; urgency=low
 
+  * Set debian/compat to 9 and build-depend on debhelper >= 8.9.0.
+  * Support cross-building, closes: #670653.  Thanks to Colin Watson
+    <cjwatson@ubuntu.com> for the patch.
+    - Allow the gettext build-dep to be satisfied by a package of any
+      architecture.
+    - Use dh_auto_configure.
+    - Explicitly set the host CC to cross-build the contrib binaries.
   * Trigger font setup when any of CONSOLE_FONT, CONSOLE_MAP, or FONT_MAP are
     present in /etc/kbd/config, closes: #647153.
   * Point Format: in debian/copyright to the relevant file in the gitweb for
@@ -8,7 +15,7 @@ kbd (1.15.3-8) UNRELEASED; urgency=low
     #663252.  Thanks to Bjarni Ingi Gislason <bjarniig@rhi.hi.is> for the
     patch.
 
- -- Michael Schutte <michi@debian.org>  Sat, 28 Apr 2012 11:14:58 +0200
+ -- Michael Schutte <michi@debian.org>  Sat, 28 Apr 2012 11:30:07 +0200
 
 kbd (1.15.3-7) unstable; urgency=low
 

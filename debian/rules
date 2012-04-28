@@ -17,6 +17,12 @@ MOVE_TO_BIN = kbd_mode setfont fgconsole openvt chvt dumpkeys unicode_start load
 MOVE_TO_SBIN = kbdrate
 MOVE_TO_USR_SBIN = vcstime setvesablank
 
+DEB_BUILD_GNU_TYPE := $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+DEB_HOST_GNU_TYPE  := $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
+	CROSS := CC=$(DEB_HOST_GNU_TYPE)-gcc
+endif
+
 %:
 	dh $@
 
@@ -32,8 +38,7 @@ override_dh_auto_clean:
 	rm -f src/loadkeys.c src/loadkeys.h src/loadkeys.analyze.c
 
 override_dh_auto_configure:
-	./configure --prefix=/usr --datadir=/usr/share --mandir=/usr/share/man --enable-nls \
-		$(shell dpkg-buildflags --export=configure)
+	dh_auto_configure -- --enable-nls
 
 override_dh_auto_build:
 	$(MAKE) -C po/ eo.gmo it.gmo ru.gmo
@@ -42,7 +47,7 @@ override_dh_auto_build:
 	$(MAKE) -C src/ clean
 	$(MAKE)
 	$(MAKE) -C src/ $(EXTRA_BINARIES)
-	$(MAKE) CFLAGS="-O2 -g" -C contrib/ $(CONTRIB_BINARIES)
+	$(MAKE) $(CROSS) CFLAGS="-O2 -g" -C contrib/ $(CONTRIB_BINARIES)
 
 override_dh_auto_install:
 # the kbd “core”
