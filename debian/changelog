@@ -4,8 +4,11 @@ kbd (1.15.3-8) UNRELEASED; urgency=low
     present in /etc/kbd/config, closes: #647153.
   * Point Format: in debian/copyright to the relevant file in the gitweb for
     the Debian Policy Manual.
+  * Update manpages.diff: Minor fixes to the setleds(1) manual page, closes:
+    #663252.  Thanks to Bjarni Ingi Gislason <bjarniig@rhi.hi.is> for the
+    patch.
 
- -- Michael Schutte <michi@debian.org>  Sat, 12 Nov 2011 00:15:40 +0100
+ -- Michael Schutte <michi@debian.org>  Sat, 28 Apr 2012 11:14:58 +0200
 
 kbd (1.15.3-7) unstable; urgency=low
 
