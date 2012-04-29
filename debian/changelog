@@ -1,3 +1,10 @@
+kbd (1.15.3-9) unstable; urgency=low
+
+  * Revert the build-dependency change towards gettext:any and let the buildds
+    do their work again, closes: #670778.
+
+ -- Michael Schutte <michi@debian.org>  Sun, 29 Apr 2012 09:43:38 +0200
+
 kbd (1.15.3-8) unstable; urgency=low
 
   * Set debian/compat to 9 and build-depend on debhelper >= 9.
