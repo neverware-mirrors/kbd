@@ -3,6 +3,8 @@ kbd (1.15.5-1) UNRELEASED; urgency=low
   * New upstream release.
     - Drop the loadkeys_stdin patch introduced in 1.15.3-2 (included in this
       version).
+    - The kbd tarball now ships with a basic implementation of vlock.  This
+      program will not be included in the binary package.
   * Use dh-autoreconf to regenerate config.guess and config.sub during the
     build process, closes: #700119.  This introduces a new build-dep on
     dh-autoreconf.

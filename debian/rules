@@ -38,7 +38,7 @@ override_dh_auto_clean:
 	rm -f src/loadkeys.c src/loadkeys.h src/loadkeys.analyze.c
 
 override_dh_auto_configure:
-	dh_auto_configure -- --enable-nls
+	dh_auto_configure -- --enable-nls --disable-vlock
 
 override_dh_auto_build:
 	$(MAKE) -C po/ eo.gmo it.gmo ru.gmo
