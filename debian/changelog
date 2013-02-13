@@ -1,6 +1,8 @@
 kbd (1.15.5-1) UNRELEASED; urgency=low
 
   * New upstream release.
+    - Drop the loadkeys_stdin patch introduced in 1.15.3-2 (included in this
+      version).
 
  -- Michael Schutte <michi@debian.org>  Wed, 13 Feb 2013 17:23:19 +0100
 

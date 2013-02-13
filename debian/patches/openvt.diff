@@ -22,9 +22,9 @@ Three unrelated fixes:
 
 Index: devel/src/openvt.c
 ===================================================================
---- devel.orig/src/openvt.c	2011-09-23 21:32:28.000000000 +0200
-+++ devel/src/openvt.c	2011-09-23 21:34:09.000000000 +0200
-@@ -260,10 +260,12 @@
+--- devel.orig/src/openvt.c	2013-02-13 17:26:22.000000000 +0100
++++ devel/src/openvt.c	2013-02-13 17:26:22.000000000 +0100
+@@ -261,10 +261,12 @@
  			case 'V':
  				print_version_and_exit();
  				break;
@@ -38,7 +38,7 @@ Index: devel/src/openvt.c
  		}
  	}
  
-@@ -385,7 +387,8 @@
+@@ -386,7 +388,8 @@
  		close(0);
  		close(1);
  		close(2);
@@ -48,7 +48,7 @@ Index: devel/src/openvt.c
  
  		if ((dup2(fd, 0) == -1) || (dup2(fd, 1) == -1) || (dup2(fd, 2) == -1))
  			openvt_fatal(1, errno, "dup");
-@@ -408,7 +411,6 @@
+@@ -409,7 +412,6 @@
  	if (do_wait) {
  		int retval = 0; /* actual value returned form process */
  
@@ -56,7 +56,7 @@ Index: devel/src/openvt.c
  		waitpid(pid, &retval, 0);
  
  		if (show) {	/* Switch back... */
-@@ -425,7 +427,10 @@
+@@ -426,7 +428,10 @@
  
  		/* if all our stuff went right, we want to return the exit code of the command we ran
  		   super vital for scripting loops etc */
