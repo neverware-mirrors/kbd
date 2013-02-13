@@ -1,3 +1,9 @@
+kbd (1.15.5-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+
+ -- Michael Schutte <michi@debian.org>  Wed, 13 Feb 2013 17:23:19 +0100
+
 kbd (1.15.3-9) unstable; urgency=low
 
   * Revert the build-dependency change towards gettext:any and let the buildds
