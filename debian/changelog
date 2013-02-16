@@ -24,6 +24,7 @@ kbd (1.15.5-1) UNRELEASED; urgency=low
   * New patch dead2 by Samuel Thibault <sthibault@debian.org> to support
     KT_DEAD2 diacritics in loadkeys and dumpkeys, closes: #694169.  Thank you
     for the patch, Samuel!
+  * Use a canonical URL for the Vcs-Git: field.
   * Bump Standards-Version: to 3.9.4, no changes necessary.
 
  -- Michael Schutte <michi@debian.org>  Wed, 13 Feb 2013 17:23:19 +0100
