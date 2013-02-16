@@ -1,0 +1,23 @@
+From: Alexey Gladkov <gladkov.alexey@gmail.com>
+Origin: commit:7e06e56157e8431d02e1377cdc44230944203d88
+Subject: Fix a regression in loadkeys.analyze.l
+Forwarded: not-needed
+
+kbd 1.15.5 has introduced a bug in the lexical analysis part of loadkeys
+which leads to errors when trying to load certain keymaps.  The upstream
+author has provided this patch to solve the problem.
+
+---
+Index: devel/src/loadkeys.analyze.l
+===================================================================
+--- devel.orig/src/loadkeys.analyze.l	2013-02-16 16:35:33.000000000 +0100
++++ devel/src/loadkeys.analyze.l	2013-02-16 16:36:00.000000000 +0100
+@@ -323,7 +323,7 @@
+ 			}
+ {Eol}			{
+ 				line_nr++;
+-				if (state_ptr > 0) {
++				while (state_ptr > 0) {
+ 					yy_pop_state();
+ 					state_ptr--;
+ 				}

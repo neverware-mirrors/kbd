@@ -10,6 +10,8 @@ kbd (1.15.5-1) UNRELEASED; urgency=low
     dh-autoreconf.
   * Update the source URL and the years of publication in debian/copyright and
     add a paragraph for the added vlock code.
+  * New patch loadkeys_flex_stack, taken from upstream Git: Fix a regression
+    in loadkeys.analyze.l which causes some keymap files to fail to load.
 
  -- Michael Schutte <michi@debian.org>  Wed, 13 Feb 2013 17:23:19 +0100
 
