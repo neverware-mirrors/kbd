@@ -5,6 +5,9 @@ kbd (1.15.5-1) UNRELEASED; urgency=low
       version).
     - The kbd tarball now ships with a basic implementation of vlock.  This
       program will not be included in the binary package.
+    - resizecons is now built and installed on amd64, closes: #692014.  Also
+      amend the manpages patch to explain the program’s absence on
+      non-x86[_64] architectures in resizecons.8.
   * Use dh-autoreconf to regenerate config.guess and config.sub during the
     build process, closes: #700119.  This introduces a new build-dep on
     dh-autoreconf.
