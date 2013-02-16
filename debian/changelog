@@ -15,6 +15,9 @@ kbd (1.15.5-1) UNRELEASED; urgency=low
     add a paragraph for the added vlock code.
   * New patch loadkeys_flex_stack, taken from upstream Git: Fix a regression
     in loadkeys.analyze.l which causes some keymap files to fail to load.
+  * New patch dead2 by Samuel Thibault <sthibault@debian.org> to support
+    KT_DEAD2 diacritics in loadkeys and dumpkeys, closes: #694169.  Thank you
+    for the patch, Samuel!
 
  -- Michael Schutte <michi@debian.org>  Wed, 13 Feb 2013 17:23:19 +0100
 
