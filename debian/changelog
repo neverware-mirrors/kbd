@@ -8,6 +8,8 @@ kbd (1.15.5-1) UNRELEASED; urgency=low
   * Use dh-autoreconf to regenerate config.guess and config.sub during the
     build process, closes: #700119.  This introduces a new build-dep on
     dh-autoreconf.
+  * Update the source URL and the years of publication in debian/copyright and
+    add a paragraph for the added vlock code.
 
  -- Michael Schutte <michi@debian.org>  Wed, 13 Feb 2013 17:23:19 +0100
 
