@@ -33,13 +33,13 @@ override_dh_auto_clean:
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
 	rm -f po/gr.po			# replaced by el.po
 	# force rebuilding of generated code
-	rm -f src/loadkeys.c src/loadkeys.h src/loadkeys.analyze.c
+	rm -f src/loadkeys.c src/loadkeys.h src/loadkeys.analyze.c src/loadkeys.analyze.h
 
 override_dh_auto_configure:
 	dh_auto_configure -- --enable-nls --disable-vlock
 
 override_dh_auto_build:
-	$(MAKE) -C src/ CFLAGS="-Os -g" $(UDEB_BINARIES)
+	$(MAKE) -C src/ CFLAGS="-Os -g" loadkeys.analyze.h $(UDEB_BINARIES)
 	cd src/ && for ITEM in $(UDEB_BINARIES); do mv $$ITEM $$ITEM-udeb; done
 	$(MAKE) -C src/ clean
 	$(MAKE)
