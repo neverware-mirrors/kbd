@@ -31,9 +31,7 @@ override_dh_auto_clean:
 	[ ! -f Makefile ] || $(MAKE) clean
 	cd src/ && rm -f $(EXTRA_BINARIES) *-udeb
 	cd contrib/ && rm -f $(CONTRIB_BINARIES)
-	cd po/ && rm -f eo.gmo it.gmo ru.gmo
 	rm -f po/gr.po			# replaced by el.po
-	rm -f po/es.po			# erroneous
 	# force rebuilding of generated code
 	rm -f src/loadkeys.c src/loadkeys.h src/loadkeys.analyze.c
 
@@ -41,7 +39,6 @@ override_dh_auto_configure:
 	dh_auto_configure -- --enable-nls --disable-vlock
 
 override_dh_auto_build:
-	$(MAKE) -C po/ eo.gmo it.gmo ru.gmo
 	$(MAKE) -C src/ CFLAGS="-Os -g" $(UDEB_BINARIES)
 	cd src/ && for ITEM in $(UDEB_BINARIES); do mv $$ITEM $$ITEM-udeb; done
 	$(MAKE) -C src/ clean
