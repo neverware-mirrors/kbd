@@ -24,6 +24,8 @@ kbd (1.15.5-1) UNRELEASED; urgency=low
   * New patch dead2 by Samuel Thibault <sthibault@debian.org> to support
     KT_DEAD2 diacritics in loadkeys and dumpkeys, closes: #694169.  Thank you
     for the patch, Samuel!
+  * Drop the “Skipping font and keymap setup” message from /etc/init.d/kbd
+    because it’s really somewhat silly to log what the script isn’t doing.
   * Use a canonical URL for the Vcs-Git: field.
   * Bump Standards-Version: to 3.9.4, no changes necessary.
 
