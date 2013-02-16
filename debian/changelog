@@ -10,7 +10,7 @@ kbd (1.15.5-1) UNRELEASED; urgency=low
       non-x86[_64] architectures in resizecons.8.
   * Use dh-autoreconf to regenerate config.guess and config.sub during the
     build process, closes: #700119.  This introduces a new build-dep on
-    dh-autoreconf.
+    dh-autoreconf.  Thanks to Colin Watson <cjwatson@ubuntu.com> for the hint.
   * Update the source URL and the years of publication in debian/copyright and
     add a paragraph for the added vlock code.
   * New patch loadkeys_flex_stack, taken from upstream Git: Fix a regression
