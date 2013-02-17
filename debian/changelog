@@ -1,4 +1,4 @@
-kbd (1.15.5-1) UNRELEASED; urgency=low
+kbd (1.15.5-1) unstable; urgency=low
 
   * New upstream release.
     - Drop the loadkeys_stdin patch introduced in 1.15.3-2 (included in this
@@ -29,7 +29,7 @@ kbd (1.15.5-1) UNRELEASED; urgency=low
   * Use a canonical URL for the Vcs-Git: field.
   * Bump Standards-Version: to 3.9.4, no changes necessary.
 
- -- Michael Schutte <michi@debian.org>  Wed, 13 Feb 2013 17:23:19 +0100
+ -- Michael Schutte <michi@debian.org>  Sun, 17 Feb 2013 19:37:26 +0100
 
 kbd (1.15.3-9) unstable; urgency=low
 
