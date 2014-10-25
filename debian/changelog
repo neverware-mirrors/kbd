@@ -6,6 +6,8 @@ kbd (1.15.5-2) UNRELEASED; urgency=medium
     and the file behind FD 0, use the test_console function from
     console-setup's setupcon.  This makes the script run even under systemd,
     closes: #750631.
+  * /etc/init.d/kbd: Parse /etc/systemd/logind.conf, if available, to find the
+    list of VTs to configure.
   * README.Debian: Information on console-setup and its predecessors, closes:
     #750814.  Thanks to Osamu Aoki for the patch.
 
