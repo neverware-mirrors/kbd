@@ -20,8 +20,8 @@ Files: src/kbdrate.c
 Copyright: 1992, Rickard E. Faith
 License: GPL-any
 
-Files: src/dumpkeys.c src/loadkeys.y src/analyzel src/ksyms.c
-       src/ksyms.h src/showkey.c src/loadkeys.1 man/man1/dumpkeys.1
+Files: src/dumpkeys.c src/loadkeys.y src/loadkeys.analyze.l src/ksyms.c
+       src/ksyms.h src/showkey.c man/man1/loadkeys.1 man/man1/dumpkeys.1
        man/man1/showkey.1 man/man5/keymaps.5
 Copyright: 1993, Risto Kankkunen
 License: GPL-any
