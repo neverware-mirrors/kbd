@@ -65,7 +65,7 @@ override_dh_auto_install:
 	for ITEM in $(UDEB_BINARIES); do install -m755 src/$$ITEM-udeb $(KBD_UDEB)/bin/$$ITEM; done
 
 override_dh_installinit:
-	dh_installinit -r -u"start 48 S ."
+	dh_installinit -r
 
 override_dh_installdocs:
 	dh_installdocs

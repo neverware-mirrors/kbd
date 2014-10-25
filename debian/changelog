@@ -13,6 +13,8 @@ kbd (1.15.5-2) UNRELEASED; urgency=medium
     list of VTs to configure.
   * README.Debian: Information on console-setup and its predecessors, closes:
     #750814.  Thanks to Osamu Aoki for the patch.
+  * debian/rules: Remove the -u parameter from dh_installinit, as update-rc.d
+    no longer supports the “start” option.
   * Fix a few typos in debian/copyright, courtesy of lintian.
   * Update Standards-Version to 3.9.6, no source changes required.
 
