@@ -1,5 +1,8 @@
 kbd (1.15.5-2) UNRELEASED; urgency=medium
 
+  * Not updating to the new upstream version 2.0.2, as it contains major
+    changes (including a shared object for most of dumpkeys' and loadkeys'
+    features) and we're close to the freeze.
   * /etc/init.d/kbd: More accurately detect allocated ttys in /etc/inittab,
     closes: #744973.
   * /etc/init.d/kbd: Instead of checking for console access based on fgconsole
