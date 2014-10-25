@@ -107,7 +107,7 @@ setup ()
 	    LIST_CONSOLES=`cd /etc/init; find -name 'tty*.conf' -printf '%f ' | sed -e 's/[^0-9 ]//g'`
     else
 	    # traditional SysV init
-	    LIST_CONSOLES=`sed -e '/^ *#/d' /etc/inittab | grep -e '\<tty[0-9]*\>' | awk -F: '{printf "%s ", $1}'`
+	    LIST_CONSOLES=`sed -ne '/^[ \t]#/d; /tty[0-9]\+/ s/.*tty\([0-9]\+\).*/\1/ p' /etc/inittab`
     fi
 
     # Global default font+map
