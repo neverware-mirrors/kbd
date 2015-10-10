@@ -7,25 +7,21 @@ Add support for KT_DEAD2 diacritics to loadkeys and dumpkeys using the
 dead2_ prefix.
 
 ---
-Index: devel/src/dumpkeys.c
-===================================================================
---- devel.orig/src/dumpkeys.c	2013-02-16 17:21:51.000000000 +0100
-+++ devel/src/dumpkeys.c	2013-02-16 17:21:51.000000000 +0100
-@@ -153,6 +153,9 @@
- 	else if (!numeric && t == KT_META && v < 128 && v < syms[0].size &&
- 		 (p = syms[0].table[v])[0])
- 		printf("Meta_%-11s", p);
+--- a/src/libkeymap/dump.c
++++ b/src/libkeymap/dump.c
+@@ -377,6 +377,9 @@
+ 	else if (!numeric && t == KT_META && v < 128 && v < get_sym_size(ctx, KT_LATIN) &&
+ 		 (p = get_sym(ctx, KT_LATIN, v))[0])
+ 		fprintf(fd, "Meta_%-11s", p);
 +	else if (!numeric && t == KT_DEAD2 && v < 256 && v < syms[0].size &&
 +		 (p = syms[0].table[v])[0])
 +		printf("dead2_%-10s", p);
  	else
- 		printf("0x%04x         %s", code, plus ? "" : " ");
+ 		fprintf(fd, "0x%04x         %s", code, plus ? "" : " ");
  }
-Index: devel/src/ksyms.c
-===================================================================
---- devel.orig/src/ksyms.c	2013-02-16 17:21:51.000000000 +0100
-+++ devel/src/ksyms.c	2013-02-16 17:21:51.000000000 +0100
-@@ -1788,6 +1788,14 @@
+--- a/src/libkeymap/ksyms.c
++++ b/src/libkeymap/ksyms.c
+@@ -302,6 +302,14 @@
  		/* fall through to error printf */
  	}
  
@@ -37,6 +33,6 @@ Index: devel/src/ksyms.c
 +		/* fall through to error printf */
 +	}
 +
- 	for (i = 0; i < syms_size; i++) {
- 		jmax = ((i == 0 && direction == TO_UNICODE) ? 128 : syms[i].size);
- 		for (j = 0; j < jmax; j++)
+ 	if ((n = kt_latin(ctx, s, direction)) >= 0) {
+ 		return n;
+ 	}
