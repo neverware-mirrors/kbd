@@ -29,10 +29,10 @@ Forwarded: no
  man/man8misc/setvesablank.8 |    1 -
  18 files changed, 11 insertions(+), 23 deletions(-)
 
-Index: devel/man/man1/dumpkeys.1.in
+Index: devel/docs/man/man1/dumpkeys.1.in
 ===================================================================
---- devel.orig/man/man1/dumpkeys.1.in	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/dumpkeys.1.in	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/dumpkeys.1.in	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/dumpkeys.1.in	2013-02-17 19:36:47.000000000 +0100
 @@ -11,7 +11,6 @@
  .BI \-\-charset= charset
  ]
@@ -41,10 +41,10 @@ Index: devel/man/man1/dumpkeys.1.in
  .LP
  .B dumpkeys
  writes, to the standard output, the current contents of the keyboard
-Index: devel/man/man1/kbd_mode.1
+Index: devel/docs/man/man1/kbd_mode.1
 ===================================================================
---- devel.orig/man/man1/kbd_mode.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/kbd_mode.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/kbd_mode.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/kbd_mode.1	2013-02-17 19:36:47.000000000 +0100
 @@ -10,7 +10,6 @@
  .I -C CONSOLE
  ]
@@ -53,10 +53,10 @@ Index: devel/man/man1/kbd_mode.1
  .LP
  Without argument,
  .B kbd_mode
-Index: devel/man/man1/loadkeys.1.in
+Index: devel/docs/man/man1/loadkeys.1.in
 ===================================================================
---- devel.orig/man/man1/loadkeys.1.in	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/loadkeys.1.in	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/loadkeys.1.in	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/loadkeys.1.in	2013-02-17 19:36:47.000000000 +0100
 @@ -31,7 +31,6 @@
  ]
  .LP
@@ -65,10 +65,10 @@ Index: devel/man/man1/loadkeys.1.in
  .LP
  The program
  .B loadkeys
-Index: devel/man/man1/openvt.1
+Index: devel/docs/man/man1/openvt.1
 ===================================================================
---- devel.orig/man/man1/openvt.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/openvt.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/openvt.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/openvt.1	2013-02-17 19:36:47.000000000 +0100
 @@ -27,7 +27,14 @@
  .I "\-e, \-\-exec"
  Directly execute the given command, without forking.
@@ -85,10 +85,10 @@ Index: devel/man/man1/openvt.1
  .TP
  .I "\-s, \-\-switch"
  Switch to the new VT when starting the command. The VT of the new command
-Index: devel/man/man1/psfaddtable.1
+Index: devel/docs/man/man1/psfaddtable.1
 ===================================================================
---- devel.orig/man/man1/psfaddtable.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/psfaddtable.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/psfaddtable.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/psfaddtable.1	2013-02-17 19:36:47.000000000 +0100
 @@ -6,7 +6,6 @@
  .B psfaddtable
  .I fontfile tablefile outfile
@@ -97,10 +97,10 @@ Index: devel/man/man1/psfaddtable.1
  .LP
  .B psfaddtable
  takes a console font in .psf format given by
-Index: devel/man/man1/psfgettable.1
+Index: devel/docs/man/man1/psfgettable.1
 ===================================================================
---- devel.orig/man/man1/psfgettable.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/psfgettable.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/psfgettable.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/psfgettable.1	2013-02-17 19:36:47.000000000 +0100
 @@ -7,7 +7,6 @@
  .I fontfile
  .RI [ outfile ]
@@ -109,10 +109,10 @@ Index: devel/man/man1/psfgettable.1
  .LP
  .B psfgettable
  extracts the embedded Unicode character table from a .psf format
-Index: devel/man/man1/psfstriptable.1
+Index: devel/docs/man/man1/psfstriptable.1
 ===================================================================
---- devel.orig/man/man1/psfstriptable.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/psfstriptable.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/psfstriptable.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/psfstriptable.1	2013-02-17 19:36:47.000000000 +0100
 @@ -6,7 +6,6 @@
  .B psfstriptable
  .I fontfile outfile
@@ -121,10 +121,10 @@ Index: devel/man/man1/psfstriptable.1
  .LP
  .B psfstriptable
  reads a .psf format console font from 
-Index: devel/man/man1/psfxtable.1
+Index: devel/docs/man/man1/psfxtable.1
 ===================================================================
---- devel.orig/man/man1/psfxtable.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/psfxtable.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/psfxtable.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/psfxtable.1	2013-02-17 19:36:47.000000000 +0100
 @@ -14,7 +14,6 @@
  .IR outtable ]
  .RB [ \-nt ]
@@ -133,10 +133,10 @@ Index: devel/man/man1/psfxtable.1
  .LP
  .B psfxtable
  handles the embedded Unicode character table for .psf format
-Index: devel/man/man1/setleds.1
+Index: devel/docs/man/man1/setleds.1
 ===================================================================
---- devel.orig/man/man1/setleds.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/setleds.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/setleds.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/setleds.1	2013-02-17 19:36:47.000000000 +0100
 @@ -7,7 +7,6 @@
  .RI [ "-v" "] [" "-L" "] [" "-D" "] [" "-F" ]
  .RI [ {+|-}num "] [" {+|-}caps "] [" {+|-}scroll ]
@@ -195,10 +195,10 @@ Index: devel/man/man1/setleds.1
  Clear or set ScrollLock.
  (At present, pressing the ScrollLock key (or ^S/^Q) stops/starts
  console output.)
-Index: devel/man/man1/setmetamode.1
+Index: devel/docs/man/man1/setmetamode.1
 ===================================================================
---- devel.orig/man/man1/setmetamode.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/setmetamode.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/setmetamode.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/setmetamode.1	2013-02-17 19:36:47.000000000 +0100
 @@ -8,7 +8,6 @@
  .I {meta|bit|metabit | esc|prefix|escprefix}
  ]
@@ -207,10 +207,10 @@ Index: devel/man/man1/setmetamode.1
  .LP
  Without argument,
  .B setmetamode
-Index: devel/man/man1/showkey.1
+Index: devel/docs/man/man1/showkey.1
 ===================================================================
---- devel.orig/man/man1/showkey.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/showkey.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/showkey.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/showkey.1	2013-02-17 19:36:47.000000000 +0100
 @@ -5,7 +5,6 @@
  .SH SYNOPSIS
  showkey [\-h|\-\-help] [\-a|\-\-ascii] [\-s|\-\-scancodes] [\-k|\-\-keycodes]
@@ -219,10 +219,10 @@ Index: devel/man/man1/showkey.1
  .LP
  .B showkey
  prints to standard output either the scan codes or the keycode
-Index: devel/man/man1/unicode_start.1
+Index: devel/docs/man/man1/unicode_start.1
 ===================================================================
---- devel.orig/man/man1/unicode_start.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/unicode_start.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/unicode_start.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/unicode_start.1	2013-02-17 19:36:47.000000000 +0100
 @@ -6,7 +6,6 @@
  .B unicode_start
  .RI [ font " [" umap ]]
@@ -231,10 +231,10 @@ Index: devel/man/man1/unicode_start.1
  .LP
  The
  .B unicode_start
-Index: devel/man/man1/unicode_stop.1
+Index: devel/docs/man/man1/unicode_stop.1
 ===================================================================
---- devel.orig/man/man1/unicode_stop.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1/unicode_stop.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1/unicode_stop.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1/unicode_stop.1	2013-02-17 19:36:47.000000000 +0100
 @@ -5,7 +5,6 @@
  .SH SYNOPSIS
  .B unicode_stop
@@ -243,10 +243,10 @@ Index: devel/man/man1/unicode_stop.1
  .LP
  The
  .B unicode_stop
-Index: devel/man/man1misc/splitfont.1
+Index: devel/docs/man/man1misc/splitfont.1
 ===================================================================
---- devel.orig/man/man1misc/splitfont.1	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man1misc/splitfont.1	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man1misc/splitfont.1	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man1misc/splitfont.1	2013-02-17 19:36:47.000000000 +0100
 @@ -11,7 +11,7 @@
  
  .SH DESCRIPTION
@@ -256,10 +256,10 @@ Index: devel/man/man1misc/splitfont.1
  removes characters from a given font file; it removes all the
  specified characters from the named font file.
  .P
-Index: devel/man/man5/keymaps.5
+Index: devel/docs/man/man5/keymaps.5
 ===================================================================
---- devel.orig/man/man5/keymaps.5	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man5/keymaps.5	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man5/keymaps.5	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man5/keymaps.5	2013-02-17 19:36:47.000000000 +0100
 @@ -5,11 +5,6 @@
  .SH NAME
  keymaps \- keyboard table descriptions for loadkeys and dumpkeys
@@ -272,10 +272,10 @@ Index: devel/man/man5/keymaps.5
  .LP
  These files are used by
  .BR loadkeys (1)
-Index: devel/man/man8/setfont.8.in
+Index: devel/docs/man/man8/setfont.8.in
 ===================================================================
---- devel.orig/man/man8/setfont.8.in	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man8/setfont.8.in	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man8/setfont.8.in	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man8/setfont.8.in	2013-02-17 19:36:47.000000000 +0100
 @@ -12,7 +12,6 @@
  .RI "[-C " "console" ]
  .RI "[-h" "H" ]
@@ -284,10 +284,10 @@ Index: devel/man/man8/setfont.8.in
  .SH DESCRIPTION
  The
  .B setfont
-Index: devel/man/man8misc/mk_modmap.8
+Index: devel/docs/man/man8misc/mk_modmap.8
 ===================================================================
---- devel.orig/man/man8misc/mk_modmap.8	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man8misc/mk_modmap.8	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man8misc/mk_modmap.8	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man8misc/mk_modmap.8	2013-02-17 19:36:47.000000000 +0100
 @@ -26,7 +26,7 @@
  (In Debian, these are in the "xlibs-dev" package).
  .SH NOTES
@@ -304,10 +304,10 @@ Index: devel/man/man8misc/mk_modmap.8
 -.\" Manpage by Alastair McKinstry, <mckinstry@computer.org>
 \ No newline at end of file
 +.\" Manpage by Alastair McKinstry, <mckinstry@computer.org>
-Index: devel/man/man8misc/setvesablank.8
+Index: devel/docs/man/man8misc/setvesablank.8
 ===================================================================
---- devel.orig/man/man8misc/setvesablank.8	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man8misc/setvesablank.8	2013-02-17 19:36:47.000000000 +0100
+--- devel.orig/docs/man/man8misc/setvesablank.8	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man8misc/setvesablank.8	2013-02-17 19:36:47.000000000 +0100
 @@ -16,7 +16,6 @@
  ]
  .LP
@@ -316,10 +316,10 @@ Index: devel/man/man8misc/setvesablank.8
  .LP
  The program
  .B setvesablank
-Index: devel/man/man8/resizecons.8
+Index: devel/docs/man/man8/resizecons.8
 ===================================================================
---- devel.orig/man/man8/resizecons.8	2013-02-17 19:36:47.000000000 +0100
-+++ devel/man/man8/resizecons.8	2013-02-17 19:36:58.000000000 +0100
+--- devel.orig/docs/man/man8/resizecons.8	2013-02-17 19:36:47.000000000 +0100
++++ devel/docs/man/man8/resizecons.8	2013-02-17 19:36:58.000000000 +0100
 @@ -56,7 +56,11 @@
  
  .SH BUGS
