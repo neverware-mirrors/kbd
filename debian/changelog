@@ -2,6 +2,29 @@ kbd (2.0.3-1) UNRELEASED; urgency=medium
 
   * Add debian/gbp.conf
   * Imported Upstream version 2.0.3
+  * Update debian/patches/manpages.diff to use new path
+    - upstream moved manpages from ./man/ to ./docs/man/
+  * Have quilt refresh debian/patches/openvt.diff
+  * Drop debian/patches/loadkeys_flex_stack.diff
+    - now part of upstream release
+  * Update debian/patches/dead2.diff to apply
+    - patch src/libkeymap where relevant code has been relocated
+    - update context of patches to make them apply after upstream changes
+  * Change debian/patches/dead2.diff to use new helpers
+    - use helper functions to follow upstream code style in libkeymap
+  * debian/rules: update cleanup of generated files
+    - upstream changed which files are generated, adapt to it.
+  * Add build-dependency on pkg-config + check
+  * Add debian/patches/0001-add-configure-flag-to-disable-tests.patch
+    - cherry-pick fix from upstream git
+  * debian/rules: update build target for libkeymap -Os build
+  * Update debian/rules for man moving to docs/man
+  * Update debian/kbd.docs for doc moving to docs/doc
+  * Update debian/rules for doc move to docs/doc
+  * Update debian/kbd.manpages for man move to docs/man
+  * debian/control: Add Homepage field
+  * Add debian/missing-sources/jquery.js
+  * Improve debian/copyright
 
  -- Andreas Henriksson <andreas@fatal.se>  Sat, 10 Oct 2015 20:51:02 +0200
 
