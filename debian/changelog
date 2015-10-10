@@ -1,3 +1,9 @@
+kbd (1.15.5-3) UNRELEASED; urgency=medium
+
+  * Add debian/gbp.conf
+
+ -- Andreas Henriksson <andreas@fatal.se>  Sat, 10 Oct 2015 20:51:02 +0200
+
 kbd (1.15.5-2) unstable; urgency=medium
 
   * Not updating to the new upstream version 2.0.2, as it contains major
