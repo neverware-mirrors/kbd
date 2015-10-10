@@ -7,14 +7,6 @@ Files: *
 Copyright: 1994–1999, Andries E. Brouwer,
            2007–2012, Alexey Gladkov <gladkov.alexey@gmail.com>
 License: GPL-2+
- All files in this package may be freely copied under the terms
- of the GNU General Public License (GPL), version 2, or at your
- option any later version - except possibly for the restrictions
- mentioned in the directory consolefonts.
- .
- On Debian systems, the full text of the earliest applicable version of
- the GNU General Public License can be found in the file
- “/usr/share/common-licenses/GPL-2”.
 
 Files: src/kbdrate.c
 Copyright: 1992, Rickard E. Faith
@@ -60,6 +52,25 @@ Copyright: 2011, Alexey Gladkov <gladkov.alexey@gmail.com>,
 	                     and Dustin Kirkland <kirkland@canonical.com>)
 License: GPL-any
 
+Files: data/consolefonts/
+Copyright: Kurt Garloff
+           Jacek Lipkowski
+           Andries
+           alter@cybercafe.com.ua
+           Ethiopian Science and Technology Commission <ncic@padis.gn.apc.org> or <ncic@telecom.net.et>
+           Yitna Firdyiwek <ybf2u@virgina.edu> of GohaTibeb Associates
+           Daniel Yacob <Daniel_Yacob_at_UNECA@un.org> and <yacob@padis.gn.apc.org>
+           Sotiris Tsimbonis <tsimbonis@rosehill-1.irc.gr>.
+           2006 Dimitar Toshkov Zhekov
+           Guylhem AZNAR <guylhem@oeil.qc.ca>
+           Jakub Jelinek <jj@ultra.linux.cz>
+Note: See data/consolefonts/README.*
+License: GPL-2-with-exceptions
+ All files in this package may be freely copied under the terms
+ of the GNU General Public License (GPL), version 2, or at your
+ option any later version - except possibly for the restrictions
+ mentioned in the directory consolefonts.
+
 Files: src/vlock/*
 Copyright: 1994–1998, Michael K. Johnson <johnsonm@redhat.com>
            1997–1998, Juan Cespedes <cespedes@debian.org>
@@ -82,7 +93,10 @@ License: GPL-any
  License can be found in the files “/usr/share/common-licenses/GPL-*”.
 
 License: GPL-2+
- This program is free software; you can redistribute it and/or modify it
- under the terms of the GNU General Public License as published by the
- Free Software Foundation; either version 2 of the License, or (at your
- option) any later version.
+ All files in this package may be freely copied under the terms
+ of the GNU General Public License (GPL), version 2, or at your
+ option any later version.
+ .
+ On Debian systems, the full text of the earliest applicable version of
+ the GNU General Public License can be found in the file
+ “/usr/share/common-licenses/GPL-2”.
