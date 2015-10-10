@@ -6,6 +6,8 @@ Bug-Debian: http://bugs.debian.org/694169
 Add support for KT_DEAD2 diacritics to loadkeys and dumpkeys using the
 dead2_ prefix.
 
+[ah@debian.org: update to patch libkeymap and use get_sym{,_size} helpers]
+
 ---
 --- a/src/libkeymap/dump.c
 +++ b/src/libkeymap/dump.c
@@ -13,8 +15,8 @@ dead2_ prefix.
  	else if (!numeric && t == KT_META && v < 128 && v < get_sym_size(ctx, KT_LATIN) &&
  		 (p = get_sym(ctx, KT_LATIN, v))[0])
  		fprintf(fd, "Meta_%-11s", p);
-+	else if (!numeric && t == KT_DEAD2 && v < 256 && v < syms[0].size &&
-+		 (p = syms[0].table[v])[0])
++	else if (!numeric && t == KT_DEAD2 && v < 256 && v < get_sym_size(ctx, KT_LATIN) &&
++		 (p = get_sym(ctx, KT_LATIN, v))[0])
 +		printf("dead2_%-10s", p);
  	else
  		fprintf(fd, "0x%04x         %s", code, plus ? "" : " ");
@@ -26,7 +28,7 @@ dead2_ prefix.
  	}
  
 +	if (!strncmp(s, "dead2_", 6)) {
-+		keycode = ksymtocode(s+6, TO_8BIT);
++		keycode = ksymtocode(ctx, s+6, TO_8BIT);
 +		if (KTYP(keycode) == KT_LATIN)
 +			return K(KT_DEAD2, KVAL(keycode));
 +
