@@ -53,7 +53,7 @@ override_dh_auto_install:
 # the kbd “core”
 	$(MAKE) DESTDIR=$(KBD) install-exec
 	$(MAKE) DESTDIR=$(KBD) -C po/ install
-	$(MAKE) DESTDIR=$(KBD) -C man/ install
+	$(MAKE) DESTDIR=$(KBD) -C docs/man/ install
 # some additional utilities
 	install -m755 $(addprefix src/,$(EXTRA_BINARIES)) $(KBD)/usr/bin/
 	install -m755 $(addprefix contrib/,$(CONTRIB_BINARIES)) $(KBD)/usr/bin/
