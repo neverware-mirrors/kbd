@@ -12,11 +12,12 @@
 #include "getfd.h"
 #include "nls.h"
 #include "version.h"
+#include "kbd_error.h"
 
-static void attr_noreturn
+static void __attribute__ ((noreturn))
 usage(void) {
     fprintf(stderr, _("usage: getkeycodes\n"));
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 int
@@ -24,7 +25,6 @@ main(int argc, char **argv) {
 	int fd;
 	unsigned int sc, sc0;
 	struct kbkeycode a;
-	int old_kernel = 0;
 
 	set_progname(argv[0]);
 
@@ -43,7 +43,6 @@ main(int argc, char **argv) {
 	a.scancode = 0;
 	a.keycode = 0;
 	if (ioctl(fd, KDGETKEYCODE, &a)) {
-		old_kernel = 1;
 		sc0 = 89;
 	} else
 	for (sc0 = 1; sc0 <= 88; sc0++) {
@@ -88,11 +87,10 @@ main(int argc, char **argv) {
 			printf("   -");
 			continue;
 		}
-		perror("KDGETKEYCODE");
-		fprintf(stderr,
-			_("failed to get keycode for scancode 0x%x\n"), sc);
+		kbd_error(EXIT_FAILURE, errno, _("failed to get keycode for scancode 0x%x: "
+		                                 "ioctl KDGETKEYCODE"), sc);
 		exit(1);
 	}
 	printf("\n");
-	return 0;
+	return EXIT_SUCCESS;
 }

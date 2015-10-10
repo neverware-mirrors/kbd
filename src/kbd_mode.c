@@ -7,18 +7,20 @@
 
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <linux/types.h>
 #include <linux/kd.h>
 #include "getfd.h"
 #include "nls.h"
 #include "version.h"
+#include "kbd_error.h"
 
-static void attr_noreturn
+static void __attribute__ ((noreturn))
 usage(void){
     fprintf(stderr, _("usage: kbd_mode [-a|-u|-k|-s] [-C device]\n"));
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 int
@@ -76,9 +78,7 @@ main(int argc, char *argv[]){
 	if (n == 0) {
 	    /* report mode */
 	    if (ioctl(fd, KDGKBMODE, &mode)) {
-		perror("KDGKBMODE");
-	        fprintf(stderr, _("kbd_mode: error reading keyboard mode\n"));
-		exit(1);
+		kbd_error(EXIT_FAILURE, errno, "ioctl KDGKBMODE");
 	    }
 	    switch(mode) {
 	      case K_RAW:
@@ -96,13 +96,12 @@ main(int argc, char *argv[]){
 	      default:
 		printf(_("The keyboard is in some unknown mode\n"));
 	    }
-	    exit(0);
+	    return EXIT_SUCCESS;
 	}
 
 	if (ioctl(fd, KDSKBMODE, mode)) {
-		perror("KDSKBMODE");
-		fprintf(stderr, _("%s: error setting keyboard mode\n"), progname);
-		exit(1);
+		kbd_error(EXIT_FAILURE, errno, "ioctl KDSKBMODE");
 	}
-	exit(0);
+
+	return EXIT_SUCCESS;
 }
