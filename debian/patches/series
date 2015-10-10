@@ -3,3 +3,4 @@ manpages.diff
 openvt.diff
 unicode_start_breaks_X.diff
 dead2.diff
+0001-add-configure-flag-to-disable-tests.patch
