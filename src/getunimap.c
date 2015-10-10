@@ -24,10 +24,10 @@ ud_compar(const void *u1, const void *u2){
 	return (int) fp1 - (int) fp2;
 }
 
-static void attr_noreturn
+static void __attribute__ ((noreturn))
 usage(void) {
 	fprintf(stderr, _("Usage:\n\t%s [-s] [-C console]\n"), progname);
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 int
@@ -67,7 +67,7 @@ main(int argc, char **argv){
 
 	fd = getfd(console);
 	if (getunimap(fd, &ud))
-		exit(1);
+		return EXIT_FAILURE;
 
 	if (sortflag) {
 		printf("# sorted kernel unimap - count=%d\n", ud.entry_ct);
@@ -98,5 +98,5 @@ main(int argc, char **argv){
 		}
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }

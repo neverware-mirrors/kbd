@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <errno.h>
-#include <error.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/kd.h>
@@ -8,11 +7,12 @@
 #include "getfd.h"
 #include "nls.h"
 #include "version.h"
+#include "kbd_error.h"
 
 static const char *action = NULL;
 static const char *value  = NULL;
 
-static void attr_noreturn
+static void __attribute__ ((noreturn))
 usage(int code) {
 	fprintf(stderr,
 		_("Usage: %1$s [-C DEVICE] getmode [text|graphics]\n"
@@ -62,8 +62,7 @@ main(int argc, char **argv) {
 	}
 
 	if (optind == argc) {
-		fprintf(stderr, _("Error: Not enough arguments.\n"));
-		exit(EXIT_FAILURE);
+		kbd_error(EXIT_FAILURE, 0, _("Error: Not enough arguments.\n"));
 	}
 
 	action = argv[optind++];
@@ -75,7 +74,7 @@ main(int argc, char **argv) {
 
 	if (!strcasecmp("GETMODE", action)) {
 		if (ioctl(fd, KDGETMODE, &mode) == -1)
-			error(EXIT_FAILURE, errno, "ioctl");
+			kbd_error(EXIT_FAILURE, errno, "ioctl KDGETMODE");
 
 		switch (mode) {
 			case KD_TEXT:		rc = answer("text");		break;
@@ -84,7 +83,7 @@ main(int argc, char **argv) {
 
 	} else if (!strcasecmp("GKBMODE", action)) {
 		if (ioctl(fd, KDGKBMODE, &mode) == -1)
-			error(EXIT_FAILURE, errno, "ioctl");
+			kbd_error(EXIT_FAILURE, errno, "ioctl KDGKBMODE");
 
 		switch (mode) {
 			case K_RAW:		rc = answer("raw");		break;
@@ -95,7 +94,7 @@ main(int argc, char **argv) {
 
 	} else if (!strcasecmp("GKBMETA", action)) {
 		if (ioctl(fd, KDGKBMETA, &mode) == -1)
-			error(EXIT_FAILURE, errno, "ioctl");
+			kbd_error(EXIT_FAILURE, errno, "ioctl KDGKBMETA");
 
 		switch (mode) {
 			case K_METABIT:		rc = answer("metabit");		break;
@@ -104,7 +103,7 @@ main(int argc, char **argv) {
 
 	} else if (!strcasecmp("GKBLED", action)) {
 		if (ioctl(fd, KDGKBLED, &flags) == -1)
-			error(EXIT_FAILURE, errno, "ioctl");
+			kbd_error(EXIT_FAILURE, errno, "ioctl KDGKBLED");
 
 		mode = (flags & 0x7);
 
@@ -121,7 +120,7 @@ main(int argc, char **argv) {
 		}
 
 	} else {
-		fprintf(stderr, _("Error: Unrecognized action: %s\n"), action);
+		kbd_warning(0, _("Error: Unrecognized action: %s\n"), action);
 	}
 
 	close(fd);

@@ -78,18 +78,13 @@
 #include <signal.h>
 #include <sys/io.h>
 #include <sys/ioctl.h>
-#if (__GNU_LIBRARY__ >= 6)
-#include <sys/perm.h>
-#else
-#include <linux/types.h>
-#include <linux/termios.h>
-#endif
 #include <linux/vt.h>
 #include "paths.h"
 #include "getfd.h"
 #include "findfile.h"
 #include "nls.h"
 #include "version.h"
+#include "kbd_error.h"
 
 #define MODE_RESTORETEXTMODE	0
 #define MODE_VGALINES		1
@@ -105,8 +100,8 @@ static int vga_get_fontheight(void);
 static void vga_set_cursor(int, int);
 static void vga_set_verticaldisplayend_lowbyte(int);
 
-char *dirpath[] = { "", DATADIR "/" VIDEOMODEDIR "/", 0};
-char *suffixes[] = { "", 0 };
+const char *const dirpath[] = { "", DATADIR "/" VIDEOMODEDIR "/", 0};
+const char *const suffixes[] = { "", 0 };
 
 int
 main(int argc, char **argv) {
@@ -116,8 +111,8 @@ main(int argc, char **argv) {
     struct winsize winsize;
     char *p;
     char tty[12], cmd[80], infile[1024];
-    FILE *fin;
     char *defaultfont;
+    lkfile_t fp;
 
     set_progname(argv[0]);
 
@@ -149,35 +144,29 @@ main(int argc, char **argv) {
     if (mode == MODE_RESTORETEXTMODE) {
         /* prepare for: restoretextmode -r 80x25 */
         sprintf(infile, "%dx%d", cc, rr);
-        fin = findfile(infile, dirpath, suffixes);
-        if (!fin) {
-	    fprintf(stderr, _("resizecons: cannot find videomode file %s\n"),
-		    infile);
-	    exit(1);
-	}
- 	fpclose(fin);
+        if (lk_findfile(infile, dirpath, suffixes, &fp)) {
+            kbd_error(EXIT_FAILURE, 0, _("resizecons: cannot find videomode file %s\n"), infile);
+        }
+        lk_fpclose(&fp);
     }
 
     fd = getfd(NULL);
 
     if(ioctl(fd, TIOCGWINSZ, &winsize)) {
-	perror("TIOCGWINSZ");
-	exit(1);
+        kbd_error(EXIT_FAILURE, errno, "ioctl TIOCGWINSZ");
     }
 
     if (mode == MODE_VGALINES) {
-    	/* Get the number of columns. */
-    	cc = winsize.ws_col;
-    	if (rr != 25 && rr != 28 && rr !=30 && rr != 34 && rr != 36
-    	&& rr != 40 && rr != 44 && rr != 50 && rr != 60) {
-    	    fprintf(stderr, _("Invalid number of lines\n"));
-	    exit(1);
-	}
+        /* Get the number of columns. */
+        cc = winsize.ws_col;
+        if (rr != 25 && rr != 28 && rr != 30 && rr != 34 && rr != 36 &&
+            rr != 40 && rr != 44 && rr != 50 && rr != 60) {
+            kbd_error(EXIT_FAILURE, 0, _("Invalid number of lines\n"));
+        }
     }
 
     if(ioctl(fd, VT_GETSTATE, &vtstat)) {
-	perror("VT_GETSTATE");
-	exit(1);
+        kbd_error(EXIT_FAILURE, errno, "ioctl VT_GETSTATE");
     }
 
     vtsizes.v_rows = rr;
@@ -187,8 +176,7 @@ main(int argc, char **argv) {
     vga_init_io();		/* maybe only if (mode == MODE_VGALINES) */
 
     if(ioctl(fd, VT_RESIZE, &vtsizes)) {
-	perror("VT_RESIZE");
-	exit(1);
+        kbd_error(EXIT_FAILURE, errno, "ioctl VT_RESIZE");
     }
 
     if (mode == MODE_VGALINES) {
@@ -196,16 +184,16 @@ main(int argc, char **argv) {
         int scanlines_old;
         int scanlines_new;
         int fontheight;
-   	if (winsize.ws_row == 25 || winsize.ws_row == 28 ||
-   	winsize.ws_row == 36 || winsize.ws_row == 44 ||
-   	winsize.ws_row == 50)
-   	    scanlines_old = 400;
-   	else
-   	    scanlines_old = 480;
-   	if (rr == 25 || rr == 28 || rr == 36 || rr == 44 || rr == 50)
-   	    scanlines_new = 400;
-   	else
-   	    scanlines_new = 480;
+        if (winsize.ws_row == 25 || winsize.ws_row == 28 ||
+            winsize.ws_row == 36 || winsize.ws_row == 44 ||
+            winsize.ws_row == 50)
+            scanlines_old = 400;
+        else
+            scanlines_old = 480;
+        if (rr == 25 || rr == 28 || rr == 36 || rr == 44 || rr == 50)
+            scanlines_new = 400;
+        else
+            scanlines_new = 480;
         /* Switch to 400 or 480 scanline vertical timing if required. */
         if (scanlines_old != 400 && scanlines_new == 400)
             vga_400_scanlines();
@@ -222,7 +210,7 @@ main(int argc, char **argv) {
         case 50 : fontheight = 8; break;
         case 60 : fontheight = 8; break;
         default : fontheight = 8; break;
-	}
+        }
 	/* Set the VGA character height. */
 	vga_set_fontheight(fontheight);
 	/* Set the line offsets within a character cell of the cursor. */
@@ -244,13 +232,13 @@ main(int argc, char **argv) {
 
     if (mode == MODE_RESTORETEXTMODE) {
 	/* do: restoretextmode -r 25x80 */
-	sprintf(cmd, "restoretextmode -r %s\n", pathname);
+	sprintf(cmd, "restoretextmode -r %s\n", fp.pathname);
 	errno = 0;
 	if(system(cmd)) {
 	    if(errno)
 		perror("restoretextmode");
 	    fprintf(stderr, _("resizecons: the command `%s' failed\n"), cmd);
-	    exit(1);
+	    exit(EXIT_FAILURE);
 	}
     }
 
@@ -273,7 +261,7 @@ main(int argc, char **argv) {
 	  }
 	  if (fd >= 0) {
 	      if(ioctl(fd, TIOCSWINSZ, &winsize))
-		perror("TIOCSWINSZ");
+	          kbd_warning(errno, "ioctl TIOCSWINSZ");
 	      close(fd);
 	  }
       }
@@ -319,7 +307,7 @@ main(int argc, char **argv) {
 	if(errno)
 	    perror("setfont");
 	fprintf(stderr, "resizecons: the command `%s' failed\n", cmd);
-	exit(1);
+	exit(EXIT_FAILURE);
     }
 
     fprintf(stderr, _("resizecons: don't forget to change TERM "
@@ -329,17 +317,17 @@ main(int argc, char **argv) {
       fprintf(stderr,
 	      "Also the variables LINES and COLUMNS may need adjusting.\n");
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
-static void attr_noreturn
+static void __attribute__ ((noreturn))
 usage() {
     fprintf(stderr,
 	    _("resizecons:\n"
 	      "call is:  resizecons COLSxROWS  or:  resizecons COLS ROWS\n"
 	      "or: resizecons -lines ROWS, with ROWS one of 25, 28, 30, 34,"
 	      " 36, 40, 44, 50, 60\n"));
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 /*
@@ -374,7 +362,7 @@ static void vga_init_io() {
 	if (iopl(3) < 0) {
 		fprintf(stderr,
 			_("resizecons: cannot get I/O permissions.\n"));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	crtcport = 0x3d4;
 	if ((my_inb(0x3cc) & 0x01) == 0)

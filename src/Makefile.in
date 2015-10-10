@@ -16,6 +16,7 @@
 @SET_MAKE@
 
 
+
 VPATH = @srcdir@
 am__make_dryrun = \
   { \
@@ -61,20 +62,40 @@ host_triplet = @host@
 bin_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_5)
 subdir = src
 DIST_COMMON = $(dist_bin_SCRIPTS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in loadkeys.analyze.c loadkeys.c loadkeys.h
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/attributes.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+LIBRARIES = $(noinst_LIBRARIES)
+ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR    " $@;
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+libcommon_a_AR = $(AR) $(ARFLAGS)
+libcommon_a_LIBADD =
+am_libcommon_a_OBJECTS = getfd.$(OBJEXT) xmalloc.$(OBJEXT) \
+	kbd_error.$(OBJEXT)
+libcommon_a_OBJECTS = $(am_libcommon_a_OBJECTS)
+libfont_a_AR = $(AR) $(ARFLAGS)
+libfont_a_LIBADD =
+am_libfont_a_OBJECTS = psffontop.$(OBJEXT) utf8.$(OBJEXT) \
+	kdmapop.$(OBJEXT) loadunimap.$(OBJEXT) kdfontop.$(OBJEXT)
+libfont_a_OBJECTS = $(am_libfont_a_OBJECTS)
 am__EXEEXT_1 = mapscrn$(EXEEXT) loadunimap$(EXEEXT)
 @KEYCODES_PROGS_TRUE@am__EXEEXT_2 = getkeycodes$(EXEEXT) \
 @KEYCODES_PROGS_TRUE@	setkeycodes$(EXEEXT)
@@ -95,150 +116,146 @@ am__EXEEXT_5 = dumpkeys$(EXEEXT) loadkeys$(EXEEXT) showkey$(EXEEXT) \
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 =
-am__objects_2 = getfd.$(OBJEXT)
-am_chvt_OBJECTS = $(am__objects_1) chvt.$(OBJEXT) $(am__objects_2)
+am_chvt_OBJECTS = $(am__objects_1) chvt.$(OBJEXT)
 chvt_OBJECTS = $(am_chvt_OBJECTS)
 chvt_LDADD = $(LDADD)
-am__objects_3 = kdmapop.$(OBJEXT)
-am_clrunimap_OBJECTS = $(am__objects_1) clrunimap.$(OBJEXT) \
-	$(am__objects_2) $(am__objects_3)
+chvt_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am_clrunimap_OBJECTS = $(am__objects_1) clrunimap.$(OBJEXT)
 clrunimap_OBJECTS = $(am_clrunimap_OBJECTS)
 clrunimap_LDADD = $(LDADD)
-am_deallocvt_OBJECTS = $(am__objects_1) deallocvt.$(OBJEXT) \
-	$(am__objects_2)
+clrunimap_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_deallocvt_OBJECTS = $(am__objects_1) deallocvt.$(OBJEXT)
 deallocvt_OBJECTS = $(am_deallocvt_OBJECTS)
 deallocvt_LDADD = $(LDADD)
-am__objects_4 = ksyms.$(OBJEXT)
-am__objects_5 = xmalloc.$(OBJEXT)
-am_dumpkeys_OBJECTS = $(am__objects_1) dumpkeys.$(OBJEXT) \
-	$(am__objects_2) $(am__objects_4) $(am__objects_5)
+deallocvt_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_dumpkeys_OBJECTS = $(am__objects_1) dumpkeys.$(OBJEXT)
 dumpkeys_OBJECTS = $(am_dumpkeys_OBJECTS)
 dumpkeys_LDADD = $(LDADD)
-am_fgconsole_OBJECTS = $(am__objects_1) fgconsole.$(OBJEXT) \
-	$(am__objects_2)
+dumpkeys_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_fgconsole_OBJECTS = $(am__objects_1) fgconsole.$(OBJEXT)
 fgconsole_OBJECTS = $(am_fgconsole_OBJECTS)
 fgconsole_LDADD = $(LDADD)
-am_getkeycodes_OBJECTS = $(am__objects_1) getkeycodes.$(OBJEXT) \
-	$(am__objects_2)
+fgconsole_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_getkeycodes_OBJECTS = $(am__objects_1) getkeycodes.$(OBJEXT)
 getkeycodes_OBJECTS = $(am_getkeycodes_OBJECTS)
 getkeycodes_LDADD = $(LDADD)
-am_getunimap_OBJECTS = $(am__objects_1) getunimap.$(OBJEXT) \
-	$(am__objects_2) $(am__objects_3)
+getkeycodes_DEPENDENCIES = libcommon.a libfont.a \
+	libkeymap/libkeymap.la
+am_getunimap_OBJECTS = $(am__objects_1) getunimap.$(OBJEXT)
 getunimap_OBJECTS = $(am_getunimap_OBJECTS)
 getunimap_LDADD = $(LDADD)
-am_kbd_mode_OBJECTS = $(am__objects_1) kbd_mode.$(OBJEXT) \
-	$(am__objects_2)
+getunimap_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_kbd_mode_OBJECTS = $(am__objects_1) kbd_mode.$(OBJEXT)
 kbd_mode_OBJECTS = $(am_kbd_mode_OBJECTS)
 kbd_mode_LDADD = $(LDADD)
-am_kbdinfo_OBJECTS = $(am__objects_1) kbdinfo.$(OBJEXT) \
-	$(am__objects_2)
+kbd_mode_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_kbdinfo_OBJECTS = $(am__objects_1) kbdinfo.$(OBJEXT)
 kbdinfo_OBJECTS = $(am_kbdinfo_OBJECTS)
 kbdinfo_LDADD = $(LDADD)
+kbdinfo_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
 kbdrate_SOURCES = kbdrate.c
 kbdrate_OBJECTS = kbdrate.$(OBJEXT)
 kbdrate_LDADD = $(LDADD)
-am__objects_6 = findfile.$(OBJEXT)
-am_loadkeys_OBJECTS = loadkeys.$(OBJEXT) loadkeys.analyze.$(OBJEXT) \
-	$(am__objects_2) $(am__objects_4) $(am__objects_5) \
-	$(am__objects_6)
+kbdrate_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_loadkeys_OBJECTS = $(am__objects_1) loadkeys.$(OBJEXT)
 loadkeys_OBJECTS = $(am_loadkeys_OBJECTS)
 loadkeys_LDADD = $(LDADD)
-am__objects_7 = loadunimap-findfile.$(OBJEXT)
-am__objects_8 = loadunimap-psffontop.$(OBJEXT)
-am__objects_9 = loadunimap-utf8.$(OBJEXT)
-am__objects_10 = loadunimap-xmalloc.$(OBJEXT)
-am__objects_11 = loadunimap-getfd.$(OBJEXT)
-am__objects_12 = loadunimap-kdmapop.$(OBJEXT)
+loadkeys_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
 am_loadunimap_OBJECTS = $(am__objects_1) \
-	loadunimap-loadunimap.$(OBJEXT) $(am__objects_7) \
-	$(am__objects_8) $(am__objects_9) $(am__objects_10) \
-	$(am__objects_11) $(am__objects_12)
+	loadunimap-loadunimap.$(OBJEXT)
 loadunimap_OBJECTS = $(am_loadunimap_OBJECTS)
 loadunimap_LDADD = $(LDADD)
-loadunimap_LINK = $(CCLD) $(loadunimap_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
-am__objects_13 = mapscrn-findfile.$(OBJEXT)
-am__objects_14 = mapscrn-utf8.$(OBJEXT)
-am__objects_15 = mapscrn-xmalloc.$(OBJEXT)
-am__objects_16 = mapscrn-getfd.$(OBJEXT)
-am__objects_17 = mapscrn-kdmapop.$(OBJEXT)
-am_mapscrn_OBJECTS = $(am__objects_1) mapscrn-mapscrn.$(OBJEXT) \
-	$(am__objects_13) $(am__objects_14) $(am__objects_15) \
-	$(am__objects_16) $(am__objects_17)
+loadunimap_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+loadunimap_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(loadunimap_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_mapscrn_OBJECTS = $(am__objects_1) mapscrn-mapscrn.$(OBJEXT)
 mapscrn_OBJECTS = $(am_mapscrn_OBJECTS)
 mapscrn_LDADD = $(LDADD)
-mapscrn_LINK = $(CCLD) $(mapscrn_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
-am_openvt_OBJECTS = $(am__objects_1) openvt.$(OBJEXT) $(am__objects_2) \
-	$(am__objects_5)
+mapscrn_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+mapscrn_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(mapscrn_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_openvt_OBJECTS = $(am__objects_1) openvt.$(OBJEXT)
 openvt_OBJECTS = $(am_openvt_OBJECTS)
 openvt_LDADD = $(LDADD)
+openvt_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
 outpsfheader_SOURCES = outpsfheader.c
 outpsfheader_OBJECTS = outpsfheader.$(OBJEXT)
 outpsfheader_LDADD = $(LDADD)
-am__objects_18 = psffontop.$(OBJEXT)
-am__objects_19 = utf8.$(OBJEXT)
-am_psfxtable_OBJECTS = $(am__objects_1) psfxtable.$(OBJEXT) \
-	$(am__objects_18) $(am__objects_5) $(am__objects_19) \
-	$(am__objects_2)
+outpsfheader_DEPENDENCIES = libcommon.a libfont.a \
+	libkeymap/libkeymap.la
+am_psfxtable_OBJECTS = $(am__objects_1) psfxtable.$(OBJEXT)
 psfxtable_OBJECTS = $(am_psfxtable_OBJECTS)
 psfxtable_LDADD = $(LDADD)
-am_resizecons_OBJECTS = $(am__objects_1) resizecons.$(OBJEXT) \
-	$(am__objects_2) $(am__objects_6) $(am__objects_5)
+psfxtable_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_resizecons_OBJECTS = $(am__objects_1) resizecons.$(OBJEXT)
 resizecons_OBJECTS = $(am_resizecons_OBJECTS)
 resizecons_LDADD = $(LDADD)
-am_screendump_OBJECTS = $(am__objects_1) screendump.$(OBJEXT) \
-	$(am__objects_5)
+resizecons_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_screendump_OBJECTS = $(am__objects_1) screendump.$(OBJEXT)
 screendump_OBJECTS = $(am_screendump_OBJECTS)
 screendump_LDADD = $(LDADD)
-am__objects_20 = loadunimap.$(OBJEXT)
+screendump_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
 am_setfont_OBJECTS = $(am__objects_1) setfont.$(OBJEXT) \
-	$(am__objects_6) $(am__objects_5) $(am__objects_2) \
-	mapscrn.$(OBJEXT) $(am__objects_3) $(am__objects_18) \
-	$(am__objects_19) kdfontop.$(OBJEXT) $(am__objects_20)
+	mapscrn.$(OBJEXT)
 setfont_OBJECTS = $(am_setfont_OBJECTS)
 setfont_LDADD = $(LDADD)
-am_setkeycodes_OBJECTS = $(am__objects_1) setkeycodes.$(OBJEXT) \
-	$(am__objects_2)
+setfont_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_setkeycodes_OBJECTS = $(am__objects_1) setkeycodes.$(OBJEXT)
 setkeycodes_OBJECTS = $(am_setkeycodes_OBJECTS)
 setkeycodes_LDADD = $(LDADD)
+setkeycodes_DEPENDENCIES = libcommon.a libfont.a \
+	libkeymap/libkeymap.la
 setleds_SOURCES = setleds.c
 setleds_OBJECTS = setleds.$(OBJEXT)
 setleds_LDADD = $(LDADD)
-am_setlogcons_OBJECTS = $(am__objects_1) setlogcons.$(OBJEXT) \
-	$(am__objects_2)
+setleds_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_setlogcons_OBJECTS = $(am__objects_1) setlogcons.$(OBJEXT)
 setlogcons_OBJECTS = $(am_setlogcons_OBJECTS)
 setlogcons_LDADD = $(LDADD)
+setlogcons_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
 setmetamode_SOURCES = setmetamode.c
 setmetamode_OBJECTS = setmetamode.$(OBJEXT)
 setmetamode_LDADD = $(LDADD)
-am_setpalette_OBJECTS = $(am__objects_1) setpalette.$(OBJEXT) \
-	$(am__objects_2)
+setmetamode_DEPENDENCIES = libcommon.a libfont.a \
+	libkeymap/libkeymap.la
+am_setpalette_OBJECTS = $(am__objects_1) setpalette.$(OBJEXT)
 setpalette_OBJECTS = $(am_setpalette_OBJECTS)
 setpalette_LDADD = $(LDADD)
-am_setvesablank_OBJECTS = $(am__objects_1) setvesablank.$(OBJEXT) \
-	$(am__objects_2)
+setpalette_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
+am_setvesablank_OBJECTS = $(am__objects_1) setvesablank.$(OBJEXT)
 setvesablank_OBJECTS = $(am_setvesablank_OBJECTS)
 setvesablank_LDADD = $(LDADD)
-am_setvtrgb_OBJECTS = $(am__objects_1) setvtrgb.$(OBJEXT) \
-	$(am__objects_2)
+setvesablank_DEPENDENCIES = libcommon.a libfont.a \
+	libkeymap/libkeymap.la
+am_setvtrgb_OBJECTS = $(am__objects_1) setvtrgb.$(OBJEXT)
 setvtrgb_OBJECTS = $(am_setvtrgb_OBJECTS)
 setvtrgb_LDADD = $(LDADD)
+setvtrgb_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
 am_showconsolefont_OBJECTS = $(am__objects_1) \
-	showconsolefont.$(OBJEXT) $(am__objects_2) $(am__objects_5) \
-	$(am__objects_3) kdfontop.$(OBJEXT)
+	showconsolefont.$(OBJEXT)
 showconsolefont_OBJECTS = $(am_showconsolefont_OBJECTS)
 showconsolefont_LDADD = $(LDADD)
-am_showkey_OBJECTS = $(am__objects_1) showkey.$(OBJEXT) \
-	$(am__objects_2)
+showconsolefont_DEPENDENCIES = libcommon.a libfont.a \
+	libkeymap/libkeymap.la
+am_showkey_OBJECTS = $(am__objects_1) showkey.$(OBJEXT)
 showkey_OBJECTS = $(am_showkey_OBJECTS)
 showkey_LDADD = $(LDADD)
+showkey_DEPENDENCIES = libcommon.a libfont.a libkeymap/libkeymap.la
 spawn_console_SOURCES = spawn_console.c
 spawn_console_OBJECTS = spawn_console.$(OBJEXT)
 spawn_console_LDADD = $(LDADD)
+spawn_console_DEPENDENCIES = libcommon.a libfont.a \
+	libkeymap/libkeymap.la
 spawn_login_SOURCES = spawn_login.c
 spawn_login_OBJECTS = spawn_login.$(OBJEXT)
 spawn_login_LDADD = $(LDADD)
+spawn_login_DEPENDENCIES = libcommon.a libfont.a \
+	libkeymap/libkeymap.la
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -271,47 +288,40 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
 am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
 am__v_CC_0 = @echo "  CC    " $@;
-AM_V_at = $(am__v_at_@AM_V@)
-am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
-am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD  " $@;
-LEXCOMPILE = $(LEX) $(AM_LFLAGS) $(LFLAGS)
-AM_V_LEX = $(am__v_LEX_@AM_V@)
-am__v_LEX_ = $(am__v_LEX_@AM_DEFAULT_V@)
-am__v_LEX_0 = @echo "  LEX   " $@;
-YLWRAP = $(top_srcdir)/config/ylwrap
-YACCCOMPILE = $(YACC) $(AM_YFLAGS) $(YFLAGS)
-AM_V_YACC = $(am__v_YACC_@AM_V@)
-am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
-am__v_YACC_0 = @echo "  YACC  " $@;
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(chvt_SOURCES) $(clrunimap_SOURCES) $(deallocvt_SOURCES) \
-	$(dumpkeys_SOURCES) $(fgconsole_SOURCES) \
-	$(getkeycodes_SOURCES) $(getunimap_SOURCES) \
-	$(kbd_mode_SOURCES) $(kbdinfo_SOURCES) kbdrate.c \
-	$(loadkeys_SOURCES) $(loadunimap_SOURCES) $(mapscrn_SOURCES) \
-	$(openvt_SOURCES) outpsfheader.c $(psfxtable_SOURCES) \
-	$(resizecons_SOURCES) $(screendump_SOURCES) $(setfont_SOURCES) \
+SOURCES = $(libcommon_a_SOURCES) $(libfont_a_SOURCES) $(chvt_SOURCES) \
+	$(clrunimap_SOURCES) $(deallocvt_SOURCES) $(dumpkeys_SOURCES) \
+	$(fgconsole_SOURCES) $(getkeycodes_SOURCES) \
+	$(getunimap_SOURCES) $(kbd_mode_SOURCES) $(kbdinfo_SOURCES) \
+	kbdrate.c $(loadkeys_SOURCES) $(loadunimap_SOURCES) \
+	$(mapscrn_SOURCES) $(openvt_SOURCES) outpsfheader.c \
+	$(psfxtable_SOURCES) $(resizecons_SOURCES) \
+	$(screendump_SOURCES) $(setfont_SOURCES) \
 	$(setkeycodes_SOURCES) setleds.c $(setlogcons_SOURCES) \
 	setmetamode.c $(setpalette_SOURCES) $(setvesablank_SOURCES) \
 	$(setvtrgb_SOURCES) $(showconsolefont_SOURCES) \
 	$(showkey_SOURCES) spawn_console.c spawn_login.c
-DIST_SOURCES = $(chvt_SOURCES) $(clrunimap_SOURCES) \
-	$(deallocvt_SOURCES) $(dumpkeys_SOURCES) $(fgconsole_SOURCES) \
+DIST_SOURCES = $(libcommon_a_SOURCES) $(libfont_a_SOURCES) \
+	$(chvt_SOURCES) $(clrunimap_SOURCES) $(deallocvt_SOURCES) \
+	$(dumpkeys_SOURCES) $(fgconsole_SOURCES) \
 	$(getkeycodes_SOURCES) $(getunimap_SOURCES) \
 	$(kbd_mode_SOURCES) $(kbdinfo_SOURCES) kbdrate.c \
 	$(loadkeys_SOURCES) $(loadunimap_SOURCES) $(mapscrn_SOURCES) \
@@ -370,6 +380,7 @@ am__relativize = \
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -377,24 +388,32 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CHECK_CFLAGS = @CHECK_CFLAGS@
+CHECK_LIBS = @CHECK_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DLLTOOL = @DLLTOOL@
+DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+FGREP = @FGREP@
 GMSGFMT = @GMSGFMT@
 GREP = @GREP@
+HAVE_DOXYGEN = @HAVE_DOXYGEN@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
+LD = @LD@
 LDFLAGS = @LDFLAGS@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
@@ -403,16 +422,24 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBTOOL = @LIBTOOL@
+LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
 MSGMERGE = @MSGMERGE@
+NM = @NM@
+NMEDIT = @NMEDIT@
+OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -422,7 +449,11 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PAM_LIBS = @PAM_LIBS@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 POSUB = @POSUB@
+RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -436,7 +467,9 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -482,10 +515,14 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -DDATADIR=\"$(datadir)\" -DLOCALEDIR=\"$(localedir)\" \
+AM_CPPFLAGS = \
+	-I$(srcdir)/libkeymap -I$(builddir)/libkeymap \
+	-I$(srcdir)/libkeymap/keymap -I$(builddir)/libkeymap/keymap \
+	-DDATADIR=\"$(datadir)\" -DLOCALEDIR=\"$(localedir)\" \
+	-D_FORTIFY_SOURCE=2 \
 	-funit-at-a-time
 
-SUBDIRS = vlock
+SUBDIRS = vlock libkeymap
 OLDPROGS = mapscrn loadunimap
 PROGS = dumpkeys loadkeys showkey setfont showconsolefont setleds \
 	setmetamode kbd_mode psfxtable fgconsole kbdrate chvt \
@@ -493,53 +530,55 @@ PROGS = dumpkeys loadkeys showkey setfont showconsolefont setleds \
 	$(am__append_2) $(am__append_3)
 dist_bin_SCRIPTS = unicode_start unicode_stop
 EXTRA_DIST = \
-	loadkeys.analyze.c loadkeys.analyze.h loadkeys.analyze.l wctomb.c \
+	wctomb.c \
 	totextmode.c README.cad README.init README.openvt \
 	cad
 
-ALL_S = modifiers.h nls.h paths.h version.h kbd.h
-FIND_S = findfile.c findfile.h
-GETFD_S = getfd.c getfd.h
-KDMA_S = kdmapop.c kdmapop.h
-KSYMS_S = ksyms.c ksyms.h cp1250.syms.h ethiopic.syms.h koi8.syms.h sami.syms.h thai.syms.h
-PSF_S = psf.h psffontop.c psffontop.h
-UNIM_S = loadunimap.c loadunimap.h
-UTF8_S = utf8.c utf8.h
-XMAL_S = xmalloc.c xmalloc.h
-chvt_SOURCES = $(ALL_S) chvt.c $(GETFD_S)
-clrunimap_SOURCES = $(ALL_S) clrunimap.c $(GETFD_S) $(KDMA_S)
-deallocvt_SOURCES = $(ALL_S) deallocvt.c $(GETFD_S)
-dumpkeys_SOURCES = $(ALL_S) dumpkeys.c $(GETFD_S) $(KSYMS_S) $(XMAL_S)
-fgconsole_SOURCES = $(ALL_S) fgconsole.c $(GETFD_S)
-getkeycodes_SOURCES = $(ALL_S) getkeycodes.c $(GETFD_S)
-getunimap_SOURCES = $(ALL_S) getunimap.c $(GETFD_S) $(KDMA_S)
-kbd_mode_SOURCES = $(ALL_S) kbd_mode.c $(GETFD_S)
-loadunimap_SOURCES = $(ALL_S) loadunimap.c $(FIND_S) $(PSF_S) $(UTF8_S) $(XMAL_S) $(GETFD_S) $(KDMA_S)
-mapscrn_SOURCES = $(ALL_S) mapscrn.c $(FIND_S) $(UTF8_S) $(XMAL_S) $(GETFD_S) $(KDMA_S)
-openvt_SOURCES = $(ALL_S) openvt.c $(GETFD_S) $(XMAL_S)
-psfxtable_SOURCES = $(ALL_S) psfxtable.c $(PSF_S) $(XMAL_S) $(UTF8_S) $(GETFD_S)
-resizecons_SOURCES = $(ALL_S) resizecons.c $(GETFD_S) $(FIND_S) $(XMAL_S)
-screendump_SOURCES = $(ALL_S) screendump.c $(XMAL_S)
-setfont_SOURCES = $(ALL_S) setfont.c $(FIND_S) $(XMAL_S) $(GETFD_S) mapscrn.c $(KDMA_S) $(PSF_S) $(UTF8_S) kdfontop.c kdfontop.h $(UNIM_S)
-setkeycodes_SOURCES = $(ALL_S) setkeycodes.c $(GETFD_S)
-setvtrgb_SOURCES = $(ALL_S) setvtrgb.c $(GETFD_S)
-setlogcons_SOURCES = $(ALL_S) setlogcons.c $(GETFD_S)
-setpalette_SOURCES = $(ALL_S) setpalette.c $(GETFD_S)
-setvesablank_SOURCES = $(ALL_S) setvesablank.c $(GETFD_S)
-showconsolefont_SOURCES = $(ALL_S) showconsolefont.c $(GETFD_S) $(XMAL_S) $(KDMA_S) kdfontop.c kdfontop.h
-showkey_SOURCES = $(ALL_S) showkey.c $(GETFD_S)
-kbdinfo_SOURCES = $(ALL_S) kbdinfo.c $(GETFD_S)
+libcommon_a_SOURCES = \
+	getfd.c getfd.h \
+	xmalloc.c xmalloc.h \
+	kbd_error.c kbd_error.h
+
+libfont_a_SOURCES = \
+	psf.h psffontop.c psffontop.h \
+	utf8.c utf8.h \
+	kdmapop.c kdmapop.h \
+	loadunimap.c loadunimap.h \
+	kdfontop.c kdfontop.h
+
+ALL_S = nls.h paths.h version.h kbd.h
+chvt_SOURCES = $(ALL_S) chvt.c
+clrunimap_SOURCES = $(ALL_S) clrunimap.c
+deallocvt_SOURCES = $(ALL_S) deallocvt.c
+fgconsole_SOURCES = $(ALL_S) fgconsole.c
+getkeycodes_SOURCES = $(ALL_S) getkeycodes.c
+getunimap_SOURCES = $(ALL_S) getunimap.c
+kbd_mode_SOURCES = $(ALL_S) kbd_mode.c
+loadunimap_SOURCES = $(ALL_S) loadunimap.c
+mapscrn_SOURCES = $(ALL_S) mapscrn.c
+openvt_SOURCES = $(ALL_S) openvt.c
+psfxtable_SOURCES = $(ALL_S) psfxtable.c
+resizecons_SOURCES = $(ALL_S) resizecons.c
+screendump_SOURCES = $(ALL_S) screendump.c
+setfont_SOURCES = $(ALL_S) setfont.c mapscrn.c
+setkeycodes_SOURCES = $(ALL_S) setkeycodes.c
+setvtrgb_SOURCES = $(ALL_S) setvtrgb.c
+setlogcons_SOURCES = $(ALL_S) setlogcons.c
+setpalette_SOURCES = $(ALL_S) setpalette.c
+setvesablank_SOURCES = $(ALL_S) setvesablank.c
+showconsolefont_SOURCES = $(ALL_S) showconsolefont.c
+showkey_SOURCES = $(ALL_S) showkey.c
+kbdinfo_SOURCES = $(ALL_S) kbdinfo.c
+dumpkeys_SOURCES = $(ALL_S) dumpkeys.c
+loadkeys_SOURCES = $(ALL_S) loadkeys.c
 mapscrn_CFLAGS = -DMAIN
 loadunimap_CFLAGS = -DMAIN
-AM_YFLAGS = -d
-AM_LFLAGS = --header-file=$(CURDIR)/loadkeys.analyze.h
-BUILT_SOURCES = loadkeys.c loadkeys.analyze.c loadkeys.h loadkeys.analyze.h
-loadkeys_SOURCES = loadkeys.y loadkeys.analyze.l $(GETFD_S) $(KSYMS_S) $(XMAL_S) $(FIND_S)
-all: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+noinst_LIBRARIES = libcommon.a libfont.a
+LDADD = libcommon.a libfont.a libkeymap/libkeymap.la
+all: all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .l .o .obj .y
+.SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -570,6 +609,17 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+libcommon.a: $(libcommon_a_OBJECTS) $(libcommon_a_DEPENDENCIES) $(EXTRA_libcommon_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libcommon.a
+	$(AM_V_AR)$(libcommon_a_AR) libcommon.a $(libcommon_a_OBJECTS) $(libcommon_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libcommon.a
+libfont.a: $(libfont_a_OBJECTS) $(libfont_a_DEPENDENCIES) $(EXTRA_libfont_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libfont.a
+	$(AM_V_AR)$(libfont_a_AR) libfont.a $(libfont_a_OBJECTS) $(libfont_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libfont.a
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -579,7 +629,7 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	fi; \
 	for p in $$list; do echo "$$p $$p"; done | \
 	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p; \
+	while read p p1; do if test -f $$p || test -f $$p1; \
 	  then echo "$$p"; echo "$$p"; else :; fi; \
 	done | \
 	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
@@ -593,8 +643,8 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	while read type dir files; do \
 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
 	    test -z "$$files" || { \
-	      echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	      $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
 	    } \
 	; done
 
@@ -609,7 +659,13 @@ uninstall-binPROGRAMS:
 	cd "$(DESTDIR)$(bindir)" && rm -f $$files
 
 clean-binPROGRAMS:
-	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
 chvt$(EXEEXT): $(chvt_OBJECTS) $(chvt_DEPENDENCIES) $(EXTRA_chvt_DEPENDENCIES) 
 	@rm -f chvt$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(chvt_OBJECTS) $(chvt_LDADD) $(LIBS)
@@ -640,9 +696,6 @@ kbdinfo$(EXEEXT): $(kbdinfo_OBJECTS) $(kbdinfo_DEPENDENCIES) $(EXTRA_kbdinfo_DEP
 kbdrate$(EXEEXT): $(kbdrate_OBJECTS) $(kbdrate_DEPENDENCIES) $(EXTRA_kbdrate_DEPENDENCIES) 
 	@rm -f kbdrate$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(kbdrate_OBJECTS) $(kbdrate_LDADD) $(LIBS)
-loadkeys.h: loadkeys.c
-	@if test ! -f $@; then rm -f loadkeys.c; else :; fi
-	@if test ! -f $@; then $(MAKE) $(AM_MAKEFLAGS) loadkeys.c; else :; fi
 loadkeys$(EXEEXT): $(loadkeys_OBJECTS) $(loadkeys_DEPENDENCIES) $(EXTRA_loadkeys_DEPENDENCIES) 
 	@rm -f loadkeys$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(loadkeys_OBJECTS) $(loadkeys_LDADD) $(LIBS)
@@ -750,32 +803,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/deallocvt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dumpkeys.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fgconsole.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/findfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getfd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getkeycodes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getunimap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kbd_error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kbd_mode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kbdinfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kbdrate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kdfontop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kdmapop.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ksyms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadkeys.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadkeys.analyze.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-findfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-getfd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-kdmapop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-loadunimap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-psffontop.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-utf8.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap-xmalloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loadunimap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapscrn-findfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapscrn-getfd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapscrn-kdmapop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapscrn-mapscrn.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapscrn-utf8.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapscrn-xmalloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapscrn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openvt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/outpsfheader.Po@am__quote@
@@ -812,6 +852,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
+.c.lo:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
 loadunimap-loadunimap.o: loadunimap.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-loadunimap.o -MD -MP -MF $(DEPDIR)/loadunimap-loadunimap.Tpo -c -o loadunimap-loadunimap.o `test -f 'loadunimap.c' || echo '$(srcdir)/'`loadunimap.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-loadunimap.Tpo $(DEPDIR)/loadunimap-loadunimap.Po
@@ -825,90 +872,6 @@ loadunimap-loadunimap.obj: loadunimap.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='loadunimap.c' object='loadunimap-loadunimap.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-loadunimap.obj `if test -f 'loadunimap.c'; then $(CYGPATH_W) 'loadunimap.c'; else $(CYGPATH_W) '$(srcdir)/loadunimap.c'; fi`
-
-loadunimap-findfile.o: findfile.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-findfile.o -MD -MP -MF $(DEPDIR)/loadunimap-findfile.Tpo -c -o loadunimap-findfile.o `test -f 'findfile.c' || echo '$(srcdir)/'`findfile.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-findfile.Tpo $(DEPDIR)/loadunimap-findfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='findfile.c' object='loadunimap-findfile.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-findfile.o `test -f 'findfile.c' || echo '$(srcdir)/'`findfile.c
-
-loadunimap-findfile.obj: findfile.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-findfile.obj -MD -MP -MF $(DEPDIR)/loadunimap-findfile.Tpo -c -o loadunimap-findfile.obj `if test -f 'findfile.c'; then $(CYGPATH_W) 'findfile.c'; else $(CYGPATH_W) '$(srcdir)/findfile.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-findfile.Tpo $(DEPDIR)/loadunimap-findfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='findfile.c' object='loadunimap-findfile.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-findfile.obj `if test -f 'findfile.c'; then $(CYGPATH_W) 'findfile.c'; else $(CYGPATH_W) '$(srcdir)/findfile.c'; fi`
-
-loadunimap-psffontop.o: psffontop.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-psffontop.o -MD -MP -MF $(DEPDIR)/loadunimap-psffontop.Tpo -c -o loadunimap-psffontop.o `test -f 'psffontop.c' || echo '$(srcdir)/'`psffontop.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-psffontop.Tpo $(DEPDIR)/loadunimap-psffontop.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='psffontop.c' object='loadunimap-psffontop.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-psffontop.o `test -f 'psffontop.c' || echo '$(srcdir)/'`psffontop.c
-
-loadunimap-psffontop.obj: psffontop.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-psffontop.obj -MD -MP -MF $(DEPDIR)/loadunimap-psffontop.Tpo -c -o loadunimap-psffontop.obj `if test -f 'psffontop.c'; then $(CYGPATH_W) 'psffontop.c'; else $(CYGPATH_W) '$(srcdir)/psffontop.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-psffontop.Tpo $(DEPDIR)/loadunimap-psffontop.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='psffontop.c' object='loadunimap-psffontop.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-psffontop.obj `if test -f 'psffontop.c'; then $(CYGPATH_W) 'psffontop.c'; else $(CYGPATH_W) '$(srcdir)/psffontop.c'; fi`
-
-loadunimap-utf8.o: utf8.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-utf8.o -MD -MP -MF $(DEPDIR)/loadunimap-utf8.Tpo -c -o loadunimap-utf8.o `test -f 'utf8.c' || echo '$(srcdir)/'`utf8.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-utf8.Tpo $(DEPDIR)/loadunimap-utf8.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='utf8.c' object='loadunimap-utf8.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-utf8.o `test -f 'utf8.c' || echo '$(srcdir)/'`utf8.c
-
-loadunimap-utf8.obj: utf8.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-utf8.obj -MD -MP -MF $(DEPDIR)/loadunimap-utf8.Tpo -c -o loadunimap-utf8.obj `if test -f 'utf8.c'; then $(CYGPATH_W) 'utf8.c'; else $(CYGPATH_W) '$(srcdir)/utf8.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-utf8.Tpo $(DEPDIR)/loadunimap-utf8.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='utf8.c' object='loadunimap-utf8.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-utf8.obj `if test -f 'utf8.c'; then $(CYGPATH_W) 'utf8.c'; else $(CYGPATH_W) '$(srcdir)/utf8.c'; fi`
-
-loadunimap-xmalloc.o: xmalloc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-xmalloc.o -MD -MP -MF $(DEPDIR)/loadunimap-xmalloc.Tpo -c -o loadunimap-xmalloc.o `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-xmalloc.Tpo $(DEPDIR)/loadunimap-xmalloc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xmalloc.c' object='loadunimap-xmalloc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-xmalloc.o `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
-
-loadunimap-xmalloc.obj: xmalloc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-xmalloc.obj -MD -MP -MF $(DEPDIR)/loadunimap-xmalloc.Tpo -c -o loadunimap-xmalloc.obj `if test -f 'xmalloc.c'; then $(CYGPATH_W) 'xmalloc.c'; else $(CYGPATH_W) '$(srcdir)/xmalloc.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-xmalloc.Tpo $(DEPDIR)/loadunimap-xmalloc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xmalloc.c' object='loadunimap-xmalloc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-xmalloc.obj `if test -f 'xmalloc.c'; then $(CYGPATH_W) 'xmalloc.c'; else $(CYGPATH_W) '$(srcdir)/xmalloc.c'; fi`
-
-loadunimap-getfd.o: getfd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-getfd.o -MD -MP -MF $(DEPDIR)/loadunimap-getfd.Tpo -c -o loadunimap-getfd.o `test -f 'getfd.c' || echo '$(srcdir)/'`getfd.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-getfd.Tpo $(DEPDIR)/loadunimap-getfd.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='getfd.c' object='loadunimap-getfd.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-getfd.o `test -f 'getfd.c' || echo '$(srcdir)/'`getfd.c
-
-loadunimap-getfd.obj: getfd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-getfd.obj -MD -MP -MF $(DEPDIR)/loadunimap-getfd.Tpo -c -o loadunimap-getfd.obj `if test -f 'getfd.c'; then $(CYGPATH_W) 'getfd.c'; else $(CYGPATH_W) '$(srcdir)/getfd.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-getfd.Tpo $(DEPDIR)/loadunimap-getfd.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='getfd.c' object='loadunimap-getfd.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-getfd.obj `if test -f 'getfd.c'; then $(CYGPATH_W) 'getfd.c'; else $(CYGPATH_W) '$(srcdir)/getfd.c'; fi`
-
-loadunimap-kdmapop.o: kdmapop.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-kdmapop.o -MD -MP -MF $(DEPDIR)/loadunimap-kdmapop.Tpo -c -o loadunimap-kdmapop.o `test -f 'kdmapop.c' || echo '$(srcdir)/'`kdmapop.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-kdmapop.Tpo $(DEPDIR)/loadunimap-kdmapop.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kdmapop.c' object='loadunimap-kdmapop.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-kdmapop.o `test -f 'kdmapop.c' || echo '$(srcdir)/'`kdmapop.c
-
-loadunimap-kdmapop.obj: kdmapop.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -MT loadunimap-kdmapop.obj -MD -MP -MF $(DEPDIR)/loadunimap-kdmapop.Tpo -c -o loadunimap-kdmapop.obj `if test -f 'kdmapop.c'; then $(CYGPATH_W) 'kdmapop.c'; else $(CYGPATH_W) '$(srcdir)/kdmapop.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/loadunimap-kdmapop.Tpo $(DEPDIR)/loadunimap-kdmapop.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kdmapop.c' object='loadunimap-kdmapop.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(loadunimap_CFLAGS) $(CFLAGS) -c -o loadunimap-kdmapop.obj `if test -f 'kdmapop.c'; then $(CYGPATH_W) 'kdmapop.c'; else $(CYGPATH_W) '$(srcdir)/kdmapop.c'; fi`
 
 mapscrn-mapscrn.o: mapscrn.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-mapscrn.o -MD -MP -MF $(DEPDIR)/mapscrn-mapscrn.Tpo -c -o mapscrn-mapscrn.o `test -f 'mapscrn.c' || echo '$(srcdir)/'`mapscrn.c
@@ -924,81 +887,11 @@ mapscrn-mapscrn.obj: mapscrn.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-mapscrn.obj `if test -f 'mapscrn.c'; then $(CYGPATH_W) 'mapscrn.c'; else $(CYGPATH_W) '$(srcdir)/mapscrn.c'; fi`
 
-mapscrn-findfile.o: findfile.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-findfile.o -MD -MP -MF $(DEPDIR)/mapscrn-findfile.Tpo -c -o mapscrn-findfile.o `test -f 'findfile.c' || echo '$(srcdir)/'`findfile.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapscrn-findfile.Tpo $(DEPDIR)/mapscrn-findfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='findfile.c' object='mapscrn-findfile.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-findfile.o `test -f 'findfile.c' || echo '$(srcdir)/'`findfile.c
+mostlyclean-libtool:
+	-rm -f *.lo
 
-mapscrn-findfile.obj: findfile.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-findfile.obj -MD -MP -MF $(DEPDIR)/mapscrn-findfile.Tpo -c -o mapscrn-findfile.obj `if test -f 'findfile.c'; then $(CYGPATH_W) 'findfile.c'; else $(CYGPATH_W) '$(srcdir)/findfile.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapscrn-findfile.Tpo $(DEPDIR)/mapscrn-findfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='findfile.c' object='mapscrn-findfile.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-findfile.obj `if test -f 'findfile.c'; then $(CYGPATH_W) 'findfile.c'; else $(CYGPATH_W) '$(srcdir)/findfile.c'; fi`
-
-mapscrn-utf8.o: utf8.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-utf8.o -MD -MP -MF $(DEPDIR)/mapscrn-utf8.Tpo -c -o mapscrn-utf8.o `test -f 'utf8.c' || echo '$(srcdir)/'`utf8.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapscrn-utf8.Tpo $(DEPDIR)/mapscrn-utf8.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='utf8.c' object='mapscrn-utf8.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-utf8.o `test -f 'utf8.c' || echo '$(srcdir)/'`utf8.c
-
-mapscrn-utf8.obj: utf8.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-utf8.obj -MD -MP -MF $(DEPDIR)/mapscrn-utf8.Tpo -c -o mapscrn-utf8.obj `if test -f 'utf8.c'; then $(CYGPATH_W) 'utf8.c'; else $(CYGPATH_W) '$(srcdir)/utf8.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapscrn-utf8.Tpo $(DEPDIR)/mapscrn-utf8.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='utf8.c' object='mapscrn-utf8.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-utf8.obj `if test -f 'utf8.c'; then $(CYGPATH_W) 'utf8.c'; else $(CYGPATH_W) '$(srcdir)/utf8.c'; fi`
-
-mapscrn-xmalloc.o: xmalloc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-xmalloc.o -MD -MP -MF $(DEPDIR)/mapscrn-xmalloc.Tpo -c -o mapscrn-xmalloc.o `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapscrn-xmalloc.Tpo $(DEPDIR)/mapscrn-xmalloc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xmalloc.c' object='mapscrn-xmalloc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-xmalloc.o `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
-
-mapscrn-xmalloc.obj: xmalloc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-xmalloc.obj -MD -MP -MF $(DEPDIR)/mapscrn-xmalloc.Tpo -c -o mapscrn-xmalloc.obj `if test -f 'xmalloc.c'; then $(CYGPATH_W) 'xmalloc.c'; else $(CYGPATH_W) '$(srcdir)/xmalloc.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapscrn-xmalloc.Tpo $(DEPDIR)/mapscrn-xmalloc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xmalloc.c' object='mapscrn-xmalloc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-xmalloc.obj `if test -f 'xmalloc.c'; then $(CYGPATH_W) 'xmalloc.c'; else $(CYGPATH_W) '$(srcdir)/xmalloc.c'; fi`
-
-mapscrn-getfd.o: getfd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-getfd.o -MD -MP -MF $(DEPDIR)/mapscrn-getfd.Tpo -c -o mapscrn-getfd.o `test -f 'getfd.c' || echo '$(srcdir)/'`getfd.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapscrn-getfd.Tpo $(DEPDIR)/mapscrn-getfd.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='getfd.c' object='mapscrn-getfd.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-getfd.o `test -f 'getfd.c' || echo '$(srcdir)/'`getfd.c
-
-mapscrn-getfd.obj: getfd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-getfd.obj -MD -MP -MF $(DEPDIR)/mapscrn-getfd.Tpo -c -o mapscrn-getfd.obj `if test -f 'getfd.c'; then $(CYGPATH_W) 'getfd.c'; else $(CYGPATH_W) '$(srcdir)/getfd.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapscrn-getfd.Tpo $(DEPDIR)/mapscrn-getfd.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='getfd.c' object='mapscrn-getfd.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-getfd.obj `if test -f 'getfd.c'; then $(CYGPATH_W) 'getfd.c'; else $(CYGPATH_W) '$(srcdir)/getfd.c'; fi`
-
-mapscrn-kdmapop.o: kdmapop.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-kdmapop.o -MD -MP -MF $(DEPDIR)/mapscrn-kdmapop.Tpo -c -o mapscrn-kdmapop.o `test -f 'kdmapop.c' || echo '$(srcdir)/'`kdmapop.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapscrn-kdmapop.Tpo $(DEPDIR)/mapscrn-kdmapop.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kdmapop.c' object='mapscrn-kdmapop.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-kdmapop.o `test -f 'kdmapop.c' || echo '$(srcdir)/'`kdmapop.c
-
-mapscrn-kdmapop.obj: kdmapop.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -MT mapscrn-kdmapop.obj -MD -MP -MF $(DEPDIR)/mapscrn-kdmapop.Tpo -c -o mapscrn-kdmapop.obj `if test -f 'kdmapop.c'; then $(CYGPATH_W) 'kdmapop.c'; else $(CYGPATH_W) '$(srcdir)/kdmapop.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapscrn-kdmapop.Tpo $(DEPDIR)/mapscrn-kdmapop.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kdmapop.c' object='mapscrn-kdmapop.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mapscrn_CFLAGS) $(CFLAGS) -c -o mapscrn-kdmapop.obj `if test -f 'kdmapop.c'; then $(CYGPATH_W) 'kdmapop.c'; else $(CYGPATH_W) '$(srcdir)/kdmapop.c'; fi`
-
-.l.c:
-	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
-
-.y.c:
-	$(AM_V_YACC)$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h $*.h y.output $*.output -- $(YACCCOMPILE)
+clean-libtool:
+	-rm -rf .libs _libs
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -1191,16 +1084,14 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile $(PROGRAMS) $(SCRIPTS)
+check: check-recursive
+all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(SCRIPTS)
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) install-recursive
+install: install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
 uninstall: uninstall-recursive
@@ -1230,13 +1121,10 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f loadkeys.analyze.c
-	-rm -f loadkeys.c
-	-rm -f loadkeys.h
-	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-recursive
 
-clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool \
+	clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -rf ./$(DEPDIR)
@@ -1292,7 +1180,8 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic
+mostlyclean-am: mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool
 
 pdf: pdf-recursive
 
@@ -1304,27 +1193,26 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS
 
-.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all check \
-	ctags-recursive install install-am install-exec-am \
-	install-strip tags-recursive
+.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) ctags-recursive \
+	install-am install-exec-am install-strip tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic ctags ctags-recursive distclean \
-	distclean-compile distclean-generic distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am \
-	install-dist_binSCRIPTS install-dvi install-dvi-am \
-	install-exec install-exec-am install-exec-hook install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
-	ps ps-am tags tags-recursive uninstall uninstall-am \
+	clean-generic clean-libtool clean-noinstLIBRARIES ctags \
+	ctags-recursive distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-dist_binSCRIPTS \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-exec-hook install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-recursive uninstall uninstall-am \
 	uninstall-binPROGRAMS uninstall-dist_binSCRIPTS
 
-loadkeys.analyze.h: loadkeys.analyze.c ; @true
 
 install-exec-hook:
 	for i in psfaddtable psfgettable psfstriptable; do \
