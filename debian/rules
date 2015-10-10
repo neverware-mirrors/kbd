@@ -73,4 +73,4 @@ override_dh_installinit:
 override_dh_installdocs:
 	dh_installdocs
 	install -d $(KBD_DOC)/charsets
-	cp doc/iso8859.info doc/iso*.txt doc/cp*.txt $(KBD_DOC)/charsets
+	cp docs/doc/iso8859.info docs/doc/iso*.txt docs/doc/cp*.txt $(KBD_DOC)/charsets
