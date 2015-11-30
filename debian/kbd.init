@@ -135,7 +135,7 @@ setup ()
             LIST_CONSOLES=`seq 1 "$N_CONSOLES"`
     else
 	    # traditional SysV init
-	    LIST_CONSOLES=`sed -ne '/^[ \t]#/d; /tty[0-9]\+/ s/.*tty\([0-9]\+\).*/\1/ p' /etc/inittab`
+	    LIST_CONSOLES=`sed -ne '/^[ \t]*#/d; /tty[0-9]\+/ s/.*tty\([0-9]\+\).*/\1/ p' /etc/inittab`
     fi
 
     # Global default font+map
