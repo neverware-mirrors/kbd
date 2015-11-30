@@ -126,7 +126,7 @@ setup ()
     if [ -d /etc/init ] && which initctl >/dev/null; then
 	    # Upstart
 	    LIST_CONSOLES=`cd /etc/init; find -name 'tty*.conf' -printf '%f ' | sed -e 's/[^0-9 ]//g'`
-    elif [ -f /etc/systemd/logind.conf ] && which systemd >/dev/null; then
+    elif [ -f /etc/systemd/logind.conf ] && [ -d /run/systemd/system ]; then
             # systemd
             N_CONSOLES=`sed -ne 's/#.*//; /NAutoVTs/ { s/[^0-9]//g; p }' /etc/systemd/logind.conf`
             if [ -z "$N_CONSOLES" ]; then
