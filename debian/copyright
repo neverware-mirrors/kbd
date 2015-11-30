@@ -5,44 +5,56 @@ Source: http://ftp.altlinux.org/pub/people/legion/kbd/
 
 Files: *
 Copyright: 1994–1999, Andries E. Brouwer,
-           2007–2012, Alexey Gladkov <gladkov.alexey@gmail.com>
+           2007–2014, Alexey Gladkov <gladkov.alexey@gmail.com>
 License: GPL-2+
 
-Files: src/kbdrate.c
+Files: src/libkeymap/*
+Copyright: 2012-2014 Alexey Gladkov <gladkov.alexey@gmail.com>
+License: GPL-2+
+
+Files: src/kbdrate.c docs/man/man8/kbdrate.8
 Copyright: 1992, Rickard E. Faith
 License: GPL-any
 
-Files: src/dumpkeys.c src/loadkeys.y src/loadkeys.analyze.l src/ksyms.c
-       src/ksyms.h src/showkey.c man/man1/loadkeys.1 man/man1/dumpkeys.1
-       man/man1/showkey.1 man/man5/keymaps.5
+Files: src/dumpkeys.c src/libkeymap/analyze.l
+       src/libkeymap/ksyms.c src/libkeymap/ksyms.h src/showkey.c
+       docs/man/man1/loadkeys.1 docs/man/man1/dumpkeys.1
+       docs/man/man1/showkey.1 docs/man/man5/keymaps.5
 Copyright: 1993, Risto Kankkunen
 License: GPL-any
 
-Files: src/setfont.c man/man8/setfont.8 src/mapscrn.c man/man8/mapscrn.8
-       src/loadkeys.y
+Files: src/setfont.c docs/man/man8/setfont.8
+       src/mapscrn.c docs/man/man8/mapscrn.8
 Copyright: 1993, Eugene G. Crosser
 License: GPL-any
 
-Files: man/man1/psfaddtable.1 man/man1/psfgettable.1
-       man/man1/psfstriptable.1
+Files: src/loadkeys.c src/libkeymap/parser.y src/libkeymap/dump.c
+Copyright: 1993  Risto Kankkunen.
+           1993  Eugene G. Crosser.
+           1994-2007  Andries E. Brouwer.
+           2007-2013  Alexey Gladkov <gladkov.alexey@gmail.com>
+License: GPL-any
+
+Files: docs/man/man1/psfaddtable.1 docs/man/man1/psfgettable.1
+       docs/man/man1/psfstriptable.1
 Copyright: 1994, H. Peter Anvin
 License: GPL-any
 
 Files: src/chvt.c src/clrunimap.c src/deallocvt.c src/fgconsole.c
-       src/findfile.c src/getfd.c src/getkeycodes.c src/getunimap.c
+       src/libkeymap/findfile.c src/getfd.c src/getkeycodes.c src/getunimap.c
        src/kbd_mode.c src/loadunimap.c src/psffontop.c src/psfxtable.c
        src/resizecons.c src/screendump.c src/setkeycodes.c src/setleds.c
        src/setmetamode.c src/setvesablank.c src/showconsolefont.c
-       src/spawn_console.c src/spawn_login.c man/man1/chvt.1
-       man/man1/deallocvt.1 man/man1/kbd_mode.1 man/man1/setleds.1
-       man/man1/setmetamode.1 man/man8/getkeycodes.8
-       man/man8/loadunimap.8 man/man8/resizecons.8
-       man/man8/setkeycodes.8
+       src/spawn_console.c src/spawn_login.c docs/man/man1/chvt.1
+       docs/man/man1/deallocvt.1 docs/man/man1/kbd_mode.1
+       docs/man/man1/setleds.1 docs/man/man1/setmetamode.1
+       docs/man/man8/getkeycodes.8 docs/man/man8/loadunimap.8
+       docs/man/man8/resizecons.8 docs/man/man8/setkeycodes.8
 Copyright: 1994–1999, Andries E. Brouwer
 License: GPL-any
 
-Files: man/man1misc/splitfont.1 man/man1/openvt.1
-       man/man8misc/setlogcons.8 man/man8misc/vcstime.8
+Files: docs/man/man1misc/splitfont.1 docs/man/man1/openvt.1
+       docs/man/man8misc/setlogcons.8 docs/man/man8misc/vcstime.8
 Copyright: 2007–2008, Alexey Gladkov <gladkov.alexey@gmail.com>
 License: GPL-any
 
@@ -74,7 +86,7 @@ License: GPL-2-with-exceptions
 Files: src/vlock/*
 Copyright: 1994–1998, Michael K. Johnson <johnsonm@redhat.com>
            1997–1998, Juan Cespedes <cespedes@debian.org>
-           2002–2006, Dmitry V. Levin <ldv@altlinux.org>
+           2002–2006, 2013 Dmitry V. Levin <ldv@altlinux.org>
 License: GPL-2+
 
 Files: debian/*
