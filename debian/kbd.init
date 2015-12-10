@@ -221,7 +221,15 @@ setup ()
         setterm_args="$setterm_args -powerdown $POWERDOWN_TIME"
     fi
     if [ "$setterm_args" ]; then
-        setterm $setterm_args 
+        if [ -d /run/systemd/system ]; then
+            # setterm relies on $TERM and STDIN/STDOUT which has been
+            # sanitized away by systemd, so we use --term and redirect
+            # input/output.
+            setterm --term linux $setterm_args \
+                < ${DEVICE_PREFIX}1 > ${DEVICE_PREFIX}1
+        else
+            setterm $setterm_args 
+        fi
     fi
 
     # Keyboard rate and delay
