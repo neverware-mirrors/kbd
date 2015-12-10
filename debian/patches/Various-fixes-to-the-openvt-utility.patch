@@ -1,9 +1,9 @@
 From: Michael Schutte <michi@debian.org>
+Date: Thu, 10 Dec 2015 20:31:03 +0100
 Subject: Various fixes to the openvt utility
-Forwarded: no
-Bug-Debian: http://bugs.debian.org/190387
-Bug-Debian: http://bugs.debian.org/630108
-Bug-Debian: http://bugs.debian.org/642324
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 Three unrelated fixes:
 
@@ -15,14 +15,15 @@ Three unrelated fixes:
 
  * When showing the help output, only exit with a zero status if the
    “-h” option was given.
-
 ---
- src/openvt.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ src/openvt.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
+diff --git a/src/openvt.c b/src/openvt.c
+index 1ba8912..09bed94 100644
 --- a/src/openvt.c
 +++ b/src/openvt.c
-@@ -238,10 +238,12 @@
+@@ -238,10 +238,12 @@ main(int argc, char *argv[])
  			case 'V':
  				print_version_and_exit();
  				break;
@@ -36,7 +37,7 @@ Three unrelated fixes:
  		}
  	}
  
-@@ -363,7 +365,8 @@
+@@ -363,7 +365,8 @@ main(int argc, char *argv[])
  		close(0);
  		close(1);
  		close(2);
@@ -46,7 +47,7 @@ Three unrelated fixes:
  
  		if ((dup2(fd, 0) == -1) || (dup2(fd, 1) == -1) || (dup2(fd, 2) == -1))
  			kbd_error(1, errno, "dup");
-@@ -386,7 +389,6 @@
+@@ -386,7 +389,6 @@ main(int argc, char *argv[])
  	if (do_wait) {
  		int retval = 0; /* actual value returned form process */
  
@@ -54,7 +55,7 @@ Three unrelated fixes:
  		waitpid(pid, &retval, 0);
  
  		if (show) {	/* Switch back... */
-@@ -403,7 +405,10 @@
+@@ -403,7 +405,10 @@ main(int argc, char *argv[])
  
  		/* if all our stuff went right, we want to return the exit code of the command we ran
  		   super vital for scripting loops etc */

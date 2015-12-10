@@ -1,6 +1,6 @@
-kbd_mode.diff
-manpages.diff
-openvt.diff
-unicode_start_breaks_X.diff
-dead2.diff
-0001-add-configure-flag-to-disable-tests.patch
+Change-misleading-kbd_mode-message-for-XLATE-mode.patch
+Miscellaneous-manpage-corrections-and-additions.patch
+Various-fixes-to-the-openvt-utility.patch
+Check-for-X-in-kbd_mode.patch
+Support-KT_DEAD2-diacritics.patch
+add-configure-flag-to-disable-tests.patch

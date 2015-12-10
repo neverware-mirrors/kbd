@@ -1,0 +1,346 @@
+From: Michael Schutte <michi@debian.org>
+Date: Thu, 10 Dec 2015 20:31:03 +0100
+Subject: Miscellaneous manpage corrections and additions
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+ * Remove .IX lines.
+ * Fix a groff syntax error in splitfont.1.
+ * Correct a typo in mk_modmap.8, kindly pointed out by lintian.
+ * Document that “openvt -e” has to be a session leader, closes:
+   #610373.
+---
+ docs/man/man1/dumpkeys.1.in      |  1 -
+ docs/man/man1/kbd_mode.1         |  1 -
+ docs/man/man1/loadkeys.1.in      |  1 -
+ docs/man/man1/openvt.1           |  9 ++++++++-
+ docs/man/man1/psfaddtable.1      |  1 -
+ docs/man/man1/psfgettable.1      |  1 -
+ docs/man/man1/psfstriptable.1    |  1 -
+ docs/man/man1/psfxtable.1        |  1 -
+ docs/man/man1/setleds.1          | 13 ++++++-------
+ docs/man/man1/setmetamode.1      |  1 -
+ docs/man/man1/showkey.1          |  1 -
+ docs/man/man1/unicode_start.1    |  1 -
+ docs/man/man1/unicode_stop.1     |  1 -
+ docs/man/man1misc/splitfont.1    |  2 +-
+ docs/man/man5/keymaps.5          |  5 -----
+ docs/man/man8/resizecons.8       |  9 +++++++--
+ docs/man/man8/setfont.8.in       |  1 -
+ docs/man/man8misc/mk_modmap.8    |  4 ++--
+ docs/man/man8misc/setvesablank.8 |  1 -
+ 19 files changed, 24 insertions(+), 31 deletions(-)
+
+diff --git a/docs/man/man1/dumpkeys.1.in b/docs/man/man1/dumpkeys.1.in
+index 00f9e66..eef8edb 100644
+--- a/docs/man/man1/dumpkeys.1.in
++++ b/docs/man/man1/dumpkeys.1.in
+@@ -11,7 +11,6 @@ dumpkeys \- dump keyboard translation tables
+ .BI \-\-charset= charset
+ ]
+ .SH DESCRIPTION
+-.IX "dumpkeys command" "" "\fLdumpkeys\fR command"  
+ .LP
+ .B dumpkeys
+ writes, to the standard output, the current contents of the keyboard
+diff --git a/docs/man/man1/kbd_mode.1 b/docs/man/man1/kbd_mode.1
+index 960b36c..a3f061f 100644
+--- a/docs/man/man1/kbd_mode.1
++++ b/docs/man/man1/kbd_mode.1
+@@ -10,7 +10,6 @@ kbd_mode \- report or set the keyboard mode
+ .I -C CONSOLE
+ ]
+ .SH DESCRIPTION
+-.IX "kbd_mode command" "" "\fLkbd_mode\fR command"  
+ .LP
+ Without argument,
+ .B kbd_mode
+diff --git a/docs/man/man1/loadkeys.1.in b/docs/man/man1/loadkeys.1.in
+index 95e141a..51e2d40 100644
+--- a/docs/man/man1/loadkeys.1.in
++++ b/docs/man/man1/loadkeys.1.in
+@@ -31,7 +31,6 @@ loadkeys \- load keyboard translation tables
+ ]
+ .LP
+ .SH DESCRIPTION
+-.IX "loadkeys command" "" "\fLloadkeys\fR command"  
+ .LP
+ The program
+ .B loadkeys
+diff --git a/docs/man/man1/openvt.1 b/docs/man/man1/openvt.1
+index 4712547..074a72e 100644
+--- a/docs/man/man1/openvt.1
++++ b/docs/man/man1/openvt.1
+@@ -27,7 +27,14 @@ Force opening a VT without checking whether it is already in use;
+ .I "\-e, \-\-exec"
+ Directly execute the given command, without forking.
+ This option is meant for use in
+-.IR /etc/inittab ;
++.IR /etc/inittab .
++If you want to use this feature in another context, be aware that
++.B openvt
++has to be a session leader in order for \-e to work.  See
++.BR setsid (2)
++or
++.BR setsid (1)
++on how to achieve this.
+ .TP
+ .I "\-s, \-\-switch"
+ Switch to the new VT when starting the command. The VT of the new command
+diff --git a/docs/man/man1/psfaddtable.1 b/docs/man/man1/psfaddtable.1
+index ad5c844..611d9bb 100644
+--- a/docs/man/man1/psfaddtable.1
++++ b/docs/man/man1/psfaddtable.1
+@@ -6,7 +6,6 @@ psfaddtable \- add a Unicode character table to a console font
+ .B psfaddtable
+ .I fontfile tablefile outfile
+ .SH DESCRIPTION
+-.IX "psfaddtable command" "" "\fLpsfaddtable\fR command"  
+ .LP
+ .B psfaddtable
+ takes a console font in .psf format given by
+diff --git a/docs/man/man1/psfgettable.1 b/docs/man/man1/psfgettable.1
+index 228be18..5d8e572 100644
+--- a/docs/man/man1/psfgettable.1
++++ b/docs/man/man1/psfgettable.1
+@@ -7,7 +7,6 @@ psfgettable \- extract the embedded Unicode character table from a console font
+ .I fontfile
+ .RI [ outfile ]
+ .SH DESCRIPTION
+-.IX "psfgettable command" "" "\fLpsfgettable\fR command"  
+ .LP
+ .B psfgettable
+ extracts the embedded Unicode character table from a .psf format
+diff --git a/docs/man/man1/psfstriptable.1 b/docs/man/man1/psfstriptable.1
+index f7e059d..b11ed4d 100644
+--- a/docs/man/man1/psfstriptable.1
++++ b/docs/man/man1/psfstriptable.1
+@@ -6,7 +6,6 @@ psfstriptable \- remove the embedded Unicode character table from a console font
+ .B psfstriptable
+ .I fontfile outfile
+ .SH DESCRIPTION
+-.IX "psfstriptable command" "" "\fLpsfstriptable\fR command"  
+ .LP
+ .B psfstriptable
+ reads a .psf format console font from 
+diff --git a/docs/man/man1/psfxtable.1 b/docs/man/man1/psfxtable.1
+index adc3bc9..5cc89ad 100644
+--- a/docs/man/man1/psfxtable.1
++++ b/docs/man/man1/psfxtable.1
+@@ -14,7 +14,6 @@ psfxtable \- handle Unicode character tables for console fonts
+ .IR outtable ]
+ .RB [ \-nt ]
+ .SH DESCRIPTION
+-.IX "psfxtable command" "" "\fLpsfxtable\fR command"  
+ .LP
+ .B psfxtable
+ handles the embedded Unicode character table for .psf format
+diff --git a/docs/man/man1/setleds.1 b/docs/man/man1/setleds.1
+index f484fa0..8909d87 100644
+--- a/docs/man/man1/setleds.1
++++ b/docs/man/man1/setleds.1
+@@ -7,7 +7,6 @@ setleds \- set the keyboard leds
+ .RI [ "-v" "] [" "-L" "] [" "-D" "] [" "-F" ]
+ .RI [ {+|-}num "] [" {+|-}caps "] [" {+|-}scroll ]
+ .SH DESCRIPTION
+-.IX "setleds command" "" "\fLsetleds\fR command"  
+ .LP
+ .B Setleds
+ reports and changes the led flag settings of a VT
+@@ -16,7 +15,7 @@ Without arguments,
+ .B setleds
+ prints the current settings.
+ With arguments, it sets or clears the indicated flags
+-(and leaves the others unchanged). The settings before
++(and leaves the others unchanged).  The settings before
+ and after the change are reported if the \-v flag is given.
+ .LP
+ The led flag settings are specific for each VT (and the VT
+@@ -37,7 +36,7 @@ With option \-L,
+ .B setleds
+ will not touch the VT flags, but only change the leds.
+ From this moment on, the leds will no longer reflect the VT flags
+-(but display whatever is put into them). The command
++(but display whatever is put into them).  The command
+ .B "setleds -L"
+ (without further arguments) will restore the situation in which
+ the leds reflect the VT flags.
+@@ -45,7 +44,7 @@ the leds reflect the VT flags.
+ One might use
+ .B setleds
+ in /etc/rc to define the initial and default state of NumLock,
+-e.g. by
++e.g.\& by
+ .br
+ .in +5m
+ INITTY=/dev/tty[1-8]
+@@ -60,19 +59,19 @@ done
+ .in -5m
+ .SH OPTIONS
+ .TP
+-\-num \+num
++\-num +num
+ Clear or set NumLock.
+ (At present, the NumLock setting influences the
+ interpretation of keypad keys.
+ Pressing the NumLock key complements the NumLock setting.)
+ .TP
+-\-caps \+caps
++\-caps +caps
+ Clear or set CapsLock.
+ (At present, the CapsLock setting complements the Shift key
+ when applied to letters.
+ Pressing the CapsLock key complements the CapsLock setting.)
+ .TP
+-\-scroll \+scroll
++\-scroll +scroll
+ Clear or set ScrollLock.
+ (At present, pressing the ScrollLock key (or ^S/^Q) stops/starts
+ console output.)
+diff --git a/docs/man/man1/setmetamode.1 b/docs/man/man1/setmetamode.1
+index 2a0dd81..fdad981 100644
+--- a/docs/man/man1/setmetamode.1
++++ b/docs/man/man1/setmetamode.1
+@@ -8,7 +8,6 @@ setmetamode \- define the keyboard meta key handling
+ .I {meta|bit|metabit | esc|prefix|escprefix}
+ ]
+ .SH DESCRIPTION
+-.IX "setmetamode command" "" "\fLsetmetamode\fR command"  
+ .LP
+ Without argument,
+ .B setmetamode
+diff --git a/docs/man/man1/showkey.1 b/docs/man/man1/showkey.1
+index 654e019..ad63434 100644
+--- a/docs/man/man1/showkey.1
++++ b/docs/man/man1/showkey.1
+@@ -5,7 +5,6 @@ showkey \- examine the codes sent by the keyboard
+ .SH SYNOPSIS
+ showkey [\-h|\-\-help] [\-a|\-\-ascii] [\-s|\-\-scancodes] [\-k|\-\-keycodes]
+ .SH DESCRIPTION
+-.IX "showkey command" "" "\fLshowkey\fR command"  
+ .LP
+ .B showkey
+ prints to standard output either the scan codes or the keycode
+diff --git a/docs/man/man1/unicode_start.1 b/docs/man/man1/unicode_start.1
+index b76ccb3..59aae01 100644
+--- a/docs/man/man1/unicode_start.1
++++ b/docs/man/man1/unicode_start.1
+@@ -6,7 +6,6 @@ unicode_start \- put keyboard and console in unicode mode
+ .B unicode_start
+ .RI [ font " [" umap ]]
+ .SH DESCRIPTION
+-.IX "unicode_start command" "" "\fLunicode_start\fR command"  
+ .LP
+ The
+ .B unicode_start
+diff --git a/docs/man/man1/unicode_stop.1 b/docs/man/man1/unicode_stop.1
+index 2fa2015..367de9b 100644
+--- a/docs/man/man1/unicode_stop.1
++++ b/docs/man/man1/unicode_stop.1
+@@ -5,7 +5,6 @@ unicode_stop \- revert keyboard and console from unicode mode
+ .SH SYNOPSIS
+ .B unicode_stop
+ .SH DESCRIPTION
+-.IX "unicode_stop command" "" "\fLunicode_stop\fR command"  
+ .LP
+ The
+ .B unicode_stop
+diff --git a/docs/man/man1misc/splitfont.1 b/docs/man/man1misc/splitfont.1
+index 573bc3b..43a499c 100644
+--- a/docs/man/man1misc/splitfont.1
++++ b/docs/man/man1misc/splitfont.1
+@@ -11,7 +11,7 @@ splitfont
+ 
+ .SH DESCRIPTION
+ The command
+-.splitfont
++.B splitfont
+ removes characters from a given font file; it removes all the
+ specified characters from the named font file.
+ .P
+diff --git a/docs/man/man5/keymaps.5 b/docs/man/man5/keymaps.5
+index 4d9fe52..48aac27 100644
+--- a/docs/man/man5/keymaps.5
++++ b/docs/man/man5/keymaps.5
+@@ -5,11 +5,6 @@
+ .SH NAME
+ keymaps \- keyboard table descriptions for loadkeys and dumpkeys
+ .SH DESCRIPTION
+-.IX "keymaps" "" "\fLkeymaps\fR \(em keyboard table descriptions for loadkeys and dumpkeys" ""
+-.IX "loadkeys" "keyboard table descriptions" "\fLloadkeys\fR" "keyboard table descriptions"
+-.IX "dumpkeys" "keyboard table descriptions" "\fLdumpkeys\fR" "keyboard table descriptions"
+-.IX keyboard "table descriptions for loadkeys and dumpkeys" keyboard "table descriptions for \fLloadkeys\fR and \fLdumpkeys\fR"
+-.IX "translation tables"
+ .LP
+ These files are used by
+ .BR loadkeys (1)
+diff --git a/docs/man/man8/resizecons.8 b/docs/man/man8/resizecons.8
+index 81efa6e..65e724c 100644
+--- a/docs/man/man8/resizecons.8
++++ b/docs/man/man8/resizecons.8
+@@ -56,7 +56,11 @@ yourself afterwards.
+ 
+ .SH BUGS
+ .I resizecons
+-does not work on all hardware.
++does not work on all hardware.  For example, it cannot be used on
++platforms other than x86 and x86_64.  See the
++.BR fbset (1)
++program if you are looking for an alternative.
++
+ This command used to be called
+ .I resize,
+ but was renamed to avoid conflict with another command with the same name.
+@@ -66,5 +70,6 @@ but was renamed to avoid conflict with another command with the same name.
+ .BR stty (1),
+ .BR selection (1),
+ .BR restoretextmode (8),
+-.BR disalloc (8)
++.BR disalloc (8),
++.BR fbset (1)
+ 
+diff --git a/docs/man/man8/setfont.8.in b/docs/man/man8/setfont.8.in
+index 5ae63dd..645433b 100644
+--- a/docs/man/man8/setfont.8.in
++++ b/docs/man/man8/setfont.8.in
+@@ -12,7 +12,6 @@ setfont \- load EGA/VGA console screen font
+ .RI "[-C " "console" ]
+ .RI "[-h" "H" ]
+ .RI "[-v] [-V]"
+-.IX "setfont command" "" "\fLsetfont\fR command"
+ .SH DESCRIPTION
+ The
+ .B setfont
+diff --git a/docs/man/man8misc/mk_modmap.8 b/docs/man/man8misc/mk_modmap.8
+index 9db007f..782cb5f 100644
+--- a/docs/man/man8misc/mk_modmap.8
++++ b/docs/man/man8misc/mk_modmap.8
+@@ -26,7 +26,7 @@ It requires the X header files to be installed.
+ (In Debian, these are in the "xlibs-dev" package).
+ .SH NOTES
+ Since XFree version 2.1, X initialises its keymap using the Linux
+-keymap, so xmodmap will often be superflous.
++keymap, so xmodmap will often be superfluous.
+ 
+ .SH SEE ALSO
+ .BR dumpkeys (1),
+@@ -39,4 +39,4 @@ keymap, so xmodmap will often be superflous.
+ .\" .br
+ .\" Pablo Saratxaga <pablo@mandrakesoft.com>
+ .\" .br
+-.\" Manpage by Alastair McKinstry, <mckinstry@computer.org>
+\ No newline at end of file
++.\" Manpage by Alastair McKinstry, <mckinstry@computer.org>
+diff --git a/docs/man/man8misc/setvesablank.8 b/docs/man/man8misc/setvesablank.8
+index 8a48867..9622aac 100644
+--- a/docs/man/man8misc/setvesablank.8
++++ b/docs/man/man8misc/setvesablank.8
+@@ -16,7 +16,6 @@ setvesablank \- Turn VESA screen blanking on or off
+ ]
+ .LP
+ .SH DESCRIPTION
+-.IX "setvesablank command" "" "\fLsetvesablank\fR command"
+ .LP
+ The program
+ .B setvesablank

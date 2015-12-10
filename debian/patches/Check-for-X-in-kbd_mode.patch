@@ -1,22 +1,24 @@
 From: Denis Barbier <barbier@debian.org>
+Date: Thu, 10 Dec 2015 20:31:03 +0100
 Subject: Check for X in kbd_mode
-Bug-Debian: http://bugs.debian.org/281305
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 “kbd_mode” can render X unusable.  Add checks to unicode_{start,stop} to
 avoid the problem.
 
 This patch originated in console-tools.
-
 ---
- src/unicode_start |   13 +++++++++++++
- src/unicode_stop  |    6 ++++++
- 2 files changed, 19 insertions(+), 0 deletions(-)
+ src/unicode_start | 13 +++++++++++++
+ src/unicode_stop  |  6 ++++++
+ 2 files changed, 19 insertions(+)
 
-Index: devel/src/unicode_start
-===================================================================
---- devel.orig/src/unicode_start	2011-07-22 19:06:52.000000000 +0200
-+++ devel/src/unicode_start	2011-07-22 19:07:10.000000000 +0200
-@@ -13,6 +13,19 @@
+diff --git a/src/unicode_start b/src/unicode_start
+index d5234a8..7351fe0 100755
+--- a/src/unicode_start
++++ b/src/unicode_start
+@@ -13,6 +13,19 @@ esac
  
  # Enables Unicode processing in the current console.
  #
@@ -36,10 +38,10 @@ Index: devel/src/unicode_start
  # 1. The input side: the keyboard driver.
  
  # Set the keyboard driver in Unicode mode. (Default is ASCII mode.)
-Index: devel/src/unicode_stop
-===================================================================
---- devel.orig/src/unicode_stop	2011-07-22 19:06:52.000000000 +0200
-+++ devel/src/unicode_stop	2011-07-22 19:07:10.000000000 +0200
+diff --git a/src/unicode_stop b/src/unicode_stop
+index 07a8e4b..858bbc5 100755
+--- a/src/unicode_stop
++++ b/src/unicode_stop
 @@ -1,5 +1,11 @@
  #!/bin/sh
  
