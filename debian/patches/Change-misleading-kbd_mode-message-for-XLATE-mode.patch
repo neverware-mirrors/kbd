@@ -5,6 +5,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+Bug-Debian: http://bugs.debian.org/546712
+Forwarded: no
+
 The text said “default (ASCII) mode”, which is wrong in two respects:
 XLATE isn’t limited to 7-bit ASCII, but works with various 8-bit
 charsets, and the XLATE mode hasn’t been the kernel default for a while.

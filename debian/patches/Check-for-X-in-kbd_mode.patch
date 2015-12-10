@@ -5,6 +5,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+Bug-Debian: http://bugs.debian.org/281305
+
 “kbd_mode” can render X unusable.  Add checks to unicode_{start,stop} to
 avoid the problem.
 

@@ -2,6 +2,9 @@ From: Samuel Thibault <sthibault@debian.org>
 Date: Thu, 10 Dec 2015 20:31:04 +0100
 Subject: Support KT_DEAD2 diacritics
 
+Forwarded: no
+Bug-Debian: http://bugs.debian.org/694169
+
 Add support for KT_DEAD2 diacritics to loadkeys and dumpkeys using the
 dead2_ prefix.
 

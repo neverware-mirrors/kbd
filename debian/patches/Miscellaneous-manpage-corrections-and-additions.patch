@@ -5,6 +5,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+Forwarded: no
+
  * Remove .IX lines.
  * Fix a groff syntax error in splitfont.1.
  * Correct a typo in mk_modmap.8, kindly pointed out by lintian.

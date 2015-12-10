@@ -5,6 +5,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+Forwarded: no
+Bug-Debian: http://bugs.debian.org/190387
+Bug-Debian: http://bugs.debian.org/630108
+Bug-Debian: http://bugs.debian.org/642324
+
 Three unrelated fixes:
 
  * Propagate child exit codes in “openvt -w”.
