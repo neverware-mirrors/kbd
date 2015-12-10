@@ -1,13 +1,10 @@
 From: Denis Barbier <barbier@debian.org>
 Date: Thu, 10 Dec 2015 20:31:03 +0100
 Subject: Check for X in kbd_mode
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
 Bug-Debian: http://bugs.debian.org/281305
 
-“kbd_mode” can render X unusable.  Add checks to unicode_{start,stop} to
+"kbd_mode" can render X unusable.  Add checks to unicode_{start,stop} to
 avoid the problem.
 
 This patch originated in console-tools.

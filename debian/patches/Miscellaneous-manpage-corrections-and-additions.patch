@@ -1,16 +1,13 @@
 From: Michael Schutte <michi@debian.org>
 Date: Thu, 10 Dec 2015 20:31:03 +0100
 Subject: Miscellaneous manpage corrections and additions
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
 Forwarded: no
 
  * Remove .IX lines.
  * Fix a groff syntax error in splitfont.1.
  * Correct a typo in mk_modmap.8, kindly pointed out by lintian.
- * Document that “openvt -e” has to be a session leader, closes:
+ * Document that "openvt -e" has to be a session leader, closes:
    #610373.
 ---
  docs/man/man1/dumpkeys.1.in      |  1 -

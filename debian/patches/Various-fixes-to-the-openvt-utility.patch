@@ -1,9 +1,6 @@
 From: Michael Schutte <michi@debian.org>
 Date: Thu, 10 Dec 2015 20:31:03 +0100
 Subject: Various fixes to the openvt utility
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
 Forwarded: no
 Bug-Debian: http://bugs.debian.org/190387
@@ -12,14 +9,14 @@ Bug-Debian: http://bugs.debian.org/642324
 
 Three unrelated fixes:
 
- * Propagate child exit codes in “openvt -w”.
+ * Propagate child exit codes in "openvt -w".
 
  * consfd stores the file descriptor referring to the console.  In some
    cases, this will be one of the stdio fds, which are closed in the
    child process.  Avoid closing it again.
 
  * When showing the help output, only exit with a zero status if the
-   “-h” option was given.
+   "-h" option was given.
 ---
  src/openvt.c | 13 +++++++++----
  1 file changed, 9 insertions(+), 4 deletions(-)
