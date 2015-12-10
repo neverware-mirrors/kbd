@@ -1,7 +1,10 @@
 kbd (2.0.3-1) UNRELEASED; urgency=medium
 
+  * Team upload.
+
+  [ Andreas Henriksson ]
   * Add debian/gbp.conf
-  * Imported Upstream version 2.0.3
+  * Imported Upstream version 2.0.3 (Closes: #805314)
   * Update debian/patches/manpages.diff to use new path
     - upstream moved manpages from ./man/ to ./docs/man/
   * Have quilt refresh debian/patches/openvt.diff
@@ -24,7 +27,31 @@ kbd (2.0.3-1) UNRELEASED; urgency=medium
   * Update debian/kbd.manpages for man move to docs/man
   * debian/control: Add Homepage field
   * Add debian/missing-sources/jquery.js
-  * Improve debian/copyright
+  * Improve/update debian/copyright
+  * kbd.init: make initial whitespace on comment lines optional
+  * kbd.init: only parse logind.conf if we're running systemd
+  * kbd.init: don't assume /etc/inittab always exists
+  * debian/kbd.init: run setterm against /dev/tty1 under systemd.
+    Thanks to Andreas Trottmann (Closes: #771161)
+  * debian/gbp.conf: disable patch-numbers in gbp pq
+  * Have gbp pq import && gbp pq export rename patches
+    - debian/patches/kbd_mode.diff =>
+      debian/patches/Change-misleading-kbd_mode-message-for-XLATE-mode.patch
+    - debian/patches/manpages.diff =>
+      debian/patches/Miscellaneous-manpage-corrections-and-additions.patch
+    - debian/patches/openvt.diff =>
+      debian/patches/Various-fixes-to-the-openvt-utility.patch
+    - debian/patches/unicode_start_breaks_X.diff =>
+      debian/patches/Check-for-X-in-kbd_mode.patch
+    - debian/patches/dead2.diff =>
+      debian/patches/Support-KT_DEAD2-diacritics.patch
+    - debian/patches/0001-add-configure-flag-to-disable-tests.patch =>
+      debian/patches/add-configure-flag-to-disable-tests.patch
+  * debian/patches/*: Add back Forwarded / Bug-Debian meta-headers
+  * debian/patches/*: description in plain ascii to avoid extra headers
+
+  [ Marco d'Itri ]
+  * files with the same name installed in / and /usr (Closes: #767922)
 
  -- Andreas Henriksson <andreas@fatal.se>  Sat, 10 Oct 2015 20:51:02 +0200
 
