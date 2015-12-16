@@ -1,4 +1,4 @@
-kbd (2.0.3-1) UNRELEASED; urgency=medium
+kbd (2.0.3-1) unstable; urgency=medium
 
   * Team upload.
 
@@ -53,7 +53,7 @@ kbd (2.0.3-1) UNRELEASED; urgency=medium
   [ Marco d'Itri ]
   * files with the same name installed in / and /usr (Closes: #767922)
 
- -- Andreas Henriksson <andreas@fatal.se>  Sat, 10 Oct 2015 20:51:02 +0200
+ -- Andreas Henriksson <andreas@fatal.se>  Wed, 16 Dec 2015 11:21:18 +0100
 
 kbd (1.15.5-2) unstable; urgency=medium
 
