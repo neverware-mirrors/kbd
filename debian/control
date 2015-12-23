@@ -13,7 +13,8 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-kbd/kbd.git
 Package: kbd
 Architecture: linux-any
 Depends: ${shlibs:Depends}, ${misc:Depends}, lsb-base (>= 3.0-10)
-Recommends: console-setup | console-data
+Recommends: console-setup-linux | console-data
+Suggests: console-setup
 Provides: console-utilities
 Conflicts: console-utilities
 Description: Linux console font and keytable utilities
@@ -21,7 +22,7 @@ Description: Linux console font and keytable utilities
  resize text mode virtual consoles and remap the keyboard.
  .
  You will probably want to install a set of data files, such as the one
- in the “console-data” package.
+ in the “console-setup-linux” package.
 
 Package: kbd-udeb
 Package-Type: udeb
