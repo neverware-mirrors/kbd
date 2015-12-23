@@ -1,0 +1,26 @@
+kbd (2.0.3-2) unstable; urgency=medium
+
+  The kbd init script is no longer supported. If configuration in
+  /etc/kbd/config and /etc/kbd/remap is unmodified there will be an
+  attempt to automatically clean up those files as well as the
+  /etc/init.d/kbd init script on upgrades, if not THEY ARE LEFT IN PLACE
+  and considered owned by the local admin.
+
+  Most people probably use console-setup to configure their console, but
+  this is not a requirement on Debian. We prefer always having something
+  arond that configures the console which is why we don't
+  unconditionally drop the above files.
+
+  You can use the following command to check if you have console-setup
+  installed: dpkg-query -s console-setup
+
+  If it says "...is not installed..." you might want to start using
+  console-setup by installing it: apt-get install console-setup
+
+  Unless you know you want to keep using the obsolete init script and
+  maintain it yourself you're recommended to make sure they are removed
+  using the following commands:
+  rm -f /etc/init.d/kbd /etc/kbd/config /etc/kbd/remap && rmdir /etc/kbd
+  update-rc.d -f kbd remove
+
+ -- Andreas Henriksson <andreas@fatal.se>  Wed, 23 Dec 2015 22:21:37 +0100
