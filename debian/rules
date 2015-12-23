@@ -62,13 +62,8 @@ override_dh_auto_install:
 	mv $(addprefix debian/kbd/usr/bin/,$(MOVE_TO_BIN)) $(KBD)/bin/
 	mv $(addprefix debian/kbd/usr/bin/,$(MOVE_TO_SBIN)) $(KBD)/sbin/
 	mv $(addprefix debian/kbd/usr/bin/,$(MOVE_TO_USR_SBIN)) $(KBD)/usr/sbin/
-# configuration files
-	install -m644 debian/conffiles.d/* $(KBD)/etc/kbd/
 # prepare udeb
 	for ITEM in $(UDEB_BINARIES); do install -m755 src/$$ITEM-udeb $(KBD_UDEB)/bin/$$ITEM; done
-
-override_dh_installinit:
-	dh_installinit -r
 
 override_dh_installdocs:
 	dh_installdocs
