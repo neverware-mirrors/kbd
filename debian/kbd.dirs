@@ -1,6 +1,4 @@
 bin
-etc/kbd
-etc/init.d
 sbin
 usr/bin
 usr/sbin
