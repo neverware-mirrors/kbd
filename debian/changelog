@@ -4,7 +4,6 @@ kbd (2.0.3-2) UNRELEASED; urgency=medium
   * Stop shipping /etc/init.d/kbd and /etc/kbd/* (Closes: #796583)
   * Drop kbd init script and /etc/kbd/* if unused
   * Add debian/NEWS entry for kbd init removal
-  * Recommend console-setup-linux which has the data files
   * Add myself to Uploaders
   * Add myself to debian/copyright for debian/*
   * Stop shipping obsolete /etc/kbd & /etc/init.d dirs
