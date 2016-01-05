@@ -23,4 +23,4 @@ kbd (2.0.3-2) unstable; urgency=medium
   rm -f /etc/init.d/kbd /etc/kbd/config /etc/kbd/remap && rmdir /etc/kbd
   update-rc.d -f kbd remove
 
- -- Andreas Henriksson <andreas@fatal.se>  Wed, 23 Dec 2015 22:21:37 +0100
+ -- Andreas Henriksson <andreas@fatal.se>  Tue, 05 Jan 2016 17:55:55 +0100
