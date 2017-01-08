@@ -1,3 +1,7 @@
+/**
+ * @file dump.h
+ * @brief Functions for keymap output.
+ */
 #ifndef LK_DUMP_H
 #define LK_DUMP_H
 
@@ -19,12 +23,16 @@ typedef enum {
  * @brief General information about the keymap.
  */
 struct kmapinfo {
-	lk_flags    flags;           /**< Parser flags that are set outside the library */
-	lk_keywords keywords;        /**< Keywords used in keymap files */
-	size_t      keymaps;         /**< Number of keymaps in actual use */
-	size_t      keymaps_alloced; /**< Number of keymaps dynamically allocated */
-	size_t      functions;       /**< Number of function keys */
-	size_t      composes;        /**< Number of compose definitions in actual use */
+	lk_flags flags;         /**< Parser flags that are set outside the library */
+	lk_keywords keywords;   /**< Keywords used in keymap files */
+	size_t keymaps;         /**< Number of keymaps in actual use */
+	size_t keymaps_alloced; /**< Number of keymaps dynamically allocated */
+	size_t functions;       /**< Number of function keys */
+	size_t composes;        /**< Number of compose definitions in actual use */
+
+	size_t keymaps_total;
+	size_t functions_total;
+	size_t composes_total;
 };
 
 /**
@@ -85,8 +93,28 @@ void lk_dump_funcs(struct lk_ctx *ctx, FILE *fd);
  */
 void lk_dump_diacs(struct lk_ctx *ctx, FILE *fd);
 
+/**
+ * Converts a number to a string representation of the character.
+ * @param ctx is a keymap library context.
+ * @param code is a numeric representation of ksym.
+ *
+ * @return a string representation of the code.
+ */
+char *lk_code_to_ksym(struct lk_ctx *ctx, int code);
+
+char *lk_get_sym(struct lk_ctx *ctx, unsigned int ktype, unsigned int index);
+
+/**
+ * Converts a string to a numeric representation of the character.
+ * @param ctx is a keymap library context.
+ * @param code is a string representation of ksym.
+ *
+ * @return a unicode representation of the code.
+ */
+int lk_ksym_to_unicode(struct lk_ctx *ctx, const char *code);
+
 int lk_get_kmapinfo(struct lk_ctx *ctx, struct kmapinfo *res);
 void lk_dump_summary(struct lk_ctx *ctx, FILE *fd, int console);
-void lk_dump_symbols(FILE *fd);
+void lk_dump_symbols(struct lk_ctx *ctx, FILE *fd);
 
 #endif /* LK_DUMP_H */

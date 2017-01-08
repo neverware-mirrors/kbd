@@ -3,17 +3,23 @@
  *
  * usage: setvesablank ON|on|off
  */
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include "getfd.h"
 #include "nls.h"
+#include "kbd_error.h"
 
-int
-main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	int fd;
-	struct { char ten, onoff; } arg;
+	struct {
+		char ten, onoff;
+	} arg;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
@@ -21,18 +27,18 @@ main(int argc, char *argv[]) {
 
 	if (argc != 2) {
 		fprintf(stderr, _("usage: %s\n"), "setvesablank ON|on|off");
-		exit(1);
+		return EXIT_FAILURE;
 	}
-	fd = getfd(NULL);
-	arg.ten = 10;
+	if ((fd = getfd(NULL)) < 0)
+		kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console"));
+	arg.ten   = 10;
 	arg.onoff = 0;
 	if (!strcmp(argv[1], "on"))
 		arg.onoff = 1;
 	else if (!strcmp(argv[1], "ON"))
 		arg.onoff = 2;
 	if (ioctl(fd, TIOCLINUX, &arg)) {
-		perror("setvesablank: TIOCLINUX");
-		exit(1);
+		kbd_error(EXIT_FAILURE, errno, "setvesablank: TIOCLINUX");
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -19,10 +19,10 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
+#include "config.h"
 
 #include <stdio.h>
 #include <errno.h>
-#include <error.h>
 #include <stdlib.h>
 #include <syslog.h>
 
@@ -30,6 +30,7 @@
 
 #include "pam_auth.h"
 #include "vlock.h"
+#include "kbd_error.h"
 
 static struct pam_conv conv = {
 	&misc_conv,
@@ -37,31 +38,29 @@ static struct pam_conv conv = {
 };
 
 pam_handle_t *
-init_pam (const char *username, const char *tty, int log)
+init_pam(const char *username, const char *tty, int log)
 {
 	pam_handle_t *pamh = 0;
-	int     rc = pam_start ("vlock", username, &conv, &pamh);
+	int rc             = pam_start("vlock", username, &conv, &pamh);
 
-	if (rc != PAM_SUCCESS)
-	{
+	if (rc != PAM_SUCCESS) {
 		/* pam_strerror is not available atm. */
 		if (log)
-			syslog (LOG_WARNING, "pam_start failed: %m");
+			syslog(LOG_WARNING, "pam_start failed: %m");
 		else
-			error (EXIT_SUCCESS, errno, "pam_start");
+			kbd_warning(errno, "pam_start");
 		return 0;
 	}
 
-	rc = pam_set_item (pamh, PAM_TTY, tty);
-	if (rc != PAM_SUCCESS)
-	{
+	rc = pam_set_item(pamh, PAM_TTY, tty);
+	if (rc != PAM_SUCCESS) {
 		if (log)
-			syslog (LOG_WARNING, "pam_set_item: %s",
-				pam_strerror (pamh, rc));
+			syslog(LOG_WARNING, "pam_set_item: %s",
+			       pam_strerror(pamh, rc));
 		else
-			error (EXIT_SUCCESS, 0, "pam_set_item: %s",
-			       pam_strerror (pamh, rc));
-		pam_end (pamh, rc);
+			kbd_warning(0, "pam_set_item: %s",
+			            pam_strerror(pamh, rc));
+		pam_end(pamh, rc);
 		return 0;
 	}
 

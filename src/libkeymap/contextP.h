@@ -1,14 +1,9 @@
 #ifndef LK_CONTEXTP_H
 #define LK_CONTEXTP_H
 
-#include "keymap.h"
+#include <stdarg.h>
 
-/**
- * @brief Copy of struct kbdiacruc.
- */
-struct kb_diacr {
-	unsigned int diacr, base, result;
-};
+#include "keymap.h"
 
 /**
  * @brief The maximum number of include levels.

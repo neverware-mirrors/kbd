@@ -57,7 +57,7 @@ beats rebuilding the kernel!
   kbdrate now first tries if the KDKBDREP ioctl is available. If it
   is, it is used, else the old method is applied.
 
-  1999-02-22 Arkadiusz Mi∂kiewicz <misiek@misiek.eu.org>
+  1999-02-22 Arkadiusz Mi≈õkiewicz <misiek@misiek.eu.org>
   - added Native Language Support
 
   1999-03-17
@@ -67,7 +67,9 @@ beats rebuilding the kernel!
   with yet another measurement system.  Thus, try for KIOCSRATE, too.
 
 */
+#include "config.h"
 
+#include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -86,27 +88,29 @@ beats rebuilding the kernel!
 
 /* Equal to kernel version, but field names vary. */
 struct my_kbd_repeat {
-        int delay;        /* in msec; <= 0: don't change */
-        int period;       /* in msec; <= 0: don't change */
-			  /* earlier this field was misnamed "rate" */
+	int delay;  /* in msec; <= 0: don't change */
+	int period; /* in msec; <= 0: don't change */
+	            /* earlier this field was misnamed "rate" */
 };
 
 #include <signal.h>
 
 #include "nls.h"
 #include "version.h"
+#include "kbd_error.h"
 
 static int valid_rates[] = { 300, 267, 240, 218, 200, 185, 171, 160, 150,
-                                   133, 120, 109, 100, 92, 86, 80, 75, 67,
-                                   60, 55, 50, 46, 43, 40, 37, 33, 30, 27,
-                                   25, 23, 21, 20 };
-#define RATE_COUNT (sizeof( valid_rates ) / sizeof( int ))
+	                     133, 120, 109, 100, 92, 86, 80, 75, 67,
+	                     60, 55, 50, 46, 43, 40, 37, 33, 30, 27,
+	                     25, 23, 21, 20 };
+#define RATE_COUNT (sizeof(valid_rates) / sizeof(int))
 
 static int valid_delays[] = { 250, 500, 750, 1000 };
-#define DELAY_COUNT (sizeof( valid_delays ) / sizeof( int ))
+#define DELAY_COUNT (sizeof(valid_delays) / sizeof(int))
 
 static int
-KDKBDREP_ioctl_ok(double rate, int delay, int silent) {
+KDKBDREP_ioctl_ok(double rate, int delay, int silent)
+{
 	/*
 	 * This ioctl is defined in <linux/kd.h> but is not
 	 * implemented anywhere - must be in some m68k patches.
@@ -116,12 +120,11 @@ KDKBDREP_ioctl_ok(double rate, int delay, int silent) {
 
 	/* don't change, just test */
 	kbdrep_s.period = -1;
-	kbdrep_s.delay = -1;
-	if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
+	kbdrep_s.delay  = -1;
+	if (ioctl(0, KDKBDREP, &kbdrep_s)) {
 		if (errno == EINVAL || errno == ENOTTY)
 			return 0;
-		perror( "ioctl(KDKBDREP)" );
-		exit( 1 );
+		kbd_error(EXIT_FAILURE, errno, "ioctl KDKBDREP");
 	}
 
 #if 0
@@ -130,113 +133,111 @@ KDKBDREP_ioctl_ok(double rate, int delay, int silent) {
 #endif
 
 	/* do the change */
-	if (rate == 0)				  /* switch repeat off */
+	if (rate == 0) /* switch repeat off */
 		kbdrep_s.period = 0;
 	else
-		kbdrep_s.period  = 1000.0 / rate; /* convert cps to msec */
+		kbdrep_s.period = 1000.0 / rate; /* convert cps to msec */
 	if (kbdrep_s.period < 1)
 		kbdrep_s.period = 1;
-	kbdrep_s.delay = delay;
+	kbdrep_s.delay          = delay;
 	if (kbdrep_s.delay < 1)
 		kbdrep_s.delay = 1;
-   
+
 	if (ioctl(0, KDKBDREP, &kbdrep_s)) {
-		perror("ioctl(KDKBDREP)");
-		exit(1);
+		kbd_error(EXIT_FAILURE, errno, "ioctl KDKBDREP");
 	}
 
 	/* report */
 	if (kbdrep_s.period == 0)
 		rate = 0;
 	else
-		rate = 1000.0 / (double) kbdrep_s.period;
+		rate = 1000.0 / (double)kbdrep_s.period;
 
 	if (!silent)
-		printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
-			rate, kbdrep_s.delay );
+		printf(_("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
+		       rate, kbdrep_s.delay);
 
 	kbdrep_s.period = -1;
-	kbdrep_s.delay = -1;
-	if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
+	kbdrep_s.delay  = -1;
+	if (ioctl(0, KDKBDREP, &kbdrep_s)) {
 		if (errno == EINVAL)
 			return 0;
-		perror( "ioctl(KDKBDREP)" );
-		exit( 1 );
+		kbd_error(EXIT_FAILURE, errno, "ioctl KDKBDREP");
 	}
 	printf("old delay %d, period %d\n",
 	       kbdrep_s.delay, kbdrep_s.period);
 	if (kbdrep_s.period == 0)
 		rate = 0;
 	else
-		rate = 1000.0 / (double) kbdrep_s.period;
+		rate = 1000.0 / (double)kbdrep_s.period;
 
 	if (!silent)
-		printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
-			rate, kbdrep_s.delay );
+		printf(_("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
+		       rate, kbdrep_s.delay);
 
-	return 1;			/* success! */
+	return 1; /* success! */
 }
 
 #ifndef KIOCSRATE
-#define arg_state __attribute__ ((unused))
+#define arg_state __attribute__((unused))
 #else
 #define arg_state
 #endif
 
 static int
-KIOCSRATE_ioctl_ok(arg_state double rate, arg_state int delay, arg_state int silent) {
+KIOCSRATE_ioctl_ok(arg_state double rate, arg_state int delay, arg_state int silent)
+{
 #ifdef KIOCSRATE
 	struct kbd_rate kbdrate_s;
 	int fd;
 
 	fd = open("/dev/kbd", O_RDONLY);
 	if (fd == -1) {
-		perror( "open(/dev/kbd)" );
-		exit( 1 );
+		kbd_error(EXIT_FAILURE, errno, "open /dev/kbd");
 	}
 
-	kbdrate_s.rate = (int) (rate + 0.5);  /* round up */
-	kbdrate_s.delay = delay * HZ / 1000;  /* convert ms to Hz */
+	kbdrate_s.rate  = (int)(rate + 0.5); /* round up */
+	kbdrate_s.delay = delay * HZ / 1000; /* convert ms to Hz */
 	if (kbdrate_s.rate > 50)
 		kbdrate_s.rate = 50;
 
-	if (ioctl( fd, KIOCSRATE, &kbdrate_s )) {
-		perror( "ioctl(KIOCSRATE)" );
-		exit( 1 );
+	if (ioctl(fd, KIOCSRATE, &kbdrate_s)) {
+		kbd_error(EXIT_FAILURE, errno, "ioctl KIOCSRATE");
 	}
-	close( fd );
+	close(fd);
 
 	if (!silent)
-		printf( "Typematic Rate set to %d cps (delay = %d ms)\n",
-			kbdrate_s.rate, kbdrate_s.delay * 1000 / HZ );
+		printf("Typematic Rate set to %d cps (delay = %d ms)\n",
+		       kbdrate_s.rate, kbdrate_s.delay * 1000 / HZ);
 
 	return 1;
-#else /* no KIOCSRATE */
+#else  /* no KIOCSRATE */
 	return 0;
 #endif /* KIOCSRATE */
 }
 
 static void
-sigalrmhandler(int sig __attribute__ ((unused))) {
-	fprintf( stderr, "kbdrate: Failed waiting for kbd controller!\n" );
-	raise( SIGINT );
+sigalrmhandler(int sig __attribute__((unused)))
+{
+	kbd_warning(0, "Failed waiting for kbd controller!\n");
+	raise(SIGINT);
 }
 
-int
-main( int argc, char **argv ) {
+int main(int argc, char **argv)
+{
 #ifdef __sparc__
-	double      rate = 5.0;      /* Default rate */
-	int         delay = 200;     /* Default delay */
+	double rate = 5.0; /* Default rate */
+	int delay   = 200; /* Default delay */
 #else
-	double      rate = 10.9;     /* Default rate */
-	int         delay = 250;     /* Default delay */
+	double rate = 10.9; /* Default rate */
+	int delay   = 250; /* Default delay */
 #endif
-	int         value = 0x7f;    /* Maximum delay with slowest rate */
-        			     /* DO NOT CHANGE this value */
-	int         silent = 0;
-	int         fd;
-	char        data;
-	int         c;
+	int value = 0x7f; /* Maximum delay with slowest rate */
+	                  /* DO NOT CHANGE this value */
+	int silent = 0;
+	int fd;
+	char data;
+	int c;
 	unsigned int i;
 	extern char *optarg;
 
@@ -250,30 +251,29 @@ main( int argc, char **argv ) {
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")))
 		print_version_and_exit();
 
-	while ( (c = getopt( argc, argv, "r:d:sv" )) != EOF ) {
+	while ((c = getopt(argc, argv, "r:d:s")) != EOF) {
 		switch (c) {
-		case 'r':
-			rate = atof( optarg );
-			break;
-		case 'd':
-			delay = atoi( optarg );
-			break;
-		case 's':
-			silent = 1;
-			break;
-		default:
-			fprintf(stderr,
-				_("Usage: kbdrate [-V] [-s] [-r rate] [-d delay]\n"));
-			exit(1);
+			case 'r':
+				rate = atof(optarg);
+				break;
+			case 'd':
+				delay = atoi(optarg);
+				break;
+			case 's':
+				silent = 1;
+				break;
+			default:
+				fprintf(stderr,
+				        _("Usage: kbdrate [-V | --version] [-s] [-r rate] [-d delay]\n"));
+				exit(EXIT_FAILURE);
 		}
 	}
 
-	if(KDKBDREP_ioctl_ok(rate, delay, silent)) 	/* m68k? */
+	if (KDKBDREP_ioctl_ok(rate, delay, silent)) /* m68k? */
 		return 0;
 
-	if(KIOCSRATE_ioctl_ok(rate, delay, silent))	/* sparc? */
+	if (KIOCSRATE_ioctl_ok(rate, delay, silent)) /* sparc? */
 		return 0;
-
 
 	/* The ioport way */
 
@@ -284,7 +284,6 @@ main( int argc, char **argv ) {
 			break;
 		}
 
-
 	for (i = 0; i < DELAY_COUNT; i++)
 		if (delay <= valid_delays[i]) {
 			value &= 0x1f;
@@ -292,52 +291,47 @@ main( int argc, char **argv ) {
 			break;
 		}
 
-	if ( (fd = open( "/dev/port", O_RDWR )) < 0) {
-		perror( _("Cannot open /dev/port") );
-		exit( 1 );
+	if ((fd = open("/dev/port", O_RDWR)) < 0) {
+		kbd_error(EXIT_FAILURE, errno, _("Cannot open /dev/port"));
 	}
 
-	signal( SIGALRM, sigalrmhandler );
-	alarm( 3 );
+	signal(SIGALRM, sigalrmhandler);
+	alarm(3);
 
 	do {
-		lseek( fd, 0x64, 0 );
-		if (read( fd, &data, 1 ) == -1) {
-			perror( "read" );
-			exit( 1 );
+		lseek(fd, 0x64, 0);
+		if (read(fd, &data, 1) == -1) {
+			kbd_error(EXIT_FAILURE, errno, "read");
 		}
-	} while ((data & 2) == 2 );  /* wait */
+	} while ((data & 2) == 2); /* wait */
 
-	lseek( fd, 0x60, 0 );
-	data = 0xf3;                 /* set typematic rate */
-	if (write( fd, &data, 1 ) == -1) {
-		perror( "write" );
-		exit( 1 );
+	lseek(fd, 0x60, 0);
+	data = 0xf3; /* set typematic rate */
+	if (write(fd, &data, 1) == -1) {
+		kbd_error(EXIT_FAILURE, errno, "write");
 	}
 
 	do {
-		lseek( fd, 0x64, 0 );
-		if (read( fd, &data, 1 ) == -1) {
-			perror( "read" );
-			exit( 1 );
+		lseek(fd, 0x64, 0);
+		if (read(fd, &data, 1) == -1) {
+			kbd_error(EXIT_FAILURE, errno, "read");
 		}
-	} while ((data & 2) == 2 );  /* wait */
+	} while ((data & 2) == 2); /* wait */
 
-	alarm( 0 );
+	alarm(0);
 
-	lseek( fd, 0x60, 0 );
-	sleep( 1 );
-	if (write( fd, &value, 1 ) == -1) {
-		perror( "write" );
-		exit( 1 );
+	lseek(fd, 0x60, 0);
+	sleep(1);
+	if (write(fd, &value, 1) == -1) {
+		kbd_error(EXIT_FAILURE, errno, "write");
 	}
 
-	close( fd );
+	close(fd);
 
 	if (!silent)
-		printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
-			valid_rates[value & 0x1f] / 10.0,
-			valid_delays[ (value & 0x60) >> 5 ] );
+		printf(_("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
+		       valid_rates[value & 0x1f] / 10.0,
+		       valid_delays[(value & 0x60) >> 5]);
 
-	return 0;
+	return EXIT_SUCCESS;
 }

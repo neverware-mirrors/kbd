@@ -1,5 +1,7 @@
 /* Error-free versions of some libc routines */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,14 +12,16 @@
 
 extern char *progname;
 
-static void __attribute__ ((noreturn))
-nomem(void) {
+static void __attribute__((noreturn))
+nomem(void)
+{
 	fprintf(stderr, _("%s: out of memory\n"), progname);
 	exit(EX_OSERR);
 }
 
 void *
-xmalloc(size_t sz) {
+xmalloc(size_t sz)
+{
 	void *p = malloc(sz);
 	if (p == NULL)
 		nomem();
@@ -25,7 +29,8 @@ xmalloc(size_t sz) {
 }
 
 void *
-xrealloc(void *pp, size_t sz) {
+xrealloc(void *pp, size_t sz)
+{
 	void *p = realloc(pp, sz);
 	if (p == NULL)
 		nomem();
@@ -33,7 +38,8 @@ xrealloc(void *pp, size_t sz) {
 }
 
 char *
-xstrdup(char *p) {
+xstrdup(char *p)
+{
 	char *q = strdup(p);
 	if (q == NULL)
 		nomem();
@@ -41,7 +47,8 @@ xstrdup(char *p) {
 }
 
 char *
-xstrndup(char *p, size_t n) {
+xstrndup(char *p, size_t n)
+{
 	char *q = strndup(p, n);
 	if (q == NULL)
 		nomem();
@@ -49,7 +56,8 @@ xstrndup(char *p, size_t n) {
 }
 
 void *
-xfree(void *p) {
+xfree(void *p)
+{
 	if (p != NULL)
 		free(p);
 	return NULL;

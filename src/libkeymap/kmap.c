@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -10,17 +12,25 @@
 #include "ksyms.h"
 #include "modifiers.h"
 
-int
-lk_map_exists(struct lk_ctx *ctx, unsigned int k_table)
+int lk_map_exists(struct lk_ctx *ctx, unsigned int k_table)
 {
 	return (lk_array_get_ptr(ctx->keymap, k_table) != NULL);
 }
 
-int
-lk_key_exists(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index)
+int lk_get_keys_total(struct lk_ctx *ctx, unsigned int k_table)
 {
 	struct lk_array *map;
-	u_short *key;
+	map = lk_array_get_ptr(ctx->keymap, k_table);
+	if (!map) {
+		return 0;
+	}
+	return map->total;
+}
+
+int lk_key_exists(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index)
+{
+	struct lk_array *map;
+	unsigned int *key;
 
 	map = lk_array_get_ptr(ctx->keymap, k_table);
 	if (!map) {
@@ -35,8 +45,7 @@ lk_key_exists(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index)
 	return (*key > 0);
 }
 
-int
-lk_add_map(struct lk_ctx *ctx, unsigned int k_table)
+int lk_add_map(struct lk_ctx *ctx, unsigned int k_table)
 {
 	struct lk_array *keys;
 
@@ -61,15 +70,14 @@ lk_add_map(struct lk_ctx *ctx, unsigned int k_table)
 	return 0;
 }
 
-int
-lk_get_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index)
+int lk_get_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index)
 {
 	struct lk_array *map;
 	unsigned int *key;
 
 	map = lk_array_get_ptr(ctx->keymap, k_table);
 	if (!map) {
-		ERR(ctx, _("unable to keymap %d"), k_table);
+		ERR(ctx, _("unable to get keymap %d"), k_table);
 		return -1;
 	}
 
@@ -78,11 +86,10 @@ lk_get_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index)
 		return K_HOLE;
 	}
 
-	return (*key)-1;
+	return (*key) - 1;
 }
 
-int
-lk_del_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index)
+int lk_del_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index)
 {
 	struct lk_array *map;
 
@@ -97,15 +104,14 @@ lk_del_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index)
 
 	if (lk_array_unset(map, k_index) < 0) {
 		ERR(ctx, _("unable to unset key %d for table %d"),
-			k_index, k_table);
+		    k_index, k_table);
 		return -1;
 	}
 
 	return 0;
 }
 
-int
-lk_add_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index, int keycode)
+int lk_add_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index, int keycode)
 {
 	struct lk_array *map;
 	unsigned int code = keycode + 1;
@@ -116,9 +122,6 @@ lk_add_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index, int k
 		ERR(ctx, _("lk_add_key called with bad keycode %d"), keycode);
 		return -1;
 	}
-
-	if (!k_index && keycode == K_NOSUCHMAP)
-		return 0;
 
 	map = lk_array_get_ptr(ctx->keymap, k_table);
 	if (!map) {
@@ -140,19 +143,19 @@ lk_add_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index, int k
 
 	if (lk_array_set(map, k_index, &code) < 0) {
 		ERR(ctx, _("unable to set key %d for table %d"),
-			k_index, k_table);
+		    k_index, k_table);
 		return -1;
 	}
 
 	if (ctx->keywords & LK_KEYWORD_ALTISMETA) {
 		unsigned int alttable = k_table | M_ALT;
-		int type = KTYP(keycode);
-		int val = KVAL(keycode);
+		int type              = KTYP(keycode);
+		int val               = KVAL(keycode);
 
-		if (alttable != k_table && !lk_key_exists(ctx, alttable, k_index) &&
-		    (type == KT_LATIN || type == KT_LETTER) && val < 128) {
-			if (lk_add_map(ctx, alttable) < 0)
-				return -1;
+		if (alttable != k_table && lk_map_exists(ctx, alttable) &&
+		    !lk_key_exists(ctx, alttable, k_index) &&
+		    (type == KT_LATIN || type == KT_LETTER) &&
+		    val < 128) {
 			if (lk_add_key(ctx, alttable, k_index, K(KT_META, val)) < 0)
 				return -1;
 		}
@@ -161,85 +164,8 @@ lk_add_key(struct lk_ctx *ctx, unsigned int k_table, unsigned int k_index, int k
 	return 0;
 }
 
-int
-lk_get_func(struct lk_ctx *ctx, struct kbsentry *kbs)
-{
-	char *s;
-
-	s = lk_array_get_ptr(ctx->func_table, kbs->kb_func);
-	if (!s) {
-		ERR(ctx, _("func %d not allocated"), kbs->kb_func);
-		return -1;
-	}
-
-	strncpy((char *)kbs->kb_string, s, sizeof(kbs->kb_string));
-	kbs->kb_string[sizeof(kbs->kb_string) - 1] = 0;
-
-	return 0;
-}
-
-
-int
-lk_add_func(struct lk_ctx *ctx, struct kbsentry kbs)
-{
-	char *s;
-
-	s = lk_array_get_ptr(ctx->func_table, kbs.kb_func);
-	if (s)
-		free(s);
-
-	s = strdup((char *)kbs.kb_string);
-
-	if (lk_array_set(ctx->func_table, kbs.kb_func, &s) < 0) {
-		free(s);
-		ERR(ctx, _("out of memory"));
-		return -1;
-	}
-
-	return 0;
-}
-
-int
-lk_add_diacr(struct lk_ctx *ctx, unsigned int diacr, unsigned int base, unsigned int res)
-{
-	struct kb_diacr *ptr;
-
-	ptr = malloc(sizeof(struct kb_diacr));
-	if (!ptr) {
-		ERR(ctx, _("out of memory"));
-		return -1;
-	}
-
-	ptr->diacr  = diacr;
-	ptr->base   = base;
-	ptr->result = res;
-
-	lk_array_append(ctx->accent_table, &ptr);
-
-	return 0;
-}
-
-int
-lk_add_compose(struct lk_ctx *ctx,
-               unsigned int diacr,
-               unsigned int base,
-               unsigned int res)
-{
-	int direction = TO_8BIT;
-
-#ifdef KDSKBDIACRUC
-	if (ctx->flags & LK_FLAG_PREFER_UNICODE)
-		direction = TO_UNICODE;
-#endif
-	return lk_add_diacr(ctx,
-		convert_code(ctx, diacr, direction),
-		convert_code(ctx, base, direction),
-		convert_code(ctx, res, direction)
-	);
-}
-
 static int
-do_constant_key(struct lk_ctx *ctx, int i, u_short key)
+do_constant_key(struct lk_ctx *ctx, int i, unsigned short key)
 {
 	int typ, val;
 	unsigned int j;
@@ -249,16 +175,16 @@ do_constant_key(struct lk_ctx *ctx, int i, u_short key)
 
 	if ((typ == KT_LATIN || typ == KT_LETTER) &&
 	    ((val >= 'a' && val <= 'z') || (val >= 'A' && val <= 'Z'))) {
-		u_short defs[16];
+		unsigned short defs[16];
 		defs[0] = K(KT_LETTER, val);
 		defs[1] = K(KT_LETTER, val ^ 32);
 		defs[2] = defs[0];
 		defs[3] = defs[1];
 
-		for (j = 4; j < 8; j++)
+		for (j          = 4; j < 8; j++)
 			defs[j] = K(KT_LATIN, val & ~96);
 
-		for (j = 8; j < 16; j++)
+		for (j          = 8; j < 16; j++)
 			defs[j] = K(KT_META, KVAL(defs[j - 8]));
 
 		for (j = 0; j < ctx->keymap->total; j++) {
@@ -289,8 +215,7 @@ do_constant_key(struct lk_ctx *ctx, int i, u_short key)
 	return 0;
 }
 
-int
-lk_add_constants(struct lk_ctx *ctx)
+int lk_add_constants(struct lk_ctx *ctx)
 {
 	unsigned int i, r0 = 0;
 
@@ -301,7 +226,7 @@ lk_add_constants(struct lk_ctx *ctx)
 
 	for (i = 0; i < ctx->key_constant->total; i++) {
 		char *constant;
-		u_short key;
+		unsigned short key;
 
 		constant = lk_array_get(ctx->key_constant, i);
 		if (!constant || !(*constant))

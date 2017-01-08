@@ -12,6 +12,7 @@
 %{
 #define YY_HEADER_EXPORT_START_CONDITIONS 1
 
+#include "config.h"
 #include "nls.h"
 #include "kbd.h"
 
@@ -105,7 +106,7 @@ strings_as_usual(struct lk_ctx *ctx)
 				sizeof(ke.kb_string));
 			ke.kb_string[sizeof(ke.kb_string) - 1] = 0;
 
-			if (lk_add_func(ctx, ke) == -1)
+			if (lk_add_func(ctx, &ke) == -1)
 				return -1;
 		}
 	}
@@ -160,8 +161,14 @@ compose_as_usual(struct lk_ctx *ctx, char *charset)
 		};
 		int i;
 		for (i = 0; i < 68; i++) {
-			struct ccc ptr = def_latin1_composes[i];
-			if (lk_add_compose(ctx, ptr.c1, ptr.c2, ptr.c3) == -1)
+			struct lk_kbdiacr ptr;
+			struct ccc c = def_latin1_composes[i];
+
+			ptr.diacr  = c.c1;
+			ptr.base   = c.c2;
+			ptr.result = c.c3;
+
+			if (lk_append_compose(ctx, &ptr) == -1)
 				return -1;
 		}
 	}
@@ -180,7 +187,6 @@ line		: EOL
 		| usualstringsline
 		| usualcomposeline
 		| keymapline
-		| fullline
 		| singleline
 		| strline
                 | compline
@@ -253,7 +259,7 @@ strline		: STRING LITERAL EQUALS STRLITERAL EOL
 
 				if (KTYP($2) != KT_FN) {
 					ERR(ctx, _("'%s' is not a function key symbol"),
-						syms[KTYP($2)].table[KVAL($2)]);
+						get_sym(ctx, KTYP($2), KVAL($2)));
 					YYERROR;
 				}
 
@@ -263,52 +269,35 @@ strline		: STRING LITERAL EQUALS STRLITERAL EOL
 				        sizeof(ke.kb_string));
 				ke.kb_string[sizeof(ke.kb_string) - 1] = 0;
 
-				if (lk_add_func(ctx, ke) == -1)
+				if (lk_add_func(ctx, &ke) == -1)
 					YYERROR;
 			}
 		;
-compline        : COMPOSE compsym compsym TO compsym EOL
+compline        : COMPOSE compsym compsym TO CCHAR EOL
                         {
-				if (lk_add_compose(ctx, $2, $3, $5) == -1)
+				struct lk_kbdiacr ptr;
+				ptr.diacr  = $2;
+				ptr.base   = $3;
+				ptr.result = $5;
+
+				if (lk_append_compose(ctx, &ptr) == -1)
 					YYERROR;
 			}
 		 | COMPOSE compsym compsym TO rvalue EOL
 			{
-				if (lk_add_compose(ctx, $2, $3, $5) == -1)
+				struct lk_kbdiacr ptr;
+				ptr.diacr  = $2;
+				ptr.base   = $3;
+				ptr.result = $5;
+
+				if (lk_append_compose(ctx, &ptr) == -1)
 					YYERROR;
 			}
                 ;
 compsym		: CCHAR		{	$$ = $1;		}
 		| UNUMBER	{	$$ = $1 ^ 0xf000;	}
 		;
-singleline	:	{
-				ctx->mod = 0;
-			}
-		  modifiers KEYCODE NUMBER EQUALS rvalue EOL
-			{
-				if (lk_add_key(ctx, ctx->mod, $4, $6) < 0)
-					YYERROR;
-			}
-		| PLAIN KEYCODE NUMBER EQUALS rvalue EOL
-			{
-				if (lk_add_key(ctx, 0, $3, $5) < 0)
-					YYERROR;
-			}
-		;
-modifiers	: modifiers modifier
-		| modifier
-		;
-modifier	: SHIFT		{ ctx->mod |= M_SHIFT;	}
-		| CONTROL	{ ctx->mod |= M_CTRL;	}
-		| ALT		{ ctx->mod |= M_ALT;		}
-		| ALTGR		{ ctx->mod |= M_ALTGR;	}
-		| SHIFTL	{ ctx->mod |= M_SHIFTL;	}
-		| SHIFTR	{ ctx->mod |= M_SHIFTR;	}
-		| CTRLL		{ ctx->mod |= M_CTRLL;	}
-		| CTRLR		{ ctx->mod |= M_CTRLR;	}
-		| CAPSSHIFT	{ ctx->mod |= M_CAPSSHIFT;	}
-		;
-fullline	: KEYCODE NUMBER EQUALS rvalue0 EOL
+singleline	: KEYCODE NUMBER EQUALS rvalue0 EOL
 			{
 				unsigned int j, i, keycode;
 				int *val;
@@ -367,6 +356,33 @@ fullline	: KEYCODE NUMBER EQUALS rvalue0 EOL
 					}
 				}
 			}
+
+		| modifiers KEYCODE NUMBER EQUALS rvalue EOL
+			{
+				if (lk_add_key(ctx, ctx->mod, $3, $5) < 0)
+					YYERROR;
+				ctx->mod = 0;
+			}
+		| PLAIN KEYCODE NUMBER EQUALS rvalue EOL
+			{
+				if (lk_add_key(ctx, 0, $3, $5) < 0)
+					YYERROR;
+				ctx->mod = 0;
+			}
+		;
+modifiers	: modifiers modifier
+		| modifier
+		;
+modifier	: SHIFT		{ ctx->mod |= M_SHIFT;	}
+		| CONTROL	{ ctx->mod |= M_CTRL;	}
+		| ALT		{ ctx->mod |= M_ALT;		}
+		| ALTGR		{ ctx->mod |= M_ALTGR;	}
+		| SHIFTL	{ ctx->mod |= M_SHIFTL;	}
+		| SHIFTR	{ ctx->mod |= M_SHIFTR;	}
+		| CTRLL		{ ctx->mod |= M_CTRLL;	}
+		| CTRLR		{ ctx->mod |= M_CTRLR;	}
+		| CAPSSHIFT	{ ctx->mod |= M_CAPSSHIFT;	}
+		;
 		;
 
 rvalue0		:
@@ -392,6 +408,8 @@ lk_parse_keymap(struct lk_ctx *ctx, lkfile_t *f)
 {
 	yyscan_t scanner;
 	int rc = -1;
+
+	ctx->mod = 0;
 
 	yylex_init(&scanner);
 	yylex_init_extra(ctx, &scanner);

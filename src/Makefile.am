@@ -38,7 +38,8 @@ EXTRA_DIST = \
 
 libcommon_a_SOURCES = \
 	getfd.c getfd.h \
-	xmalloc.c xmalloc.h
+	xmalloc.c xmalloc.h \
+	kbd_error.c kbd_error.h
 
 libfont_a_SOURCES   = \
 	psf.h psffontop.c psffontop.h \
@@ -79,7 +80,7 @@ mapscrn_CFLAGS = -DMAIN
 loadunimap_CFLAGS = -DMAIN
 
 noinst_LIBRARIES = libcommon.a libfont.a
-LDADD = libcommon.a libfont.a libkeymap/libkeymap.la
+LDADD = libcommon.a libfont.a libkeymap/libkeymap.la @INTLLIBS@
 
 install-exec-hook:
 	for i in psfaddtable psfgettable psfstriptable; do \

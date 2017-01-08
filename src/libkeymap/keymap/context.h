@@ -1,3 +1,8 @@
+/**
+ * @file context.h
+ * @brief Header contains flags, keywords and context structure.
+ */
+
 #ifndef LK_CONTEXT_H
 #define LK_CONTEXT_H
 
@@ -25,6 +30,13 @@ typedef enum {
 	LK_KEYWORD_CHARSET    = (1 << 3), /**< 'Charset' keyword */
 	LK_KEYWORD_STRASUSUAL = (1 << 4)  /**< 'String as usual' keyword */
 } lk_keywords;
+
+/**
+ * @brief Copy of struct kbdiacruc.
+ */
+struct lk_kbdiacr {
+	unsigned int diacr, base, result;
+};
 
 /**
  * @brief Opaque object representing the library context.
