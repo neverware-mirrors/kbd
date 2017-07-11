@@ -1,3 +1,10 @@
+kbd (2.0.3-3) UNRELEASED; urgency=medium
+
+  * debian/gbp.conf: Add import-orig upstream-vcs-tag setting
+  * debian/watch: look for .xz tarballs
+
+ -- Andreas Henriksson <andreas@fatal.se>  Tue, 11 Jul 2017 02:25:16 +0200
+
 kbd (2.0.3-2) unstable; urgency=medium
 
   * Team upload.
