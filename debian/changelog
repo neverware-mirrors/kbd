@@ -1,10 +1,16 @@
-kbd (2.0.4-1) UNRELEASED; urgency=medium
+kbd (2.0.4-1) unstable; urgency=medium
 
   * debian/gbp.conf: Add import-orig upstream-vcs-tag setting
   * debian/watch: look for .xz tarballs
   * New upstream release.
+  * Update patches to apply again
+  * Revert "Add debian/patches/0001-add-configure-flag-to-disable-tests.patch"
+    - now part of upstream release.
+  * debian/gbp.conf: switch deprecated section name gbp-pq to pq
+  * Bump Standards-Version to 4.0.0
+  * Use recommended https urls for Vcs-* fields
 
- -- Andreas Henriksson <andreas@fatal.se>  Tue, 11 Jul 2017 02:25:16 +0200
+ -- Andreas Henriksson <andreas@fatal.se>  Tue, 11 Jul 2017 02:43:37 +0200
 
 kbd (2.0.3-2) unstable; urgency=medium
 
