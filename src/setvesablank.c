@@ -3,6 +3,8 @@
  *
  * usage: setvesablank ON|on|off
  */
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -12,10 +14,12 @@
 #include "nls.h"
 #include "kbd_error.h"
 
-int
-main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	int fd;
-	struct { char ten, onoff; } arg;
+	struct {
+		char ten, onoff;
+	} arg;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
@@ -25,8 +29,9 @@ main(int argc, char *argv[]) {
 		fprintf(stderr, _("usage: %s\n"), "setvesablank ON|on|off");
 		return EXIT_FAILURE;
 	}
-	fd = getfd(NULL);
-	arg.ten = 10;
+	if ((fd = getfd(NULL)) < 0)
+		kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console"));
+	arg.ten   = 10;
 	arg.onoff = 0;
 	if (!strcmp(argv[1], "on"))
 		arg.onoff = 1;

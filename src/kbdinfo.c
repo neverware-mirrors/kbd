@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
@@ -12,19 +14,24 @@
 static const char *action = NULL;
 static const char *value  = NULL;
 
-static void __attribute__ ((noreturn))
-usage(int code) {
+static void __attribute__((noreturn))
+usage(int code)
+{
 	fprintf(stderr,
-		_("Usage: %1$s [-C DEVICE] getmode [text|graphics]\n"
-		  "   or: %1$s [-C DEVICE] gkbmode [raw|xlate|mediumraw|unicode]\n"
+	        _("Usage: %1$s [-C DEVICE] getmode [text|graphics]\n"
+	          "   or: %1$s [-C DEVICE] gkbmode [raw|xlate|mediumraw|unicode]\n"
 	          "   or: %1$s [-C DEVICE] gkbmeta [metabit|escprefix]\n"
-	          "   or: %1$s [-C DEVICE] gkbled  [scrolllock|numlock|capslock]\n"),
-		progname);
+	          "   or: %1$s [-C DEVICE] gkbled  [scrolllock|numlock|capslock]\n"
+	          "Other options:\n"
+	          "   -h                   print this usage message\n"
+	          "   -V                   print version number\n"),
+	        progname);
 	exit(code);
 }
 
 static int
-answer(const char *ans) {
+answer(const char *ans)
+{
 	if (value)
 		return strcasecmp(value, ans) ? EXIT_FAILURE : EXIT_SUCCESS;
 
@@ -32,8 +39,8 @@ answer(const char *ans) {
 	return EXIT_SUCCESS;
 }
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	int fd, mode, c;
 	int rc = EXIT_FAILURE;
 	char flags;
@@ -70,15 +77,20 @@ main(int argc, char **argv) {
 	if (optind < argc)
 		value = argv[optind++];
 
-	fd = getfd(console);
+	if ((fd = getfd(console)) < 0)
+		kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console"));
 
 	if (!strcasecmp("GETMODE", action)) {
 		if (ioctl(fd, KDGETMODE, &mode) == -1)
 			kbd_error(EXIT_FAILURE, errno, "ioctl KDGETMODE");
 
 		switch (mode) {
-			case KD_TEXT:		rc = answer("text");		break;
-			case KD_GRAPHICS:	rc = answer("graphics");	break;
+			case KD_TEXT:
+				rc = answer("text");
+				break;
+			case KD_GRAPHICS:
+				rc = answer("graphics");
+				break;
 		}
 
 	} else if (!strcasecmp("GKBMODE", action)) {
@@ -86,10 +98,18 @@ main(int argc, char **argv) {
 			kbd_error(EXIT_FAILURE, errno, "ioctl KDGKBMODE");
 
 		switch (mode) {
-			case K_RAW:		rc = answer("raw");		break;
-			case K_XLATE:		rc = answer("xlate");		break;
-			case K_MEDIUMRAW:	rc = answer("mediumraw");	break;
-			case K_UNICODE:		rc = answer("unicode");		break;
+			case K_RAW:
+				rc = answer("raw");
+				break;
+			case K_XLATE:
+				rc = answer("xlate");
+				break;
+			case K_MEDIUMRAW:
+				rc = answer("mediumraw");
+				break;
+			case K_UNICODE:
+				rc = answer("unicode");
+				break;
 		}
 
 	} else if (!strcasecmp("GKBMETA", action)) {
@@ -97,8 +117,12 @@ main(int argc, char **argv) {
 			kbd_error(EXIT_FAILURE, errno, "ioctl KDGKBMETA");
 
 		switch (mode) {
-			case K_METABIT:		rc = answer("metabit");		break;
-			case K_ESCPREFIX:	rc = answer("escprefix");	break;
+			case K_METABIT:
+				rc = answer("metabit");
+				break;
+			case K_ESCPREFIX:
+				rc = answer("escprefix");
+				break;
 		}
 
 	} else if (!strcasecmp("GKBLED", action)) {
@@ -109,13 +133,13 @@ main(int argc, char **argv) {
 
 		if (value) {
 			if (((mode & LED_SCR) && !strcasecmp(value, "scrolllock")) ||
-			    ((mode & LED_NUM) && !strcasecmp(value, "numlock"))    ||
+			    ((mode & LED_NUM) && !strcasecmp(value, "numlock")) ||
 			    ((mode & LED_CAP) && !strcasecmp(value, "capslock")))
 				rc = EXIT_SUCCESS;
 		} else {
 			printf("scrolllock:%s ", (mode & LED_SCR) ? "on" : "off");
-			printf("numlock:%s ",    (mode & LED_NUM) ? "on" : "off");
-			printf("capslock:%s\n",  (mode & LED_CAP) ? "on" : "off");
+			printf("numlock:%s ", (mode & LED_NUM) ? "on" : "off");
+			printf("capslock:%s\n", (mode & LED_CAP) ? "on" : "off");
 			rc = EXIT_SUCCESS;
 		}
 

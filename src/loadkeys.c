@@ -9,6 +9,7 @@
  * This file is covered by the GNU General Public License,
  * which should be included with kbd as the file COPYING.
  */
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,41 +18,42 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-#include "../config.h"
 #include "nls.h"
 #include "kbd.h"
 #include "paths.h"
 #include "getfd.h"
+#include "kbd_error.h"
 
 #include "keymap.h"
 
-static const char *progname = NULL;
+static const char *progname         = NULL;
 static const char *const dirpath1[] = { "", DATADIR "/" KEYMAPDIR "/**", KERNDIR "/", 0 };
 static const char *const suffixes[] = { "", ".kmap", ".map", 0 };
 
-static void __attribute__ ((noreturn))
+static void __attribute__((noreturn))
 usage(void)
 {
 	fprintf(stderr, _("loadkeys version %s\n"
-			  "\n"
-			  "Usage: %s [option...] [mapfile...]\n"
-			  "\n"
-			  "Valid options are:\n"
-			  "\n"
-			  "  -a --ascii         force conversion to ASCII\n"
-			  "  -b --bkeymap       output a binary keymap to stdout\n"
-			  "  -c --clearcompose  clear kernel compose table\n"
-			  "  -C --console=file\n"
-			  "                     the console device to be used\n"
-			  "  -d --default       load \"%s\"\n"
-			  "  -h --help          display this help text\n"
-			  "  -m --mktable       output a \"defkeymap.c\" to stdout\n"
-			  "  -p --parse         search and parse keymap without action\n"
-			  "  -q --quiet         suppress all normal output\n"
-			  "  -s --clearstrings  clear kernel string table\n"
-			  "  -u --unicode       force conversion to Unicode\n"
-			  "  -v --verbose       report the changes\n"),
-		PACKAGE_VERSION, progname, DEFMAP);
+	                  "\n"
+	                  "Usage: %s [option...] [mapfile...]\n"
+	                  "\n"
+	                  "Valid options are:\n"
+	                  "\n"
+	                  "  -a --ascii         force conversion to ASCII\n"
+	                  "  -b --bkeymap       output a binary keymap to stdout\n"
+	                  "  -c --clearcompose  clear kernel compose table\n"
+	                  "  -C --console=file\n"
+	                  "                     the console device to be used\n"
+	                  "  -d --default       load \"%s\"\n"
+	                  "  -h --help          display this help text\n"
+	                  "  -m --mktable       output a \"defkeymap.c\" to stdout\n"
+	                  "  -p --parse         search and parse keymap without action\n"
+	                  "  -q --quiet         suppress all normal output\n"
+	                  "  -s --clearstrings  clear kernel string table\n"
+	                  "  -u --unicode       force conversion to Unicode\n"
+	                  "  -v --verbose       report the changes\n"
+	                  "  -V --version       print version number\n"),
+	        PACKAGE_VERSION, progname, DEFMAP);
 	exit(EXIT_FAILURE);
 }
 
@@ -63,24 +65,23 @@ set_progname(const char *name)
 	return (p && p + 1 ? p + 1 : name);
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-	const char *const short_opts = "abcC:dhmpsuqvV";
+	const char *const short_opts          = "abcC:dhmpsuqvV";
 	const struct option const long_opts[] = {
-		{ "console", required_argument, NULL, 'C'},
-		{ "ascii",		no_argument, NULL, 'a' },
-		{ "bkeymap",		no_argument, NULL, 'b' },
-		{ "clearcompose",	no_argument, NULL, 'c' },
-		{ "default",		no_argument, NULL, 'd' },
-		{ "help",		no_argument, NULL, 'h' },
-		{ "mktable",		no_argument, NULL, 'm' },
-		{ "parse",		no_argument, NULL, 'p' },
-		{ "clearstrings",	no_argument, NULL, 's' },
-		{ "unicode",		no_argument, NULL, 'u' },
-		{ "quiet",		no_argument, NULL, 'q' },
-		{ "verbose",		no_argument, NULL, 'v' },
-		{ "version",		no_argument, NULL, 'V' },
+		{ "console", required_argument, NULL, 'C' },
+		{ "ascii", no_argument, NULL, 'a' },
+		{ "bkeymap", no_argument, NULL, 'b' },
+		{ "clearcompose", no_argument, NULL, 'c' },
+		{ "default", no_argument, NULL, 'd' },
+		{ "help", no_argument, NULL, 'h' },
+		{ "mktable", no_argument, NULL, 'm' },
+		{ "parse", no_argument, NULL, 'p' },
+		{ "clearstrings", no_argument, NULL, 's' },
+		{ "unicode", no_argument, NULL, 'u' },
+		{ "quiet", no_argument, NULL, 'q' },
+		{ "verbose", no_argument, NULL, 'v' },
+		{ "version", no_argument, NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -101,7 +102,7 @@ main(int argc, char *argv[])
 	lk_flags flags = 0;
 
 	int c, i, rc = -1;
-	int fd;
+	int fd = -1;
 	int kbd_mode;
 	int kd_mode;
 	char *console = NULL;
@@ -121,75 +122,76 @@ main(int argc, char *argv[])
 
 	while ((c = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
 		switch (c) {
-		case 'a':
-			options |= OPT_A;
-			break;
-		case 'b':
-			options |= OPT_B;
-			break;
-		case 'c':
-			flags |= LK_FLAG_CLEAR_COMPOSE;
-			break;
-		case 'C':
-			console = optarg;
-			break;
-		case 'd':
-			options |= OPT_D;
-			break;
-		case 'm':
-			options |= OPT_M;
-			break;
-		case 'p':
-			options |= OPT_P;
-			break;
-		case 's':
-			flags |= LK_FLAG_CLEAR_STRINGS;
-			break;
-		case 'u':
-			options |= OPT_U;
-			flags |= LK_FLAG_UNICODE_MODE;
-			flags |= LK_FLAG_PREFER_UNICODE;
-			break;
-		case 'q':
-			lk_set_log_priority(ctx, LOG_ERR);
-			break;
-		case 'v':
-			lk_set_log_priority(ctx, LOG_INFO);
-			break;
-		case 'V':
-			fprintf(stdout, _("%s from %s\n"), progname, PACKAGE_STRING);
-			exit(0);
-		case 'h':
-		case '?':
-			usage();
+			case 'a':
+				options |= OPT_A;
+				break;
+			case 'b':
+				options |= OPT_B;
+				break;
+			case 'c':
+				flags |= LK_FLAG_CLEAR_COMPOSE;
+				break;
+			case 'C':
+				console = optarg;
+				break;
+			case 'd':
+				options |= OPT_D;
+				break;
+			case 'm':
+				options |= OPT_M;
+				break;
+			case 'p':
+				options |= OPT_P;
+				break;
+			case 's':
+				flags |= LK_FLAG_CLEAR_STRINGS;
+				break;
+			case 'u':
+				options |= OPT_U;
+				flags |= LK_FLAG_UNICODE_MODE;
+				flags |= LK_FLAG_PREFER_UNICODE;
+				break;
+			case 'q':
+				lk_set_log_priority(ctx, LOG_ERR);
+				break;
+			case 'v':
+				lk_set_log_priority(ctx, LOG_INFO);
+				break;
+			case 'V':
+				fprintf(stdout, _("%s from %s\n"), progname, PACKAGE_STRING);
+				exit(0);
+			case 'h':
+			case '?':
+				usage();
 		}
 	}
 
 	if ((options & OPT_U) && (options & OPT_A)) {
 		fprintf(stderr,
-			_("%s: Options --unicode and --ascii are mutually exclusive\n"),
-			progname);
+		        _("%s: Options --unicode and --ascii are mutually exclusive\n"),
+		        progname);
 		exit(EXIT_FAILURE);
 	}
 
-	/* get console */
-	fd = getfd(console);
-
 	if (!(options & OPT_M) && !(options & OPT_B)) {
+		/* get console */
+		if ((fd = getfd(console)) < 0)
+			kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console"));
+
 		/* check whether the keyboard is in Unicode mode */
 		if (ioctl(fd, KDGKBMODE, &kbd_mode) ||
 		    ioctl(fd, KDGETMODE, &kd_mode)) {
 			fprintf(stderr, _("%s: error reading keyboard mode: %m\n"),
-				progname);
+			        progname);
 			exit(EXIT_FAILURE);
 		}
 
 		if (kbd_mode == K_UNICODE) {
 			if (options & OPT_A) {
 				fprintf(stderr,
-					_("%s: warning: loading non-Unicode keymap on Unicode console\n"
-					  "    (perhaps you want to do `kbd_mode -a'?)\n"),
-					progname);
+				        _("%s: warning: loading non-Unicode keymap on Unicode console\n"
+				          "    (perhaps you want to do `kbd_mode -a'?)\n"),
+				        progname);
 			} else {
 				flags |= LK_FLAG_PREFER_UNICODE;
 			}
@@ -199,9 +201,9 @@ main(int argc, char *argv[])
 
 		} else if (options & OPT_U && kd_mode != KD_GRAPHICS) {
 			fprintf(stderr,
-				_("%s: warning: loading Unicode keymap on non-Unicode console\n"
-				  "    (perhaps you want to do `kbd_mode -u'?)\n"),
-				progname);
+			        _("%s: warning: loading Unicode keymap on non-Unicode console\n"
+			          "    (perhaps you want to do `kbd_mode -u'?)\n"),
+			        progname);
 		}
 	}
 
@@ -210,7 +212,7 @@ main(int argc, char *argv[])
 	dirpath = dirpath1;
 	if ((ev = getenv("LOADKEYS_KEYMAP_PATH")) != NULL) {
 		dirpath2[0] = ev;
-		dirpath = dirpath2;
+		dirpath     = dirpath2;
 	}
 
 	if (options & OPT_D) {
@@ -223,7 +225,6 @@ main(int argc, char *argv[])
 
 		if ((rc = lk_parse_keymap(ctx, &f)) == -1)
 			goto fail;
-
 
 	} else if (optind == argc) {
 		f.fd = stdin;
@@ -257,9 +258,12 @@ main(int argc, char *argv[])
 		}
 	}
 
- fail:	lk_free(ctx);
+fail:
+	lk_free(ctx);
 	lk_fpclose(&f);
-	close(fd);
+
+	if (fd >= 0)
+		close(fd);
 
 	if (rc < 0)
 		exit(EXIT_FAILURE);

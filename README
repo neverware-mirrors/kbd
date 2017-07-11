@@ -1,4 +1,4 @@
-KBD
+KBD [![Build Status](https://travis-ci.org/legionus/kbd.svg?branch=master)](https://travis-ci.org/legionus/kbd)
 ---
 
 This package contains tools for managing Linux console (Linux console, virtual

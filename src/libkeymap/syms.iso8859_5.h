@@ -1,5 +1,5 @@
 static sym
-const iso_8859_5_syms[] = { /* 160-255 */
+const iso8859_5_syms[] = {
 	{ 0x00a0, "nobreakspace" },
 	{ 0x0401, "cyrillic_capital_letter_io" },
 	{ 0x0402, "serbocroatian_cyrillic_capital_letter_dje" },
@@ -8,15 +8,15 @@ const iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x0405, "macedonian_cyrillic_capital_letter_dze" },
 	{ 0x0406, "ukrainian_cyrillic_capital_letter_i" },
 	{ 0x0407, "ukrainian_cyrillic_capital_letter_yi" },
-	{ 0x0408, "cyrillic_capital_letter_je" }, 			/* 0250 */
+	{ 0x0408, "cyrillic_capital_letter_je" },
 	{ 0x0409, "cyrillic_capital_letter_lje" },
 	{ 0x040a, "cyrillic_capital_letter_nje" },
 	{ 0x040b, "serbocroatian_cyrillic_capital_letter_chje" },
 	{ 0x040c, "macedonian_cyrillic_capital_letter_kje" },
 	{ 0x00ad, "hyphen" },
 	{ 0x040e, "bielorussian_cyrillic_capital_letter_short_u" },
-	{ 0x040f, "cyrillic_capital_letter_dze" },
-	{ 0x0410, "cyrillic_capital_letter_a" }, 			/* 0260 */
+	{ 0x040f, "cyrillic_capital_letter_dzhe" },
+	{ 0x0410, "cyrillic_capital_letter_a" },
 	{ 0x0411, "cyrillic_capital_letter_be" },
 	{ 0x0412, "cyrillic_capital_letter_ve" },
 	{ 0x0413, "cyrillic_capital_letter_ghe" },
@@ -24,7 +24,7 @@ const iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x0415, "cyrillic_capital_letter_ie" },
 	{ 0x0416, "cyrillic_capital_letter_zhe" },
 	{ 0x0417, "cyrillic_capital_letter_ze" },
-	{ 0x0418, "cyrillic_capital_letter_i" }, 			/* 0270 */
+	{ 0x0418, "cyrillic_capital_letter_i" },
 	{ 0x0419, "cyrillic_capital_letter_short_i" },
 	{ 0x041a, "cyrillic_capital_letter_ka" },
 	{ 0x041b, "cyrillic_capital_letter_el" },
@@ -32,7 +32,7 @@ const iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x041d, "cyrillic_capital_letter_en" },
 	{ 0x041e, "cyrillic_capital_letter_o" },
 	{ 0x041f, "cyrillic_capital_letter_pe" },
-	{ 0x0420, "cyrillic_capital_letter_er" }, 			/* 0300 */
+	{ 0x0420, "cyrillic_capital_letter_er" },
 	{ 0x0421, "cyrillic_capital_letter_es" },
 	{ 0x0422, "cyrillic_capital_letter_te" },
 	{ 0x0423, "cyrillic_capital_letter_u" },
@@ -40,7 +40,7 @@ const iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x0425, "cyrillic_capital_letter_ha" },
 	{ 0x0426, "cyrillic_capital_letter_tse" },
 	{ 0x0427, "cyrillic_capital_letter_che" },
-	{ 0x0428, "cyrillic_capital_letter_sha" }, 			/* 0310 */
+	{ 0x0428, "cyrillic_capital_letter_sha" },
 	{ 0x0429, "cyrillic_capital_letter_shcha" },
 	{ 0x042a, "cyrillic_capital_hard_sign" },
 	{ 0x042b, "cyrillic_capital_letter_yeru" },
@@ -48,7 +48,7 @@ const iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x042d, "cyrillic_capital_letter_e" },
 	{ 0x042e, "cyrillic_capital_letter_yu" },
 	{ 0x042f, "cyrillic_capital_letter_ya" },
-	{ 0x0430, "cyrillic_small_letter_a" },				/* 0320 */
+	{ 0x0430, "cyrillic_small_letter_a" },
 	{ 0x0431, "cyrillic_small_letter_be" },
 	{ 0x0432, "cyrillic_small_letter_ve" },
 	{ 0x0433, "cyrillic_small_letter_ghe" },
@@ -56,7 +56,7 @@ const iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x0435, "cyrillic_small_letter_ie" },
 	{ 0x0436, "cyrillic_small_letter_zhe" },
 	{ 0x0437, "cyrillic_small_letter_ze" },
-	{ 0x0438, "cyrillic_small_letter_i" },				/* 0330 */
+	{ 0x0438, "cyrillic_small_letter_i" },
 	{ 0x0439, "cyrillic_small_letter_short_i" },
 	{ 0x043a, "cyrillic_small_letter_ka" },
 	{ 0x043b, "cyrillic_small_letter_el" },
@@ -64,7 +64,7 @@ const iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x043d, "cyrillic_small_letter_en" },
 	{ 0x043e, "cyrillic_small_letter_o" },
 	{ 0x043f, "cyrillic_small_letter_pe" },
-	{ 0x0440, "cyrillic_small_letter_er" },				/* 0340 */
+	{ 0x0440, "cyrillic_small_letter_er" },
 	{ 0x0441, "cyrillic_small_letter_es" },
 	{ 0x0442, "cyrillic_small_letter_te" },
 	{ 0x0443, "cyrillic_small_letter_u" },
@@ -72,7 +72,7 @@ const iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x0445, "cyrillic_small_letter_ha" },
 	{ 0x0446, "cyrillic_small_letter_tse" },
 	{ 0x0447, "cyrillic_small_letter_che" },
-	{ 0x0448, "cyrillic_small_letter_sha" }, 			/* 0350 */
+	{ 0x0448, "cyrillic_small_letter_sha" },
 	{ 0x0449, "cyrillic_small_letter_shcha" },
 	{ 0x044a, "cyrillic_small_hard_sign" },
 	{ 0x044b, "cyrillic_small_letter_yeru" },
@@ -80,7 +80,7 @@ const iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x044d, "cyrillic_small_letter_e" },
 	{ 0x044e, "cyrillic_small_letter_yu" },
 	{ 0x044f, "cyrillic_small_letter_ya" },
-	{ 0x2116, "number_acronym" },					/* 0360 */
+	{ 0x2116, "number_acronym" },
 	{ 0x0451, "cyrillic_small_letter_io" },
 	{ 0x0452, "serbocroatian_cyrillic_small_letter_dje" },
 	{ 0x0453, "macedonian_cyrillic_small_letter_gje" },
@@ -88,12 +88,12 @@ const iso_8859_5_syms[] = { /* 160-255 */
 	{ 0x0455, "macedonian_cyrillic_small_letter_dze" },
 	{ 0x0456, "ukrainian_cyrillic_small_letter_i" },
 	{ 0x0457, "ukrainian_cyrillic_small_letter_yi" },
-	{ 0x0458, "cyrillic_small_letter_je" },				/* 0370 */
+	{ 0x0458, "cyrillic_small_letter_je" },
 	{ 0x0459, "cyrillic_small_letter_lje" },
 	{ 0x045a, "cyrillic_small_letter_nje" },
 	{ 0x045b, "serbocroatian_cyrillic_small_letter_chje" },
 	{ 0x045c, "macedonian_cyrillic_small_letter_kje" },
 	{ 0x00a7, "section" },
-	{ 0x045e, "bielorussian_cyrillic_small_letter_short_u" }, 	/* printing error in ECMA-113 */
-	{ 0x045f, "cyrillic_small_letter_dze" }
+	{ 0x045e, "bielorussian_cyrillic_small_letter_short_u" },
+	{ 0x045f, "cyrillic_small_letter_dzhe" },
 };

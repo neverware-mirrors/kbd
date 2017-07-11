@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -7,8 +9,8 @@
 #include "version.h"
 #include "kbd_error.h"
 
-int
-main(int argc, char **argv){
+int main(int argc, char **argv)
+{
 	int fd, indx, red, green, blue;
 	unsigned char cmap[48];
 
@@ -30,14 +32,15 @@ main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 
-	fd = getfd(NULL);
+	if ((fd = getfd(NULL)) < 0)
+		kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console"));
 
 	if (ioctl(fd, GIO_CMAP, cmap))
 		kbd_error(EXIT_FAILURE, errno, "ioctl GIO_CMAP");
 
-	cmap[3*indx] = red;
-	cmap[3*indx+1] = green;
-	cmap[3*indx+2] = blue;
+	cmap[3 * indx]     = red;
+	cmap[3 * indx + 1] = green;
+	cmap[3 * indx + 2] = blue;
 
 	if (ioctl(fd, PIO_CMAP, cmap))
 		kbd_error(EXIT_FAILURE, errno, "ioctl PIO_CMAP");

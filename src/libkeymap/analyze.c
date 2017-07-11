@@ -1,4 +1,4 @@
-#line 15 "analyze.l"
+#line 17 "analyze.l"
 #include "keymap.h"
 int stack_push(struct lk_ctx *ctx, lkfile_t *fp, void *scanner);
 int stack_pop(struct lk_ctx *ctx, void *scanner);
@@ -13,8 +13,8 @@ int stack_pop(struct lk_ctx *ctx, void *scanner);
 
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
-#define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 37
+#define YY_FLEX_MINOR_VERSION 6
+#define YY_FLEX_SUBMINOR_VERSION 0
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -180,7 +180,15 @@ typedef void* yyscan_t;
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k.
+ * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
+ * Ditto for the __ia64__ case accordingly.
+ */
+#define YY_BUF_SIZE 32768
+#else
 #define YY_BUF_SIZE 16384
+#endif /* __ia64__ */
 #endif
 
 /* The state buf must be large enough to hold one state per character in the main buffer.
@@ -202,6 +210,7 @@ typedef size_t yy_size_t;
 #define EOB_ACT_LAST_MATCH 2
 
     #define YY_LESS_LINENO(n)
+    #define YY_LINENO_REWIND_TO(ptr)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -347,7 +356,7 @@ void yyfree (void * ,yyscan_t yyscanner );
 
 /* Begin user sect3 */
 
-#define yywrap(yyscanner) 1
+#define yywrap(yyscanner) (/*CONSTCOND*/1)
 #define YY_SKIP_YYWRAP
 
 typedef unsigned char YY_CHAR;
@@ -440,7 +449,7 @@ static yyconst flex_int16_t yy_accept[504] =
        30,   13,    0
     } ;
 
-static yyconst flex_int32_t yy_ec[256] =
+static yyconst YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -472,7 +481,7 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int32_t yy_meta[58] =
+static yyconst YY_CHAR yy_meta[58] =
     {   0,
         1,    1,    2,    1,    3,    1,    1,    1,    1,    1,
         4,    4,    4,    1,    4,    4,    4,    4,    4,    4,
@@ -482,7 +491,7 @@ static yyconst flex_int32_t yy_meta[58] =
         5,    5,    5,    5,    5,    5,    5
     } ;
 
-static yyconst flex_int16_t yy_base[517] =
+static yyconst flex_uint16_t yy_base[517] =
     {   0,
         0,    0,   57,    0,  110,  111,  721,  720,  724,  727,
       721,  727,  719,  727,  684,  727,  727,  727,  106,  108,
@@ -604,7 +613,7 @@ static yyconst flex_int16_t yy_def[517] =
       503,  503,  503,  503,  503,  503
     } ;
 
-static yyconst flex_int16_t yy_nxt[785] =
+static yyconst flex_uint16_t yy_nxt[785] =
     {   0,
        10,   11,   12,   13,   14,   13,   15,   16,   17,   18,
        19,   20,   20,   21,   22,   10,   23,   10,   10,   24,
@@ -793,6 +802,8 @@ static yyconst flex_int16_t yy_chk[785] =
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "analyze.l"
 #line 2 "analyze.l"
+#include "config.h"
+
 #include <stdlib.h>
 #include <unistd.h> /* readlink */
 
@@ -805,7 +816,7 @@ static yyconst flex_int16_t yy_chk[785] =
 #include "parser.h"
 
 #define YY_NO_INPUT 1
-#line 32 "analyze.l"
+#line 34 "analyze.l"
 int
 stack_push(struct lk_ctx *ctx, lkfile_t *fp, void *scanner)
 {
@@ -1044,7 +1055,7 @@ open_include(struct lk_ctx *ctx, char *s, yyscan_t scanner)
 
 
 
-#line 1048 "analyze.c"
+#line 1059 "analyze.c"
 
 #define INITIAL 0
 #define RVALUE 1
@@ -1122,11 +1133,11 @@ void yyset_extra (YY_EXTRA_TYPE user_defined ,yyscan_t yyscanner );
 
 FILE *yyget_in (yyscan_t yyscanner );
 
-void yyset_in  (FILE * in_str ,yyscan_t yyscanner );
+void yyset_in  (FILE * _in_str ,yyscan_t yyscanner );
 
 FILE *yyget_out (yyscan_t yyscanner );
 
-void yyset_out  (FILE * out_str ,yyscan_t yyscanner );
+void yyset_out  (FILE * _out_str ,yyscan_t yyscanner );
 
 yy_size_t yyget_leng (yyscan_t yyscanner );
 
@@ -1134,11 +1145,11 @@ char *yyget_text (yyscan_t yyscanner );
 
 int yyget_lineno (yyscan_t yyscanner );
 
-void yyset_lineno (int line_number ,yyscan_t yyscanner );
+void yyset_lineno (int _line_number ,yyscan_t yyscanner );
 
 int yyget_column  (yyscan_t yyscanner );
 
-void yyset_column (int column_no ,yyscan_t yyscanner );
+void yyset_column (int _column_no ,yyscan_t yyscanner );
 
 YYSTYPE * yyget_lval (yyscan_t yyscanner );
 
@@ -1154,6 +1165,10 @@ extern "C" int yywrap (yyscan_t yyscanner );
 #else
 extern int yywrap (yyscan_t yyscanner );
 #endif
+#endif
+
+#ifndef YY_NO_UNPUT
+    
 #endif
 
 #ifndef yytext_ptr
@@ -1174,13 +1189,18 @@ static int input (yyscan_t yyscanner );
 
 #endif
 
-    static void yy_push_state (int new_state ,yyscan_t yyscanner);
+    static void yy_push_state (int _new_state ,yyscan_t yyscanner);
     
     static void yy_pop_state (yyscan_t yyscanner );
     
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k */
+#define YY_READ_BUF_SIZE 16384
+#else
 #define YY_READ_BUF_SIZE 8192
+#endif /* __ia64__ */
 #endif
 
 /* Copy whatever the last rule matched to the standard output. */
@@ -1269,7 +1289,7 @@ extern int yylex \
 
 /* Code executed at the end of each rule. */
 #ifndef YY_BREAK
-#define YY_BREAK break;
+#define YY_BREAK /*LINTED*/break;
 #endif
 
 #define YY_RULE_SETUP \
@@ -1279,15 +1299,15 @@ extern int yylex \
  */
 YY_DECL
 {
-	register yy_state_type yy_current_state;
-	register char *yy_cp, *yy_bp;
-	register int yy_act;
+	yy_state_type yy_current_state;
+	char *yy_cp, *yy_bp;
+	int yy_act;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
-#line 306 "analyze.l"
+#line 308 "analyze.l"
 
 
-#line 1291 "analyze.c"
+#line 1311 "analyze.c"
 
     yylval = yylval_param;
 
@@ -1317,7 +1337,7 @@ YY_DECL
 		yy_load_buffer_state(yyscanner );
 		}
 
-	while ( 1 )		/* loops until end-of-file is reached */
+	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
 		yy_cp = yyg->yy_c_buf_p;
 
@@ -1333,7 +1353,7 @@ YY_DECL
 yy_match:
 		do
 			{
-			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
+			YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
 			if ( yy_accept[yy_current_state] )
 				{
 				yyg->yy_last_accepting_state = yy_current_state;
@@ -1370,14 +1390,14 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 308 "analyze.l"
+#line 310 "analyze.l"
 {
 				yy_push_state(INCLSTR, yyscanner);
 			}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 311 "analyze.l"
+#line 313 "analyze.l"
 {
 				char *s = strndup(yytext+1, strlen(yytext)-2);
 				if (s == NULL) {
@@ -1396,7 +1416,7 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 325 "analyze.l"
+#line 327 "analyze.l"
 {
 				ERR(yyextra, _("expected filename between quotes"));
 				return(ERROR);
@@ -1406,7 +1426,7 @@ case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(RVALUE):
 case YY_STATE_EOF(STR):
 case YY_STATE_EOF(INCLSTR):
-#line 329 "analyze.l"
+#line 331 "analyze.l"
 {
 				stack_pop(yyextra, yyscanner);
 				if (!YY_CURRENT_BUFFER)
@@ -1416,7 +1436,7 @@ case YY_STATE_EOF(INCLSTR):
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 334 "analyze.l"
+#line 336 "analyze.l"
 {
 				yyset_lineno(yyget_lineno(yyscanner) + 1,yyscanner);
 			}
@@ -1424,7 +1444,7 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 337 "analyze.l"
+#line 339 "analyze.l"
 {
 				yyset_lineno(yyget_lineno(yyscanner) + 1,yyscanner);
 
@@ -1436,21 +1456,22 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 345 "analyze.l"
+#line 347 "analyze.l"
 ; /* do nothing */
 	YY_BREAK
 case 7:
 /* rule 7 can match eol */
 *yy_cp = yyg->yy_hold_char; /* undo effects of setting up yytext */
+YY_LINENO_REWIND_TO(yy_cp - 1);
 yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 346 "analyze.l"
+#line 348 "analyze.l"
 ; /* do nothing */
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 347 "analyze.l"
+#line 349 "analyze.l"
 {
 				yy_push_state(RVALUE, yyscanner);
 				lk_array_empty(yyextra->key_line);
@@ -1459,7 +1480,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 352 "analyze.l"
+#line 354 "analyze.l"
 {
 				yy_push_state(RVALUE, yyscanner);
 				return(STRING);
@@ -1467,7 +1488,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 356 "analyze.l"
+#line 358 "analyze.l"
 {
 				yy_push_state(RVALUE, yyscanner);
 				return(TO);
@@ -1475,7 +1496,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 360 "analyze.l"
+#line 362 "analyze.l"
 {
 				yylval->num = strtol(yytext + 1, NULL, 16);
 				if (yylval->num >= 0xf000) {
@@ -1488,7 +1509,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 369 "analyze.l"
+#line 371 "analyze.l"
 {
 				yylval->num = strtol(yytext, NULL, 0);
 				return(NUMBER);
@@ -1496,127 +1517,127 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 373 "analyze.l"
+#line 375 "analyze.l"
 {	return((yylval->num = ksymtocode(yyextra, yytext, TO_AUTO)) == -1 ? ERROR : LITERAL);	}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 374 "analyze.l"
+#line 376 "analyze.l"
 {	return(DASH);		}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 375 "analyze.l"
+#line 377 "analyze.l"
 {	return(COMMA);		}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 376 "analyze.l"
+#line 378 "analyze.l"
 {	return(PLUS);		}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 377 "analyze.l"
+#line 379 "analyze.l"
 {	return(CHARSET);	}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 378 "analyze.l"
+#line 380 "analyze.l"
 {	return(KEYMAPS);	}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 379 "analyze.l"
+#line 381 "analyze.l"
 {	return(KEYCODE);	}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 380 "analyze.l"
+#line 382 "analyze.l"
 {	return(PLAIN);		}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 381 "analyze.l"
+#line 383 "analyze.l"
 {	return(SHIFT);		}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 382 "analyze.l"
+#line 384 "analyze.l"
 {	return(CONTROL);	}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 383 "analyze.l"
+#line 385 "analyze.l"
 {	return(ALT);		}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 384 "analyze.l"
+#line 386 "analyze.l"
 {	return(ALTGR);		}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 385 "analyze.l"
+#line 387 "analyze.l"
 {	return(SHIFTL);		}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 386 "analyze.l"
+#line 388 "analyze.l"
 {	return(SHIFTR);		}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 387 "analyze.l"
+#line 389 "analyze.l"
 {	return(CTRLL);		}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 388 "analyze.l"
+#line 390 "analyze.l"
 {	return(CTRLR);		}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 389 "analyze.l"
+#line 391 "analyze.l"
 {	return(CAPSSHIFT);	}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 390 "analyze.l"
+#line 392 "analyze.l"
 {	return(ALT_IS_META);	}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 391 "analyze.l"
+#line 393 "analyze.l"
 {	return(STRINGS);	}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 392 "analyze.l"
+#line 394 "analyze.l"
 {	return(COMPOSE);	}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 393 "analyze.l"
+#line 395 "analyze.l"
 {	return(AS);		}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 394 "analyze.l"
+#line 396 "analyze.l"
 {	return(USUAL);		}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 395 "analyze.l"
+#line 397 "analyze.l"
 {	return(ON);		}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 396 "analyze.l"
+#line 398 "analyze.l"
 {	return(FOR);		}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 397 "analyze.l"
+#line 399 "analyze.l"
 {
 				yylval->num = strtol(yytext + 2, NULL, 8);
 				return(CCHAR);
@@ -1624,7 +1645,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 401 "analyze.l"
+#line 403 "analyze.l"
 {
 				yylval->num = (unsigned char) yytext[2];
 				return(CCHAR);
@@ -1632,7 +1653,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 405 "analyze.l"
+#line 407 "analyze.l"
 {
 				yylval->num = (unsigned char) yytext[1];
 				return(CCHAR);
@@ -1640,7 +1661,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 409 "analyze.l"
+#line 411 "analyze.l"
 {
 				yylval->str.data[0] = '\0';
 				yylval->str.len = 0;
@@ -1650,7 +1671,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 415 "analyze.l"
+#line 417 "analyze.l"
 {
 				if (yylval->str.len == MAX_PARSER_STRING) {
 					ERR(yyextra, _("string too long"));
@@ -1661,7 +1682,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 422 "analyze.l"
+#line 424 "analyze.l"
 {
 				if (yylval->str.len == MAX_PARSER_STRING) {
 					ERR(yyextra, _("string too long"));
@@ -1672,7 +1693,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 429 "analyze.l"
+#line 431 "analyze.l"
 {
 				if (yylval->str.len == MAX_PARSER_STRING) {
 					ERR(yyextra, _("string too long"));
@@ -1683,7 +1704,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 436 "analyze.l"
+#line 438 "analyze.l"
 {
 				if (yylval->str.len == MAX_PARSER_STRING) {
 					ERR(yyextra, _("string too long"));
@@ -1695,7 +1716,7 @@ YY_RULE_SETUP
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 443 "analyze.l"
+#line 445 "analyze.l"
 {
 				int len = strlen(yytext);
 
@@ -1710,7 +1731,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 454 "analyze.l"
+#line 456 "analyze.l"
 {
 				yylval->str.data[yylval->str.len] = '\0';
 				while (((struct yyguts_t*)yyscanner)->yy_start_stack_ptr) {
@@ -1721,17 +1742,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 461 "analyze.l"
+#line 463 "analyze.l"
 {
 				return(ERROR);
 			}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 464 "analyze.l"
+#line 466 "analyze.l"
 ECHO;
 	YY_BREAK
-#line 1735 "analyze.c"
+#line 1756 "analyze.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1873,9 +1894,9 @@ ECHO;
 static int yy_get_next_buffer (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
-	register char *source = yyg->yytext_ptr;
-	register int number_to_move, i;
+	char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+	char *source = yyg->yytext_ptr;
+	yy_size_t number_to_move, i;
 	int ret_val;
 
 	if ( yyg->yy_c_buf_p > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars + 1] )
@@ -1904,7 +1925,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	/* Try to read more data. */
 
 	/* First move last chars to start of buffer. */
-	number_to_move = (int) (yyg->yy_c_buf_p - yyg->yytext_ptr) - 1;
+	number_to_move = (yy_size_t) (yyg->yy_c_buf_p - yyg->yytext_ptr) - 1;
 
 	for ( i = 0; i < number_to_move; ++i )
 		*(dest++) = *(source++);
@@ -2007,15 +2028,15 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 
     static yy_state_type yy_get_previous_state (yyscan_t yyscanner)
 {
-	register yy_state_type yy_current_state;
-	register char *yy_cp;
+	yy_state_type yy_current_state;
+	char *yy_cp;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
 	yy_current_state = yyg->yy_start;
 
 	for ( yy_cp = yyg->yytext_ptr + YY_MORE_ADJ; yy_cp < yyg->yy_c_buf_p; ++yy_cp )
 		{
-		register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
+		YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
 		if ( yy_accept[yy_current_state] )
 			{
 			yyg->yy_last_accepting_state = yy_current_state;
@@ -2040,11 +2061,11 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
  */
     static yy_state_type yy_try_NUL_trans  (yy_state_type yy_current_state , yyscan_t yyscanner)
 {
-	register int yy_is_jam;
+	int yy_is_jam;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner; /* This var may be unused depending upon options. */
-	register char *yy_cp = yyg->yy_c_buf_p;
+	char *yy_cp = yyg->yy_c_buf_p;
 
-	register YY_CHAR yy_c = 1;
+	YY_CHAR yy_c = 1;
 	if ( yy_accept[yy_current_state] )
 		{
 		yyg->yy_last_accepting_state = yy_current_state;
@@ -2062,6 +2083,10 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	(void)yyg;
 	return yy_is_jam ? 0 : yy_current_state;
 }
+
+#ifndef YY_NO_UNPUT
+
+#endif
 
 #ifndef YY_NO_INPUT
 #ifdef __cplusplus
@@ -2216,7 +2241,7 @@ static void yy_load_buffer_state  (yyscan_t yyscanner)
 	if ( ! b )
 		YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
 
-	b->yy_buf_size = size;
+	b->yy_buf_size = (yy_size_t)size;
 
 	/* yy_ch_buf has to be 2 characters longer than the size given because
 	 * we need to put in 2 end-of-buffer characters.
@@ -2377,7 +2402,7 @@ static void yyensure_buffer_stack (yyscan_t yyscanner)
 		 * scanner will even need a stack. We use 2 instead of 1 to avoid an
 		 * immediate realloc on the next call.
          */
-		num_to_alloc = 1;
+		num_to_alloc = 1; // After all that talk, this was set to 1 anyways...
 		yyg->yy_buffer_stack = (struct yy_buffer_state**)yyalloc
 								(num_to_alloc * sizeof(struct yy_buffer_state*)
 								, yyscanner);
@@ -2394,7 +2419,7 @@ static void yyensure_buffer_stack (yyscan_t yyscanner)
 	if (yyg->yy_buffer_stack_top >= (yyg->yy_buffer_stack_max) - 1){
 
 		/* Increase the buffer to prepare for a possible push. */
-		int grow_size = 8 /* arbitrary grow size */;
+		yy_size_t grow_size = 8 /* arbitrary grow size */;
 
 		num_to_alloc = yyg->yy_buffer_stack_max + grow_size;
 		yyg->yy_buffer_stack = (struct yy_buffer_state**)yyrealloc
@@ -2496,7 +2521,7 @@ YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len 
 	return b;
 }
 
-    static void yy_push_state (int  new_state , yyscan_t yyscanner)
+    static void yy_push_state (int  _new_state , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	if ( yyg->yy_start_stack_ptr >= yyg->yy_start_stack_depth )
@@ -2518,7 +2543,7 @@ YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len 
 
 	yyg->yy_start_stack[yyg->yy_start_stack_ptr++] = YY_START;
 
-	BEGIN(new_state);
+	BEGIN(_new_state);
 }
 
     static void yy_pop_state  (yyscan_t yyscanner)
@@ -2642,10 +2667,10 @@ void yyset_extra (YY_EXTRA_TYPE  user_defined , yyscan_t yyscanner)
 }
 
 /** Set the current line number.
- * @param line_number
+ * @param _line_number line number
  * @param yyscanner The scanner object.
  */
-void yyset_lineno (int  line_number , yyscan_t yyscanner)
+void yyset_lineno (int  _line_number , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
@@ -2653,14 +2678,14 @@ void yyset_lineno (int  line_number , yyscan_t yyscanner)
         if (! YY_CURRENT_BUFFER )
            YY_FATAL_ERROR( "yyset_lineno called with no buffer" );
     
-    yylineno = line_number;
+    yylineno = _line_number;
 }
 
 /** Set the current column.
- * @param line_number
+ * @param _column_no column number
  * @param yyscanner The scanner object.
  */
-void yyset_column (int  column_no , yyscan_t yyscanner)
+void yyset_column (int  _column_no , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
@@ -2668,25 +2693,25 @@ void yyset_column (int  column_no , yyscan_t yyscanner)
         if (! YY_CURRENT_BUFFER )
            YY_FATAL_ERROR( "yyset_column called with no buffer" );
     
-    yycolumn = column_no;
+    yycolumn = _column_no;
 }
 
 /** Set the input stream. This does not discard the current
  * input buffer.
- * @param in_str A readable stream.
+ * @param _in_str A readable stream.
  * @param yyscanner The scanner object.
  * @see yy_switch_to_buffer
  */
-void yyset_in (FILE *  in_str , yyscan_t yyscanner)
+void yyset_in (FILE *  _in_str , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-    yyin = in_str ;
+    yyin = _in_str ;
 }
 
-void yyset_out (FILE *  out_str , yyscan_t yyscanner)
+void yyset_out (FILE *  _out_str , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-    yyout = out_str ;
+    yyout = _out_str ;
 }
 
 int yyget_debug  (yyscan_t yyscanner)
@@ -2695,10 +2720,10 @@ int yyget_debug  (yyscan_t yyscanner)
     return yy_flex_debug;
 }
 
-void yyset_debug (int  bdebug , yyscan_t yyscanner)
+void yyset_debug (int  _bdebug , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-    yy_flex_debug = bdebug ;
+    yy_flex_debug = _bdebug ;
 }
 
 /* Accessor methods for yylval and yylloc */
@@ -2849,7 +2874,7 @@ int yylex_destroy  (yyscan_t yyscanner)
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char* s1, yyconst char * s2, int n , yyscan_t yyscanner YY_ATTRIBUTE_UNUSED)
 {
-	register int i;
+	int i;
 	for ( i = 0; i < n; ++i )
 		s1[i] = s2[i];
 }
@@ -2858,7 +2883,7 @@ static void yy_flex_strncpy (char* s1, yyconst char * s2, int n , yyscan_t yysca
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen (yyconst char * s , yyscan_t yyscanner YY_ATTRIBUTE_UNUSED)
 {
-	register int n;
+	int n;
 	for ( n = 0; s[n]; ++n )
 		;
 
@@ -2890,7 +2915,7 @@ void yyfree (void * ptr , yyscan_t yyscanner YY_ATTRIBUTE_UNUSED)
 
 #define YYTABLES_NAME "yytables"
 
-#line 464 "analyze.l"
+#line 466 "analyze.l"
 
 
 
