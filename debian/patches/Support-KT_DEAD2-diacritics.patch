@@ -14,13 +14,11 @@ dead2_ prefix.
  src/libkeymap/ksyms.c | 8 ++++++++
  2 files changed, 11 insertions(+)
 
-diff --git a/src/libkeymap/dump.c b/src/libkeymap/dump.c
-index f1ecbc6..697d78b 100644
 --- a/src/libkeymap/dump.c
 +++ b/src/libkeymap/dump.c
-@@ -377,6 +377,9 @@ print_keysym(struct lk_ctx *ctx, FILE *fd, int code, char numeric)
+@@ -395,6 +395,9 @@
  	else if (!numeric && t == KT_META && v < 128 && v < get_sym_size(ctx, KT_LATIN) &&
- 		 (p = get_sym(ctx, KT_LATIN, v))[0])
+ 	         (p = get_sym(ctx, KT_LATIN, v))[0])
  		fprintf(fd, "Meta_%-11s", p);
 +	else if (!numeric && t == KT_DEAD2 && v < 256 && v < get_sym_size(ctx, KT_LATIN) &&
 +		 (p = get_sym(ctx, KT_LATIN, v))[0])
@@ -28,11 +26,9 @@ index f1ecbc6..697d78b 100644
  	else
  		fprintf(fd, "0x%04x         %s", code, plus ? "" : " ");
  }
-diff --git a/src/libkeymap/ksyms.c b/src/libkeymap/ksyms.c
-index 22b1336..a54a7aa 100644
 --- a/src/libkeymap/ksyms.c
 +++ b/src/libkeymap/ksyms.c
-@@ -302,6 +302,14 @@ ksymtocode(struct lk_ctx *ctx, const char *s, int direction) {
+@@ -289,6 +289,14 @@
  		/* fall through to error printf */
  	}
  

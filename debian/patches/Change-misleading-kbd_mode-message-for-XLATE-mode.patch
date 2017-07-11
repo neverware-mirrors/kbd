@@ -19,16 +19,14 @@ codesearch.google.com shows only the BiCon project
  src/kbd_mode.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/src/kbd_mode.c b/src/kbd_mode.c
-index b45ffdf..f654d8e 100644
 --- a/src/kbd_mode.c
 +++ b/src/kbd_mode.c
-@@ -88,7 +88,7 @@ main(int argc, char *argv[]){
- 		printf(_("The keyboard is in mediumraw (keycode) mode\n"));
- 		break;
- 	      case K_XLATE:
--		printf(_("The keyboard is in the default (ASCII) mode\n"));
-+		printf(_("The keyboard is in xlate (8-bit) mode\n"));
- 		break;
- 	      case K_UNICODE:
- 		printf(_("The keyboard is in Unicode (UTF-8) mode\n"));
+@@ -91,7 +91,7 @@
+ 				printf(_("The keyboard is in mediumraw (keycode) mode\n"));
+ 				break;
+ 			case K_XLATE:
+-				printf(_("The keyboard is in the default (ASCII) mode\n"));
++				printf(_("The keyboard is in xlate (8-bit) mode\n"));
+ 				break;
+ 			case K_UNICODE:
+ 				printf(_("The keyboard is in Unicode (UTF-8) mode\n"));
