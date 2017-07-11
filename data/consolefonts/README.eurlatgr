@@ -65,6 +65,9 @@ CP10006
 CP10029
 CP10079
 CP10081
+Adobe Latin 1
+Adobe Latin 2
+Adobe Latin 3
 Apple CELTIC
 Apple CENTEURO
 Apple CROATIAN
@@ -90,7 +93,7 @@ WGL4
 
 Attached is also the complete list of glyphs supported by the font. By 
 remapping identical or similar characters to same positions the number 
-of glyphs (664) is way over the 512 limit. In the character list the 
+of glyphs (666) is way over the 512 limit. In the character list the 
 order shows remappings so when you see for example the following, it is 
 possible to figure out what is being remapped to what (you can of course 
 use psfgettable(1) to extract the exact mappings from the font file 
@@ -230,6 +233,7 @@ U+004B LATIN CAPITAL LETTER K                                        K
 U+039A GREEK CAPITAL LETTER KAPPA                                    Κ
 U+212A KELVIN SIGN                                                   K
 U+004C LATIN CAPITAL LETTER L                                        L
+U+2113 SCRIPT SMALL L                                                ℓ
 U+004D LATIN CAPITAL LETTER M                                        M
 U+039C GREEK CAPITAL LETTER MU                                       Μ
 U+004E LATIN CAPITAL LETTER N                                        N
@@ -343,6 +347,7 @@ U+016A LATIN CAPITAL LETTER U WITH MACRON                            Ū
 U+00DF LATIN SMALL LETTER SHARP S                                    ß
 U+03B2 GREEK SMALL LETTER BETA                                       β
 U+00A0 NO-BREAK SPACE                                                 
+U+202F NARROW NO-BREAK SPACE                                          
 U+2423 OPEN BOX                                                      ␣
 U+0104 LATIN CAPITAL LETTER A WITH OGONEK                            Ą
 U+0138 LATIN SMALL LETTER KRA                                        ĸ

@@ -1,77 +1,70 @@
-/* For koi8-r, see rfc1489.txt */
-/* For koi8-u, see rfc2319.txt
-   it is identical to koi8-r with 8 exceptions */
-/* Since koi8-r did not have letters on these 8 places,
-   we can use the same table for both. */
-/* TODO: check unicode values for these 8 positions */
-
 static sym
-const koi8_syms[] = { /* 128-255 */
-	{ 0x2500, "" },                        /* 0200 */
-	{ 0x2502, "" },
-	{ 0x250c, "" },
-	{ 0x2510, "" },
-	{ 0x2514, "" },
-	{ 0x2518, "" },
-	{ 0x251c, "" },
-	{ 0x2524, "" },
-	{ 0x252c, "" },                        /* 0210 */
-	{ 0x2534, "" },
-	{ 0x253c, "" },
-	{ 0x2580, "" },
-	{ 0x2584, "" },
-	{ 0x2588, "" },
-	{ 0x258c, "" },
-	{ 0x2590, "" },
-	{ 0x2591, "" },                        /* 0220 */
-	{ 0x2592, "" },
-	{ 0x2593, "" },
-	{ 0x2320, "" },
-	{ 0x25a0, "" },
-	{ 0x2219, "" },
-	{ 0x221a, "" },
-	{ 0x2248, "" },
-	{ 0x2264, "" },                        /* 0230 */
-	{ 0x2265, "" },
-	{ 0x00a0, "" },
-	{ 0x2321, "" },
-	{ 0x00b0, "" },
-	{ 0x00b2, "" },
-	{ 0x00b7, "" },
-	{ 0x00f7, "" },
-	{ 0x2550, "" },                        /* 0240 */
-	{ 0x2551, "" },
-	{ 0x2552, "" },
+const koi8_syms[] = {
+	{ 0x2500, "box_drawings_light_horizontal" },
+	{ 0x2502, "box_drawings_light_vertical" },
+	{ 0x250c, "box_drawings_light_down_and_right" },
+	{ 0x2510, "box_drawings_light_down_and_left" },
+	{ 0x2514, "box_drawings_light_up_and_right" },
+	{ 0x2518, "box_drawings_light_up_and_left" },
+	{ 0x251c, "box_drawings_light_vertical_and_right" },
+	{ 0x2524, "box_drawings_light_vertical_and_left" },
+	{ 0x252c, "box_drawings_light_down_and_horizontal" },
+	{ 0x2534, "box_drawings_light_up_and_horizontal" },
+	{ 0x253c, "box_drawings_light_vertical_and_horizontal" },
+	{ 0x2580, "upper_half_block" },
+	{ 0x2584, "lower_half_block" },
+	{ 0x2588, "full_block" },
+	{ 0x258c, "left_half_block" },
+	{ 0x2590, "right_half_block" },
+	{ 0x2591, "light_shade" },
+	{ 0x2592, "medium_shade" },
+	{ 0x2593, "dark_shade" },
+	{ 0x2320, "top_half_integral" },
+	{ 0x25a0, "black_square" },
+	{ 0x2219, "bullet_operator" },
+	{ 0x221a, "square_root" },
+	{ 0x2248, "almost_equal_to" },
+	{ 0x2264, "less_than_or_equal_to" },
+	{ 0x2265, "greater_than_or_equal_to" },
+	{ 0x00a0, "nobreakspace" },
+	{ 0x2321, "bottom_half_integral" },
+	{ 0x00b0, "degree" },
+	{ 0x00b2, "twosuperior" },
+	{ 0x00b7, "periodcentered" },
+	{ 0x00f7, "division" },
+	{ 0x2550, "box_drawings_double_horizontal" },
+	{ 0x2551, "box_drawings_double_vertical" },
+	{ 0x2552, "box_drawings_down_single_and_right_double" },
 	{ 0x0451, "cyrillic_small_letter_io" },
-	{ 0x2553, "ukrainian_cyrillic_small_letter_ie" },  /* koi8-u #164 */
-	{ 0x2554, "" },
-	{ 0x2555, "ukrainian_cyrillic_small_letter_i" },   /* koi8-u #166 */
-	{ 0x2556, "ukrainian_cyrillic_small_letter_yi" },  /* koi8-u #167 */
-	{ 0x2557, "" },                        /* 0250 */
-	{ 0x2558, "" },
-	{ 0x2559, "" },
-	{ 0x255a, "" },
-	{ 0x255b, "" },
-	{ 0x255c, "ukrainian_cyrillic_small_letter_ghe_with_upturn" }, /* koi8-u #173 */
-	{ 0x255d, "" },
-	{ 0x255e, "" },
-	{ 0x255f, "" },                        /* 0260 */
-	{ 0x2560, "" },
-	{ 0x2561, "" },
+	{ 0x0454, "ukrainian_cyrillic_small_letter_ie" },
+	{ 0x2554, "box_drawings_double_down_and_right" },
+	{ 0x0456, "ukrainian_cyrillic_small_letter_i" },
+	{ 0x0457, "ukrainian_cyrillic_small_letter_yi" },
+	{ 0x2557, "box_drawings_double_down_and_left" },
+	{ 0x2558, "box_drawings_up_single_and_right_double" },
+	{ 0x2559, "box_drawings_up_double_and_right_single" },
+	{ 0x255a, "box_drawings_double_up_and_right" },
+	{ 0x255b, "box_drawings_up_single_and_left_double" },
+	{ 0x0491, "cyrillic_small_letter_ghe_with_upturn" },
+	{ 0x255d, "box_drawings_double_up_and_left" },
+	{ 0x255e, "box_drawings_vertical_single_and_right_double" },
+	{ 0x255f, "box_drawings_vertical_double_and_right_single" },
+	{ 0x2560, "box_drawings_double_vertical_and_right" },
+	{ 0x2561, "box_drawings_vertical_single_and_left_double" },
 	{ 0x0401, "cyrillic_capital_letter_io" },
-	{ 0x2562, "ukrainian_cyrillic_capital_letter_ie" },/* koi8-u #180 */
-	{ 0x2563, "" },
-	{ 0x2564, "ukrainian_cyrillic_capital_letter_i" }, /* koi8-u #182 */
-	{ 0x2565, "ukrainian_cyrillic_capital_letter_yi" },/* koi8-u #183 */
-	{ 0x2566, "" },                        /* 0270 */
-	{ 0x2567, "" },
-	{ 0x2568, "" },
-	{ 0x2569, "" },
-	{ 0x256a, "" },
-	{ 0x256b, "ukrainian_cyrillic_capital_letter_ghe_with_upturn" },/* koi8-u #189 */
-	{ 0x256c, "" },
+	{ 0x0404, "ukrainian_cyrillic_capital_letter_ie" },
+	{ 0x2563, "double_vertical_and_left" },
+	{ 0x0406, "ukrainian_cyrillic_capital_letter_i" },
+	{ 0x0407, "ukrainian_cyrillic_capital_letter_yi" },
+	{ 0x2566, "box_drawings_double_down_and_horizontal" },
+	{ 0x2567, "box_drawings_up_single_and_horizontal_double" },
+	{ 0x2568, "box_drawings_up_double_and_horizontal_single" },
+	{ 0x2569, "box_drawings_double_up_and_horizontal" },
+	{ 0x256a, "box_drawings_vertical_single_and_horizontal_double" },
+	{ 0x0490, "cyrillic_capital_letter_ghe_with_upturn" },
+	{ 0x256c, "box_drawings_double_vertical_and_horizontal" },
 	{ 0x00a9, "copyright" },
-	{ 0x044e, "cyrillic_small_letter_yu" },                        /* 0300 */
+	{ 0x044e, "cyrillic_small_letter_yu" },
 	{ 0x0430, "cyrillic_small_letter_a" },
 	{ 0x0431, "cyrillic_small_letter_be" },
 	{ 0x0446, "cyrillic_small_letter_tse" },
@@ -79,7 +72,7 @@ const koi8_syms[] = { /* 128-255 */
 	{ 0x0435, "cyrillic_small_letter_ie" },
 	{ 0x0444, "cyrillic_small_letter_ef" },
 	{ 0x0433, "cyrillic_small_letter_ghe" },
-	{ 0x0445, "cyrillic_small_letter_ha" },                        /* 0310 */
+	{ 0x0445, "cyrillic_small_letter_ha" },
 	{ 0x0438, "cyrillic_small_letter_i" },
 	{ 0x0439, "cyrillic_small_letter_short_i" },
 	{ 0x043a, "cyrillic_small_letter_ka" },
@@ -87,7 +80,7 @@ const koi8_syms[] = { /* 128-255 */
 	{ 0x043c, "cyrillic_small_letter_em" },
 	{ 0x043d, "cyrillic_small_letter_en" },
 	{ 0x043e, "cyrillic_small_letter_o" },
-	{ 0x043f, "cyrillic_small_letter_pe" },                                /* 0320 */
+	{ 0x043f, "cyrillic_small_letter_pe" },
 	{ 0x044f, "cyrillic_small_letter_ya" },
 	{ 0x0440, "cyrillic_small_letter_er" },
 	{ 0x0441, "cyrillic_small_letter_es" },
@@ -95,7 +88,7 @@ const koi8_syms[] = { /* 128-255 */
 	{ 0x0443, "cyrillic_small_letter_u" },
 	{ 0x0436, "cyrillic_small_letter_zhe" },
 	{ 0x0432, "cyrillic_small_letter_ve" },
-	{ 0x044c, "cyrillic_small_soft_sign" },                                /* 0330 */
+	{ 0x044c, "cyrillic_small_soft_sign" },
 	{ 0x044b, "cyrillic_small_letter_yeru" },
 	{ 0x0437, "cyrillic_small_letter_ze" },
 	{ 0x0448, "cyrillic_small_letter_sha" },
@@ -103,7 +96,7 @@ const koi8_syms[] = { /* 128-255 */
 	{ 0x0449, "cyrillic_small_letter_shcha" },
 	{ 0x0447, "cyrillic_small_letter_che" },
 	{ 0x044a, "cyrillic_small_hard_sign" },
-	{ 0x042e, "cyrillic_capital_letter_yu" },                      /* 0340 */
+	{ 0x042e, "cyrillic_capital_letter_yu" },
 	{ 0x0410, "cyrillic_capital_letter_a" },
 	{ 0x0411, "cyrillic_capital_letter_be" },
 	{ 0x0426, "cyrillic_capital_letter_tse" },
@@ -111,7 +104,7 @@ const koi8_syms[] = { /* 128-255 */
 	{ 0x0415, "cyrillic_capital_letter_ie" },
 	{ 0x0424, "cyrillic_capital_letter_ef" },
 	{ 0x0413, "cyrillic_capital_letter_ghe" },
-	{ 0x0425, "cyrillic_capital_letter_ha" },                      /* 0350 */
+	{ 0x0425, "cyrillic_capital_letter_ha" },
 	{ 0x0418, "cyrillic_capital_letter_i" },
 	{ 0x0419, "cyrillic_capital_letter_short_i" },
 	{ 0x041a, "cyrillic_capital_letter_ka" },
@@ -119,7 +112,7 @@ const koi8_syms[] = { /* 128-255 */
 	{ 0x041c, "cyrillic_capital_letter_em" },
 	{ 0x041d, "cyrillic_capital_letter_en" },
 	{ 0x041e, "cyrillic_capital_letter_o" },
-	{ 0x041f, "cyrillic_capital_letter_pe" },                      /* 0360 */
+	{ 0x041f, "cyrillic_capital_letter_pe" },
 	{ 0x042f, "cyrillic_capital_letter_ya" },
 	{ 0x0420, "cyrillic_capital_letter_er" },
 	{ 0x0421, "cyrillic_capital_letter_es" },
@@ -127,12 +120,12 @@ const koi8_syms[] = { /* 128-255 */
 	{ 0x0423, "cyrillic_capital_letter_u" },
 	{ 0x0416, "cyrillic_capital_letter_zhe" },
 	{ 0x0412, "cyrillic_capital_letter_ve" },
-	{ 0x042c, "cyrillic_capital_soft_sign" },                      /* 0370 */
+	{ 0x042c, "cyrillic_capital_soft_sign" },
 	{ 0x042b, "cyrillic_capital_letter_yeru" },
 	{ 0x0417, "cyrillic_capital_letter_ze" },
 	{ 0x0428, "cyrillic_capital_letter_sha" },
 	{ 0x042d, "cyrillic_capital_letter_e" },
 	{ 0x0429, "cyrillic_capital_letter_shcha" },
 	{ 0x0427, "cyrillic_capital_letter_che" },
-	{ 0x042a, "cyrillic_capital_hard_sign" }
+	{ 0x042a, "cyrillic_capital_hard_sign" },
 };

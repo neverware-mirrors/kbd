@@ -1,7 +1,3 @@
-/* 
- * Keysyms whose KTYP is KT_LATIN or KT_LETTER and whose KVAL is 128..255,
- * and their Unicode equivalent.
- */
 static sym
 const latin1_syms[] = {
 	{ 0x00a0, "nobreakspace" },
@@ -99,5 +95,5 @@ const latin1_syms[] = {
 	{ 0x00fc, "udiaeresis" },
 	{ 0x00fd, "yacute" },
 	{ 0x00fe, "thorn" },
-	{ 0x00ff, "ydiaeresis" }
+	{ 0x00ff, "ydiaeresis" },
 };

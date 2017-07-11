@@ -12,6 +12,7 @@
 %{
 #define YY_HEADER_EXPORT_START_CONDITIONS 1
 
+#include "config.h"
 #include "nls.h"
 #include "kbd.h"
 
@@ -272,7 +273,7 @@ strline		: STRING LITERAL EQUALS STRLITERAL EOL
 					YYERROR;
 			}
 		;
-compline        : COMPOSE compsym compsym TO compsym EOL
+compline        : COMPOSE compsym compsym TO CCHAR EOL
                         {
 				struct lk_kbdiacr ptr;
 				ptr.diacr  = $2;
