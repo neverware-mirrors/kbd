@@ -1,3 +1,12 @@
+kbd (2.0.4-2) unstable; urgency=medium
+
+  * Drop obsolete lsb-base dependency
+  * Bump to debhelper compat 10 (automatic dh-autoreconf, etc)
+  * Bump Standards-Version to 4.1.0
+  * Remove myself from uploaders
+
+ -- Andreas Henriksson <andreas@fatal.se>  Fri, 15 Sep 2017 10:33:29 +0200
+
 kbd (2.0.4-1) unstable; urgency=medium
 
   * debian/gbp.conf: Add import-orig upstream-vcs-tag setting
