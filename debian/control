@@ -5,7 +5,7 @@ Maintainer: Console utilities maintainers <pkg-kbd-devel@lists.alioth.debian.org
 Uploaders: Michael Schutte <michi@debian.org>, Anton Zinoviev <zinoviev@debian.org>
 Build-Depends: dpkg-dev (>= 1.16.1), debhelper (>= 10),
     linuxdoc-tools, gettext, flex, bison, pkg-config, check
-Standards-Version: 4.1.0
+Standards-Version: 4.1.4
 Homepage: http://www.kbd-project.org/
 Vcs-Git: https://salsa.debian.org/debian/kbd.git
 Vcs-Browser: https://salsa.debian.org/debian/kbd
