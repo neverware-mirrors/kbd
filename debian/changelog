@@ -1,3 +1,12 @@
+kbd (2.0.4-4) unstable; urgency=medium
+
+  * Team upload.
+  * Use dpkg/architecture.mk instead of manually setting DEB_* variables
+  * Stop creating open (-> openvt) compatibility symlink (Closes: #732796)
+  * Bump Standards-Version to 4.1.5
+
+ -- Andreas Henriksson <andreas@fatal.se>  Sat, 28 Jul 2018 17:58:59 +0200
+
 kbd (2.0.4-3) unstable; urgency=medium
 
   * Team upload.
