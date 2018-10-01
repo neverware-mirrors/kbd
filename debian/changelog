@@ -1,6 +1,7 @@
 kbd (2.0.4-5) UNRELEASED; urgency=medium
 
   * d/copyright: Use https protocol in Format field
+  * d/changelog: Remove trailing whitespaces
 
  -- Ondřej Nový <onovy@debian.org>  Mon, 01 Oct 2018 09:47:00 +0200
 
@@ -577,7 +578,7 @@ kbd (1.12-18) unstable; urgency=low
     the keyboard in utf-8 mode.
   * Add an udeb with loadkeys and kbd_mode.  A patch was provided by Frans
     Pop and was modified to give a -Os option to the compiler.
-  
+
  -- Anton Zinoviev <zinoviev@debian.org>  Mon, 14 May 2007 18:34:54 +0300
 
 kbd (1.12-17) unstable; urgency=low
@@ -677,7 +678,7 @@ kbd (1.12-14) unstable; urgency=low
 
 kbd (1.12-13) unstable; urgency=low
 
-  * debian/patches/fedora-kbd-1.12-alias.patch: there are some C aliasing 
+  * debian/patches/fedora-kbd-1.12-alias.patch: there are some C aliasing
     violations, and setfont misbehaves in 1.12-12 because it has been
     compiled with GCC 4 whereas prior versions were compiled with GCC 3.
     Thanks Emanuele Rocca for this report, and Fedora folks for this patch.
@@ -788,7 +789,7 @@ kbd (1.12-3) unstable; urgency=low
     Apply patches sent to #251550 so that loadkeys sets keuboard maps
     depending on current mode and not on the format used to write keymap
     files.
-  * debian/patches/09canonicalsyms.dpatch:  
+  * debian/patches/09canonicalsyms.dpatch:
     Different symbolic names are used for the same Unicode character,
     which may confuse loadkeys (see #260758).
   * debian/patches/10charsets0.dpatch:
@@ -851,7 +852,7 @@ kbd (1.12-1) unstable; urgency=low
 
   * Finally, new upstream version. (Closes: #170715)
   * Now non-native. (Closes: #102411)
-  * Conflicts with util-linux now (better late, than 
+  * Conflicts with util-linux now (better late, than
     never). (Closes: #91848, #91839)
   * kbd now uses dpatch.
   * Bumped standarts-version to 3.5.9.
@@ -1063,7 +1064,7 @@ kbd (0.97-1) unstable; urgency=low
   * New upstream version.
   * Added back pt.map from 0.96a as pt-old.map; pt-latin1.map is a fixed
     version of pt2.map.
-  * Added back many data files from 0.96-a not yet forwarded upstream 
+  * Added back many data files from 0.96-a not yet forwarded upstream
     (seems like I forgot about quite a lot of them !)
   * Fixed i386/include/euro.map to use AltGr, not Alt.
   * Do not install M$-word (yes !) file n474.doc.
@@ -1071,7 +1072,7 @@ kbd (0.97-1) unstable; urgency=low
     has no technical ground, and will break installs where people
     specified the full name for a font file.  Thus we install them as .psf
     like we always did.
-  * Replaces: open instead of Suggesting: it because openvt is now part 
+  * Replaces: open instead of Suggesting: it because openvt is now part
     of kbd.
 
  -- Yann Dirson <dirson@debian.org>  Wed, 17 Feb 1999 22:07:01 +0100
@@ -1469,7 +1470,7 @@ kbd (0.94-4) unstable; urgency=low
 
   * Changes to kbdconfig:
   *  Added -u option to "resize" call (#13386).
-  *  Do not fail if /usr/local/share/keytables do not exist (#13329). 
+  *  Do not fail if /usr/local/share/keytables do not exist (#13329).
      Note that this dir is not used by any `kbd_0.94-?'.
   *  Fixed test whether showkey accepts --keymap option (doesn't in any
      `kbd_0.94-?' - does in experimental).
@@ -1500,14 +1501,14 @@ kbd (0.94-2) unstable; urgency=low
     both setvesablank.c and screendump.c, to allow compilation under debian's
     libc6_2.0.4-1.
   * Replaced psf.magic with fonts.magic from experimental. Installed in doc/.
-  
+
  -- Yann Dirson <dirson@univ-mlv.fr>  Mon, 22 Sep 1997 17:03:27 +0200
- 
+
 kbd (0.94-1) unstable; urgency=low
 
   * Upstream upgrade.
   * Added endianess patch to 'src/setfont.c' (Fix Bug #9842).
-  
+
  -- Vincent Renardias <vincent@waw.com>  Sun, 18 May 1997 19:20:43 +0200
 
 kbd (0.93-2) unstable; urgency=low
@@ -1515,7 +1516,7 @@ kbd (0.93-2) unstable; urgency=low
   * Added support for compressed keytables and sent patch to upstream
     developer (Fix Bug #5649).
   * Compressed keytables: saves 560 KB.
-  
+
  -- Vincent Renardias <vincent@waw.com>  Sat, 10 May 1997 15:50:04 +0200
 
 kbd (0.93-1) unstable; urgency=high
@@ -1526,23 +1527,23 @@ kbd (0.93-1) unstable; urgency=high
   * Upstream upgrade (Fix Bug #6830).
   * Added .lsm into doc directory.
   * Built with libc6.
-  
+
  -- Vincent Renardias <vincent@waw.com>  Fri,  9 May 1997 21:22:54 +0200
 
 kbd (0.92-3.2) frozen unstable; urgency=HIGH
 
   * Make sure the old /usr/lib/kbd directory is gone.
-  
+
  -- Vincent Renardias <vincent@waw.com>  Sat, 3 May 1997 21:14:38 +0200
 
 kbd (0.92-3.1) frozen unstable; urgency=HIGH
 
   * Changed broken symlink (Critical Bug #8263).
-  * Fix bad path in /usr/sbin/kbdconfig (Bug #8491). 
+  * Fix bad path in /usr/sbin/kbdconfig (Bug #8491).
   * Included patch from M. Dorman for glibc compatibility (Bug #8817).
   * Orphaned the package *sigh*.
     Uploaded by <vincent@waw.com>.
-  
+
  -- Debian QA Group <debian-qa@lists.debian.org>  Mon, 28 Apr 1997 21:27:10 +0200
 
 kbd (0.92-3) unstable; urgency=low
@@ -1566,7 +1567,7 @@ kbd (0.92-3) unstable; urgency=low
                         Do not include <linux/termios.h> and <linux/types.h>
                         when compiling under glibc2/libc6.
   * (src/getkeycodes.c) Added missing "#include <errno.h>" for glibc2/libc6.
-  
+
  -- Dominik Kubla <dominik@debian.org>  Mon, 17 Mar 1997 16:48:30 +0100
 
 kbd (0.92-2) unstable; urgency=low
