@@ -1,3 +1,9 @@
+kbd (2.0.4-5) UNRELEASED; urgency=medium
+
+  * d/copyright: Use https protocol in Format field
+
+ -- Ondřej Nový <onovy@debian.org>  Mon, 01 Oct 2018 09:47:00 +0200
+
 kbd (2.0.4-4) unstable; urgency=medium
 
   * Team upload.

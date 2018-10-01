@@ -1,4 +1,4 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: kbd
 Upstream-Contact: kbd@lists.altlinux.org, Alexey Gladkov <gladkov.alexey@gmail.com>
 Source: http://ftp.altlinux.org/pub/people/legion/kbd/
