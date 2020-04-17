@@ -16,59 +16,47 @@
 #include <string.h>
 #include <getopt.h>
 #include <unistd.h>
+#include <sysexits.h>
 #include <sys/ioctl.h>
 
-#include "nls.h"
-#include "kbd.h"
-#include "paths.h"
-#include "getfd.h"
-#include "kbd_error.h"
+#include "libcommon.h"
 
+#include "paths.h"
 #include "keymap.h"
 
-static const char *progname         = NULL;
 static const char *const dirpath1[] = { "", DATADIR "/" KEYMAPDIR "/**", KERNDIR "/", 0 };
 static const char *const suffixes[] = { "", ".kmap", ".map", 0 };
 
 static void __attribute__((noreturn))
-usage(void)
+usage(int rc)
 {
-	fprintf(stderr, _("loadkeys version %s\n"
-	                  "\n"
-	                  "Usage: %s [option...] [mapfile...]\n"
-	                  "\n"
-	                  "Valid options are:\n"
-	                  "\n"
-	                  "  -a --ascii         force conversion to ASCII\n"
-	                  "  -b --bkeymap       output a binary keymap to stdout\n"
-	                  "  -c --clearcompose  clear kernel compose table\n"
-	                  "  -C --console=file\n"
-	                  "                     the console device to be used\n"
-	                  "  -d --default       load \"%s\"\n"
-	                  "  -h --help          display this help text\n"
-	                  "  -m --mktable       output a \"defkeymap.c\" to stdout\n"
-	                  "  -p --parse         search and parse keymap without action\n"
-	                  "  -q --quiet         suppress all normal output\n"
-	                  "  -s --clearstrings  clear kernel string table\n"
-	                  "  -u --unicode       force conversion to Unicode\n"
-	                  "  -v --verbose       report the changes\n"
-	                  "  -V --version       print version number\n"),
-	        PACKAGE_VERSION, progname, DEFMAP);
-	exit(EXIT_FAILURE);
-}
-
-static inline const char *
-set_progname(const char *name)
-{
-	char *p;
-	p = strrchr(name, '/');
-	return (p && p + 1 ? p + 1 : name);
+	fprintf(stderr, _(
+		"loadkeys version %s\n"
+		"\n"
+		"Usage: %s [option...] [mapfile...]\n"
+		"\n"
+		"Options:\n"
+		"  -a, --ascii           force conversion to ASCII;\n"
+		"  -b, --bkeymap         output a binary keymap to stdout;\n"
+		"  -c, --clearcompose    clear kernel compose table;\n"
+		"  -C, --console=file    the console device to be used;\n"
+		"  -d, --default         load \"%s\";\n"
+		"  -m, --mktable         output a \"defkeymap.c\" to stdout;\n"
+		"  -p, --parse           search and parse keymap without action;\n"
+		"  -s, --clearstrings    clear kernel string table;\n"
+		"  -u, --unicode         force conversion to Unicode;\n"
+		"  -q, --quiet           suppress all normal output;\n"
+		"  -v, --verbose         explain what is being done;\n"
+		"  -h, --help            print this usage message;\n"
+		"  -V, --version         print version number.\n"),
+	        PACKAGE_VERSION, get_progname(), DEFMAP);
+	exit(rc);
 }
 
 int main(int argc, char *argv[])
 {
 	const char *const short_opts          = "abcC:dhmpsuqvV";
-	const struct option const long_opts[] = {
+	const struct option long_opts[] = {
 		{ "console", required_argument, NULL, 'C' },
 		{ "ascii", no_argument, NULL, 'a' },
 		{ "bkeymap", no_argument, NULL, 'b' },
@@ -107,18 +95,19 @@ int main(int argc, char *argv[])
 	int kd_mode;
 	char *console = NULL;
 	char *ev;
-	lkfile_t f;
+	struct kbdfile_ctx *fctx;
+	struct kbdfile *fp = NULL;
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
-
-	progname = set_progname(argv[0]);
+	set_progname(argv[0]);
+	setuplocale();
 
 	ctx = lk_init();
 	if (!ctx) {
 		exit(EXIT_FAILURE);
 	}
+
+	if ((fctx = kbdfile_context_new()) == NULL)
+		nomem();
 
 	while ((c = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
 		switch (c) {
@@ -158,18 +147,21 @@ int main(int argc, char *argv[])
 				lk_set_log_priority(ctx, LOG_INFO);
 				break;
 			case 'V':
-				fprintf(stdout, _("%s from %s\n"), progname, PACKAGE_STRING);
-				exit(0);
+				print_version_and_exit();
+				break;
 			case 'h':
+				usage(EXIT_SUCCESS);
+				break;
 			case '?':
-				usage();
+				usage(EX_USAGE);
+				break;
 		}
 	}
 
 	if ((options & OPT_U) && (options & OPT_A)) {
 		fprintf(stderr,
 		        _("%s: Options --unicode and --ascii are mutually exclusive\n"),
-		        progname);
+		        get_progname());
 		exit(EXIT_FAILURE);
 	}
 
@@ -182,7 +174,7 @@ int main(int argc, char *argv[])
 		if (ioctl(fd, KDGKBMODE, &kbd_mode) ||
 		    ioctl(fd, KDGETMODE, &kd_mode)) {
 			fprintf(stderr, _("%s: error reading keyboard mode: %m\n"),
-			        progname);
+			        get_progname());
 			exit(EXIT_FAILURE);
 		}
 
@@ -191,7 +183,7 @@ int main(int argc, char *argv[])
 				fprintf(stderr,
 				        _("%s: warning: loading non-Unicode keymap on Unicode console\n"
 				          "    (perhaps you want to do `kbd_mode -a'?)\n"),
-				        progname);
+				        get_progname());
 			} else {
 				flags |= LK_FLAG_PREFER_UNICODE;
 			}
@@ -203,7 +195,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr,
 			        _("%s: warning: loading Unicode keymap on non-Unicode console\n"
 			          "    (perhaps you want to do `kbd_mode -u'?)\n"),
-			        progname);
+			        get_progname());
 		}
 	}
 
@@ -216,35 +208,52 @@ int main(int argc, char *argv[])
 	}
 
 	if (options & OPT_D) {
-		/* first read default map - search starts in . */
+		if ((fp = kbdfile_new(fctx)) == NULL)
+			nomem();
 
-		if (lk_findfile(DEFMAP, dirpath, suffixes, &f)) {
+		/* first read default map - search starts in . */
+		if (kbdfile_find((char *) DEFMAP, dirpath, suffixes, fp)) {
 			fprintf(stderr, _("Cannot find %s\n"), DEFMAP);
 			exit(EXIT_FAILURE);
 		}
 
-		if ((rc = lk_parse_keymap(ctx, &f)) == -1)
+		rc = lk_parse_keymap(ctx, fp);
+		kbdfile_free(fp);
+
+		if (rc == -1)
 			goto fail;
 
 	} else if (optind == argc) {
-		f.fd = stdin;
-		strcpy(f.pathname, "<stdin>");
+		if ((fp = kbdfile_new(fctx)) == NULL)
+			nomem();
 
-		if ((rc = lk_parse_keymap(ctx, &f)) == -1)
+		kbdfile_set_file(fp, stdin);
+		kbdfile_set_pathname(fp, "<stdin>");
+
+		rc = lk_parse_keymap(ctx, fp);
+		kbdfile_free(fp);
+
+		if (rc == -1)
 			goto fail;
 	}
 
 	for (i = optind; argv[i]; i++) {
-		if (!strcmp(argv[i], "-")) {
-			f.fd = stdin;
-			strcpy(f.pathname, "<stdin>");
+		if ((fp = kbdfile_new(fctx)) == NULL)
+			nomem();
 
-		} else if (lk_findfile(argv[i], dirpath, suffixes, &f)) {
+		if (!strcmp(argv[i], "-")) {
+			kbdfile_set_file(fp, stdin);
+			kbdfile_set_pathname(fp, "<stdin>");
+
+		} else if (kbdfile_find(argv[i], dirpath, suffixes, fp)) {
 			fprintf(stderr, _("cannot open file %s\n"), argv[i]);
 			goto fail;
 		}
 
-		if ((rc = lk_parse_keymap(ctx, &f)) == -1)
+		rc = lk_parse_keymap(ctx, fp);
+		kbdfile_free(fp);
+
+		if (rc == -1)
 			goto fail;
 	}
 
@@ -260,7 +269,7 @@ int main(int argc, char *argv[])
 
 fail:
 	lk_free(ctx);
-	lk_fpclose(&f);
+	kbdfile_context_free(fctx);
 
 	if (fd >= 0)
 		close(fd);

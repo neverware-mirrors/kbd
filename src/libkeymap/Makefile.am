@@ -1,10 +1,21 @@
 AM_CPPFLAGS = \
+	$(CODE_COVERAGE_CPPFLAGS) \
 	-I$(srcdir) -I$(builddir) -I$(srcdir)/.. -I$(builddir)/.. \
+	-I$(srcdir)/../libcommon -I$(builddir)/../libcommon \
+	-I$(srcdir)/../libkbdfile -I$(builddir)/../libkbdfile \
 	-DDATADIR=\"$(datadir)\" -DLOCALEDIR=\"$(localedir)\" \
-	-U_GNU_SOURCE -D_FORTIFY_SOURCE=2 \
+	-U_GNU_SOURCE \
 	-funit-at-a-time
+
+AM_CFLAGS = $(CODE_COVERAGE_CFLAGS)
+LDADD     = $(CODE_COVERAGE_LIBS)
+
 CLEANFILES = libkeymap.pc
 EXTRA_DIST = libkeymap.pc.in
+
+LK_CURRENT  = 1
+LK_REVISION = 0
+LK_AGE      = 0
 
 headers = \
 	keymap.h \
@@ -15,8 +26,7 @@ headers = \
 	keymap/dump.h \
 	keymap/kernel.h \
 	keymap/kmap.h \
-	keymap/logging.h \
-	keymap/findfile.h
+	keymap/logging.h
 
 SYMS = \
   syms.latin1.h/8859-1/160 \
@@ -45,12 +55,14 @@ ksyms_headers = \
 libkeymap_la_SOURCES = \
 	$(headers) \
 	array.c \
-	findfile.c common.c kernel.c dump.c kmap.c diacr.c func.c summary.c loadkeys.c \
+	common.c kernel.c dump.c kmap.c diacr.c func.c summary.c loadkeys.c \
 	contextP.h \
 	parser.y parser.h analyze.l analyze.h \
 	modifiers.c modifiers.h \
 	ksyms.c ksyms.h $(ksyms_headers) \
-	$(srcdir)/../nls.h $(srcdir)/../paths.h $(srcdir)/../kbd.h
+	$(srcdir)/../paths.h
+
+libkeymap_la_LIBADD = $(builddir)/../libkbdfile/libkbdfile.la
 
 if BUILD_LIBKEYMAP
 pkgconfigdir   = $(libdir)/pkgconfig
@@ -58,7 +70,7 @@ pkgconfig_DATA = libkeymap.pc
 
 lib_LTLIBRARIES = libkeymap.la
 nobase_include_HEADERS = $(headers)
-libkeymap_la_LDFLAGS = -export-symbols-regex ^lk_.*
+libkeymap_la_LDFLAGS = -export-symbols-regex ^lk_.* -version-info $(LK_CURRENT):$(LK_REVISION):$(LK_AGE)
 else
 noinst_LTLIBRARIES = libkeymap.la
 endif
@@ -67,8 +79,13 @@ AM_LFLAGS = --header-file=$(CURDIR)/analyze.h
 BUILT_SOURCES = parser.c analyze.c parser.h analyze.h $(ksyms_gen_headers)
 CLEANFILES += $(BUILT_SOURCES)
 
-GEN_SYMS  = $(top_srcdir)/contrib/gen_charset_syms.pl
 TRANS_DIR = $(top_srcdir)/data/consoletrans
+
+GEN_SYMS     = $(top_srcdir)/contrib/gen_charset_syms.pl
+V_GEN_SYMS   = $(V_GEN_SYMS_$(V))
+V_GEN_SYMS_  = $(V_GEN_SYMS_$(AM_DEFAULT_VERBOSITY))
+V_GEN_SYMS_0 = @echo "  CHARSET " $@;
+V_GEN_SYMS_1 =
 
 charset_headers = $(foreach x,$(SYMS),$(word 1,$(subst /, ,$(x))))
 charset_trans   = $(TRANS_DIR)/$(word 2,$(subst /, ,$(filter syms.$(1).h/%,$(SYMS))))_to_uni.trans
@@ -78,7 +95,7 @@ parser.h: parser.c ; @true
 analyze.h: analyze.c ; @true
 
 syms.%.h:
-	$(GEN_SYMS) -n $*_syms -s $(call charset_start,$*) <$(call charset_trans,$*) >$(builddir)/$@
+	$(V_GEN_SYMS)$(GEN_SYMS) -n $*_syms -s $(call charset_start,$*) <$(call charset_trans,$*) >$(builddir)/$@
 
 %.pc: %.pc.in Makefile
 	sed \

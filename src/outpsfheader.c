@@ -4,7 +4,9 @@
 
 #include <stdio.h>
 #include <stdlib.h> /* exit */
-#include "kbd.h"
+
+#include "libcommon.h"
+
 #include "psf.h"
 
 static void __attribute__((noreturn))
@@ -16,14 +18,21 @@ usage(void)
 
 int main(int argc, char **argv)
 {
-	int psftype, fontsize, charsize, hastable;
+	int psftype, hastable;
+	unsigned int fontsize, charsize;
 
 	if (argc != 5)
 		usage();
+
 	psftype  = atoi(argv[1]);
-	fontsize = atoi(argv[2]);
-	charsize = atoi(argv[3]);
+	fontsize = (unsigned int) atoi(argv[2]);
+	charsize = (unsigned int) atoi(argv[3]);
 	hastable = atoi(argv[4]);
+
+	if (charsize > UCHAR_MAX) {
+		fprintf(stderr, "charsize is too large\n");
+		exit(1);
+	}
 
 	if (psftype == 1) {
 		struct psf1_header h1;
@@ -35,7 +44,7 @@ int main(int argc, char **argv)
 		h1.mode     = (fontsize == 256) ? 0 : PSF1_MODE512;
 		if (hastable)
 			h1.mode |= PSF1_MODEHASTAB;
-		h1.charsize = charsize;
+		h1.charsize = (unsigned char) charsize;
 		if (fwrite(&h1, sizeof(h1), 1, stdout) != 1) {
 			fprintf(stderr, "write error\n");
 			exit(1);

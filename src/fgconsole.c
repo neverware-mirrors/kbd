@@ -8,27 +8,28 @@
 #include <errno.h>
 #include <sys/ioctl.h>
 #include <getopt.h>
+#include <sysexits.h>
 #include <linux/vt.h>
 #include <linux/serial.h>
-#include "getfd.h"
-#include "nls.h"
-#include "version.h"
-#include "kbd_error.h"
+
+#include "libcommon.h"
 
 static void __attribute__((noreturn))
-usage(void)
+usage(int rc)
 {
-	fprintf(stderr, _("%s version %s\n"
-	                  "\n"
-	                  "Usage: %s [options]\n"
-	                  "\n"
-	                  "Valid options are:\n"
-	                  "\n"
-	                  "	-h --help            display this help text\n"
-	                  "	-V --version         display program version\n"
-	                  "	-n --next-available  display number of next unallocated VT\n"),
+	const char *progname = get_progname();
+	fprintf(stderr, _(
+		"%s version %s\n"
+		"\n"
+		"Usage: %s [options]\n"
+		"\n"
+		"Options:\n"
+		"\n"
+		"  -n, --next-available  print number of next unallocated VT\n"
+		"  -h, --help            print this usage message;\n"
+		"  -V, --version         print version number.\n"),
 	        progname, PACKAGE_VERSION, progname);
-	exit(EXIT_FAILURE);
+	exit(rc);
 }
 
 int main(int argc, char **argv)
@@ -43,25 +44,23 @@ int main(int argc, char **argv)
 		{ NULL, 0, NULL, 0 }
 	};
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
-
 	set_progname(argv[0]);
+	setuplocale();
+
 	while ((c = getopt_long(argc, argv, "Vhn", long_opts, NULL)) != EOF) {
 		switch (c) {
-			case 'h':
-				usage();
-				exit(0);
 			case 'n':
 				show_vt = 1;
 				break;
 			case 'V':
 				print_version_and_exit();
 				break;
+			case 'h':
+				usage(EXIT_SUCCESS);
+				break;
 			case '?':
-				usage();
-				exit(1);
+				usage(EX_USAGE);
+				break;
 		}
 	}
 

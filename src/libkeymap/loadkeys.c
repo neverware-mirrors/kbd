@@ -10,8 +10,7 @@
 
 #include "keymap.h"
 
-#include "nls.h"
-#include "kbd.h"
+#include "libcommon.h"
 #include "contextP.h"
 #include "ksyms.h"
 
@@ -32,16 +31,23 @@ defkeys(struct lk_ctx *ctx, int fd, int kbd_mode)
 	}
 
 	for (i = 0; i < MAX_NR_KEYMAPS; i++) {
-		unsigned int exist = lk_map_exists(ctx, i);
+		int exist = lk_map_exists(ctx, i);
 
 		if (exist) {
 			for (j = 0; j < NR_KEYS; j++) {
 				if (!lk_key_exists(ctx, i, j))
 					continue;
 
-				ke.kb_index = j;
-				ke.kb_table = i;
-				ke.kb_value = lk_get_key(ctx, i, j);
+				int value = lk_get_key(ctx, i, j);
+
+				if (value < 0 || value > USHRT_MAX) {
+					WARN(ctx, _("can not bind key %d to value %d because it is too large"), j, value);
+					continue;
+				}
+
+				ke.kb_index = (unsigned char) j;
+				ke.kb_table = (unsigned char) i;
+				ke.kb_value = (unsigned short) value;
 
 				fail = ioctl(fd, KDSKBENT, (unsigned long)&ke);
 
@@ -56,17 +62,17 @@ defkeys(struct lk_ctx *ctx, int fd, int kbd_mode)
 					ct++;
 
 				INFO(ctx, _("keycode %d, table %d = %d%s"),
-				     j, i, lk_get_key(ctx, i, j), fail ? _("    FAILED") : "");
+				     j, i, ke.kb_value, fail ? _("    FAILED") : "");
 
 				if (fail)
 					WARN(ctx, _("failed to bind key %d to value %d"),
-					     j, lk_get_key(ctx, i, j));
+					     j, ke.kb_value);
 			}
 
 		} else if ((ctx->keywords & LK_KEYWORD_KEYMAPS) && !exist) {
 			/* deallocate keymap */
 			ke.kb_index = 0;
-			ke.kb_table = i;
+			ke.kb_table = (unsigned char) i;
 			ke.kb_value = K_NOSUCHMAP;
 
 			DBG(ctx, _("deallocate keymap %d"), i);
@@ -80,8 +86,8 @@ defkeys(struct lk_ctx *ctx, int fd, int kbd_mode)
 				/* probably an old kernel */
 				/* clear keymap by hand */
 				for (j = 0; j < NR_KEYS; j++) {
-					ke.kb_index = j;
-					ke.kb_table = i;
+					ke.kb_index = (unsigned char) j;
+					ke.kb_table = (unsigned char) i;
 					ke.kb_value = K_HOLE;
 
 					if (ioctl(fd, KDSKBENT, (unsigned long)&ke)) {
@@ -112,9 +118,9 @@ fail:
 static char *
 ostr(struct lk_ctx *ctx, char *s)
 {
-	int lth   = strlen(s);
-	char *ns0 = malloc(4 * lth + 1);
-	char *ns  = ns0;
+	size_t lth = strlen(s);
+	char *ns0  = malloc(4 * lth + 1);
+	char *ns   = ns0;
 
 	if (ns == NULL) {
 		ERR(ctx, _("out of memory"));
@@ -145,12 +151,13 @@ ostr(struct lk_ctx *ctx, char *s)
 static int
 deffuncs(struct lk_ctx *ctx, int fd)
 {
-	int i, ct = 0;
+	unsigned int i;
+	int ct = 0;
 	char *ptr, *s;
 	struct kbsentry kbs;
 
 	for (i = 0; i < MAX_NR_FUNC; i++) {
-		kbs.kb_func = i;
+		kbs.kb_func = (unsigned char) i;
 
 		ptr = lk_array_get_ptr(ctx->func_table, i);
 
@@ -186,10 +193,11 @@ defdiacs(struct lk_ctx *ctx, int fd)
 	unsigned int i, j, count;
 	struct lk_kbdiacr *ptr;
 
-	count = ctx->accent_table->count;
-	if (count > MAX_DIACR) {
+	if (ctx->accent_table->count > MAX_DIACR) {
 		count = MAX_DIACR;
 		ERR(ctx, _("too many compose definitions"));
+	} else {
+		count = (unsigned int) ctx->accent_table->count;
 	}
 #ifdef KDSKBDIACRUC
 	if (ctx->flags & LK_FLAG_PREFER_UNICODE) {
@@ -224,9 +232,16 @@ defdiacs(struct lk_ctx *ctx, int fd)
 			if (!ptr)
 				continue;
 
-			kd.kbdiacr[j].diacr  = ptr->diacr;
-			kd.kbdiacr[j].base   = ptr->base;
-			kd.kbdiacr[j].result = ptr->result;
+			if (ptr->diacr > UCHAR_MAX ||
+			    ptr->base > UCHAR_MAX ||
+			    ptr->result > UCHAR_MAX) {
+				ERR(ctx, "unable to load compose definitions because some of them are too large");
+				return -1;
+			}
+
+			kd.kbdiacr[j].diacr  = (unsigned char) ptr->diacr;
+			kd.kbdiacr[j].base   = (unsigned char) ptr->base;
+			kd.kbdiacr[j].result = (unsigned char) ptr->result;
 			j++;
 		}
 
@@ -236,7 +251,7 @@ defdiacs(struct lk_ctx *ctx, int fd)
 		}
 	}
 
-	return count;
+	return (int) count;
 }
 
 int lk_load_keymap(struct lk_ctx *ctx, int fd, int kbd_mode)
@@ -249,8 +264,8 @@ int lk_load_keymap(struct lk_ctx *ctx, int fd, int kbd_mode)
 	if ((keyct = defkeys(ctx, fd, kbd_mode)) < 0 || (funcct = deffuncs(ctx, fd)) < 0)
 		return -1;
 
-	INFO(ctx, P_("\nChanged %d key", "\nChanged %d keys", keyct), keyct);
-	INFO(ctx, P_("Changed %d string", "Changed %d strings", funcct), funcct);
+	INFO(ctx, P_("\nChanged %d key", "\nChanged %d keys", (unsigned int) keyct), keyct);
+	INFO(ctx, P_("Changed %d string", "Changed %d strings", (unsigned int) funcct), funcct);
 
 	if (ctx->accent_table->count > 0 || ctx->flags & LK_FLAG_CLEAR_COMPOSE) {
 		diacct = defdiacs(ctx, fd);
@@ -259,7 +274,7 @@ int lk_load_keymap(struct lk_ctx *ctx, int fd, int kbd_mode)
 			return -1;
 
 		INFO(ctx, P_("Loaded %d compose definition",
-		             "Loaded %d compose definitions", diacct),
+		             "Loaded %d compose definitions", (unsigned int) diacct),
 		     diacct);
 
 	} else {

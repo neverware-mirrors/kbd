@@ -72,6 +72,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <limits.h>
 #include <string.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -80,12 +81,12 @@
 #include <sys/io.h>
 #include <sys/ioctl.h>
 #include <linux/vt.h>
+
+#include <kbdfile.h>
+
 #include "paths.h"
-#include "getfd.h"
-#include "findfile.h"
-#include "nls.h"
-#include "version.h"
-#include "kbd_error.h"
+
+#include "libcommon.h"
 
 #define MODE_RESTORETEXTMODE 0
 #define MODE_VGALINES 1
@@ -112,14 +113,11 @@ int main(int argc, char **argv)
 	struct winsize winsize;
 	char *p;
 	char tty[12], cmd[80], infile[1024];
-	char *defaultfont;
-	lkfile_t fp;
+	const char *defaultfont;
+	struct kbdfile *fp;
 
 	set_progname(argv[0]);
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	setuplocale();
 
 	if (argc < 2)
 		usage();
@@ -140,13 +138,26 @@ int main(int argc, char **argv)
 	else
 		usage();
 
+	if (cc <= 0 || cc > USHRT_MAX) {
+		kbd_error(EXIT_FAILURE, 0, _("resizecons: invalid columns number %d\n"), cc);
+		usage();
+	}
+
+	if (rr <= 0 || rr > USHRT_MAX) {
+		kbd_error(EXIT_FAILURE, 0, _("resizecons: invalid rows number %d\n"), rr);
+		usage();
+	}
+
+	if ((fp = kbdfile_new(NULL)) == NULL)
+		nomem();
+
 	if (mode == MODE_RESTORETEXTMODE) {
 		/* prepare for: restoretextmode -r 80x25 */
 		sprintf(infile, "%dx%d", cc, rr);
-		if (lk_findfile(infile, dirpath, suffixes, &fp)) {
+		if (kbdfile_find(infile, dirpath, suffixes, fp)) {
 			kbd_error(EXIT_FAILURE, 0, _("resizecons: cannot find videomode file %s\n"), infile);
 		}
-		lk_fpclose(&fp);
+		kbdfile_close(fp);
 	}
 
 	if ((fd = getfd(NULL)) < 0)
@@ -169,8 +180,8 @@ int main(int argc, char **argv)
 		kbd_error(EXIT_FAILURE, errno, "ioctl VT_GETSTATE");
 	}
 
-	vtsizes.v_rows       = rr;
-	vtsizes.v_cols       = cc;
+	vtsizes.v_rows       = (unsigned short) rr;
+	vtsizes.v_cols       = (unsigned short) cc;
 	vtsizes.v_scrollsize = 0;
 
 	vga_init_io(); /* maybe only if (mode == MODE_VGALINES) */
@@ -252,7 +263,7 @@ int main(int argc, char **argv)
 
 	if (mode == MODE_RESTORETEXTMODE) {
 		/* do: restoretextmode -r 25x80 */
-		sprintf(cmd, "restoretextmode -r %s\n", fp.pathname);
+		sprintf(cmd, "restoretextmode -r %s\n", kbdfile_get_pathname(fp));
 		errno = 0;
 		if (system(cmd)) {
 			if (errno)
@@ -262,6 +273,8 @@ int main(int argc, char **argv)
 		}
 	}
 
+	kbdfile_free(fp);
+
 	/*
      * for i in /dev/tty[0-9] /dev/tty[0-9][0-9]
      * do
@@ -269,8 +282,8 @@ int main(int argc, char **argv)
      * done
      * kill -SIGWINCH `cat /tmp/selection.pid`
      */
-	winsize.ws_row = rr;
-	winsize.ws_col = cc;
+	winsize.ws_row = (unsigned short) rr;
+	winsize.ws_col = (unsigned short) cc;
 	for (i = 0; i < 16; i++)
 		if (vtstat.v_state & (1 << i)) {
 			sprintf(tty, "/dev/tty%d", i);

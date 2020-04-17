@@ -2,16 +2,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <getopt.h>
 #include <sys/ioctl.h>
 #include <linux/kd.h>
 #include <errno.h>
-#include "kbd.h"
-#include "getfd.h"
-#include "nls.h"
-#include "version.h"
-#include "kbd_error.h"
+#include <sysexits.h>
+
+#include "libcommon.h"
 
 static unsigned char cmap[3 * 16];
 
@@ -40,9 +39,9 @@ unsigned char vga_colors[] = {
 static void __attribute__((noreturn))
 usage(int code)
 {
+	const char *progname = get_progname();
 	fprintf(stderr,
-	        _("Usage: %s [-h] [-V]\n"
-	          "       %s vga|FILE|-\n"
+	        _("Usage: %s [options] [vga|FILE|-]\n"
 	          "\n"
 	          "If you use the FILE parameter, FILE should be exactly 3 lines of\n"
 	          "comma-separated decimal values for RED, GREEN, and BLUE.\n"
@@ -52,11 +51,12 @@ usage(int code)
 	          "\n"
 	          "and then edit the values in FILE.\n"
 	          "\n"
-	          "Other options:\n"
-	          "   -h     print this usage message\n"
-	          "   -V     print version number\n"
+	          "Options:\n"
+	          "  -C, --console=DEV     the console device to be used;\n"
+	          "  -h, --help            print this usage message;\n"
+	          "  -V, --version         print version number.\n"
 	          "\n"),
-	        progname, progname);
+	        progname);
 	exit(code);
 }
 
@@ -99,26 +99,40 @@ int main(int argc, char **argv)
 	const char *file;
 	unsigned char *colormap = cmap;
 	FILE *f;
+	const char *console = NULL;
+
+	const char *short_opts = "C:hV";
+	const struct option long_opts[] = {
+		{ "console", required_argument, NULL, 'C' },
+		{ "help",    no_argument,       NULL, 'h' },
+		{ "version", no_argument,       NULL, 'V' },
+		{ NULL,      0,                 NULL,  0  }
+	};
 
 	set_progname(argv[0]);
+	setuplocale();
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
-
-	while ((c = getopt(argc, argv, "hV")) != EOF) {
+	while ((c = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
 		switch (c) {
+			case 'C':
+				if (optarg == NULL || optarg[0] == '\0')
+					usage(EX_USAGE);
+				console = optarg;
+				break;
 			case 'V':
 				print_version_and_exit();
 				break;
 			case 'h':
 				usage(EXIT_SUCCESS);
 				break;
+			case '?':
+				usage(EX_USAGE);
+				break;
 		}
 	}
 
 	if (optind == argc)
-		usage(EXIT_FAILURE);
+		usage(EX_USAGE);
 
 	file = argv[optind];
 
@@ -136,7 +150,7 @@ int main(int argc, char **argv)
 		fclose(f);
 	}
 
-	if ((fd = getfd(NULL)) < 0)
+	if ((fd = getfd(console)) < 0)
 		kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console"));
 
 	/* Apply the color map to the tty via ioctl */

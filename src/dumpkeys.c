@@ -16,46 +16,41 @@
 #include <sys/ioctl.h>
 #include <string.h>
 #include <errno.h>
+#include <sysexits.h>
 #include "ksyms.h"
-#include "getfd.h"
 #include "modifiers.h"
-#include "nls.h"
-#include "version.h"
-#include "kbd_error.h"
+
+#include "libcommon.h"
 
 static int fd;
 
 static void __attribute__((noreturn))
-usage(void)
+usage(int rc)
 {
 	fprintf(stderr, _("dumpkeys version %s"), PACKAGE_VERSION);
-	fprintf(stderr, _("\
-\n\
-usage: dumpkeys [options...]\n\
-\n\
-valid options are:\n\
-\n\
-	-h --help	    display this help text\n\
-	-i --short-info	    display information about keyboard driver\n\
-	-l -s --long-info   display above and symbols known to loadkeys\n\
-	-n --numeric	    display keytable in hexadecimal notation\n\
-	-f --full-table	    don't use short-hand notations, one row per keycode\n\
-	-1 --separate-lines one line per (modifier,keycode) pair\n\
-	-S --shape=\n\
-	-t --funcs-only	    display only the function key strings\n\
-	-k --keys-only	    display only key bindings\n\
-	-d --compose-only   display only compose key combinations\n\
-	-c --charset="));
+	fprintf(stderr, _("\n"
+	"usage: dumpkeys [options...]\n"
+	"\n"
+	"Options:\n"
+	"  -i, --short-info      display information about keyboard driver;\n"
+	"  -l, -s, --long-info   display above and symbols known to loadkeys;\n"
+	"  -n, --numeric         display keytable in hexadecimal notation;\n"
+	"  -f, --full-table      don't use short-hand notations, one row per keycode;\n"
+	"  -1, --separate-lines  one line per (modifier,keycode) pair;\n"
+	"  -S, --shape=\n"
+	"  -t, --funcs-only      display only the function key strings;\n"
+	"  -k, --keys-only       display only key bindings;\n"
+	"  -d, --compose-only    display only compose key combinations;\n"
+	"  -c, --charset="));
 	lk_list_charsets(stderr);
-	fprintf(stderr, _("\
-			    interpret character action codes to be from the\n\
-			    specified character set\n\
-"));
-	fprintf(stderr, _("\
-	-v --verbose\n\
-	-V --version	    print version number\n\
-"));
-	exit(1);
+	fprintf(stderr, _(
+	"                        interpret character action codes to be from the\n"
+	"                        specified character set;\n"));
+	fprintf(stderr, _(
+	"  -v, --verbose         explain what is being done;\n"
+	"  -h, --help            print this usage message;\n"
+	"  -V, --version         print version number.\n"));
+	exit(rc);
 }
 
 int main(int argc, char *argv[])
@@ -91,10 +86,7 @@ int main(int argc, char *argv[])
 	struct lk_ctx *ctx;
 
 	set_progname(argv[0]);
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	setuplocale();
 
 	ctx = lk_init();
 	if (!ctx) {
@@ -139,20 +131,24 @@ int main(int argc, char *argv[])
 				if ((lk_set_charset(ctx, optarg)) != 0) {
 					fprintf(stderr, _("unknown charset %s - ignoring charset request\n"),
 					        optarg);
-					usage();
+					usage(EX_USAGE);
 				}
 				printf("charset \"%s\"\n", optarg);
 				break;
 			case 'V':
 				print_version_and_exit();
+				break;
 			case 'h':
+				usage(EXIT_SUCCESS);
+				break;
 			case '?':
-				usage();
+				usage(EX_USAGE);
+				break;
 		}
 	}
 
 	if (optind < argc)
-		usage();
+		usage(EX_USAGE);
 
 	if ((fd = getfd(NULL)) < 0)
 		kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console"));
@@ -160,7 +156,7 @@ int main(int argc, char *argv[])
 	/* check whether the keyboard is in Unicode mode */
 	if (ioctl(fd, KDGKBMODE, &kbd_mode)) {
 		fprintf(stderr, _("%s: error reading keyboard mode: %m\n"),
-		        progname);
+		        get_progname());
 		exit(EXIT_FAILURE);
 	}
 
@@ -176,7 +172,7 @@ int main(int argc, char *argv[])
 
 		if (long_info) {
 			printf(_("Symbols recognized by %s:\n(numeric value, symbol)\n\n"),
-			       progname);
+			       get_progname());
 			lk_dump_symbols(ctx, stdout);
 		}
 		exit(EXIT_SUCCESS);

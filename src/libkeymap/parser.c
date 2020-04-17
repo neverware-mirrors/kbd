@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.0.14.8bf2.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.4.0.14.8bf2"
+#define YYBISON_VERSION "3.0.5"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -64,11 +64,8 @@
 /* Copy the first part of user declarations.  */
 #line 12 "parser.y" /* yacc.c:339  */
 
-#define YY_HEADER_EXPORT_START_CONDITIONS 1
-
 #include "config.h"
-#include "nls.h"
-#include "kbd.h"
+#include "libcommon.h"
 
 #include "contextP.h"
 #include "ksyms.h"
@@ -77,7 +74,7 @@
 #include "parser.h"
 #include "analyze.h"
 
-#line 81 "parser.c" /* yacc.c:339  */
+#line 78 "parser.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -97,8 +94,8 @@
 
 /* In a future release of Bison, this section will be replaced
    by #include "y.tab.h".  */
-#ifndef YY_YY_Y_TAB_H_INCLUDED
-# define YY_YY_Y_TAB_H_INCLUDED
+#ifndef YY_YY_PARSER_H_INCLUDED
+# define YY_YY_PARSER_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
@@ -107,20 +104,21 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 27 "parser.y" /* yacc.c:355  */
+#line 24 "parser.y" /* yacc.c:355  */
 
+#include <kbdfile.h>
 #include "keymap.h"
 
 #ifndef STRDATA_STRUCT
 #define STRDATA_STRUCT
 #define MAX_PARSER_STRING 512
 struct strdata {
-	unsigned int len;
+	unsigned long len;
 	unsigned char data[MAX_PARSER_STRING];
 };
 #endif
 
-#line 124 "parser.c" /* yacc.c:355  */
+#line 122 "parser.c" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -202,12 +200,12 @@ struct strdata {
 
 union YYSTYPE
 {
-#line 59 "parser.y" /* yacc.c:355  */
+#line 57 "parser.y" /* yacc.c:355  */
 
-	long long int num;
+	int num;
 	struct strdata str;
 
-#line 211 "parser.c" /* yacc.c:355  */
+#line 209 "parser.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -219,10 +217,10 @@ typedef union YYSTYPE YYSTYPE;
 
 int yyparse (void *scanner, struct lk_ctx *ctx);
 
-#endif /* !YY_YY_Y_TAB_H_INCLUDED  */
+#endif /* !YY_YY_PARSER_H_INCLUDED  */
 
 /* Copy the second part of user declarations.  */
-#line 72 "parser.y" /* yacc.c:358  */
+#line 70 "parser.y" /* yacc.c:358  */
 
 static int
 yyerror(yyscan_t scanner __attribute__ ((unused)),
@@ -238,7 +236,7 @@ strings_as_usual(struct lk_ctx *ctx)
 	/*
 	 * 26 strings, mostly inspired by the VT100 family
 	 */
-	char *stringvalues[30] = {
+	const char *stringvalues[30] = {
 		/* F1 .. F20 */
 		"\033[[A",  "\033[[B",  "\033[[C",  "\033[[D",  "\033[[E",
 		"\033[17~", "\033[18~", "\033[19~", "\033[20~", "\033[21~",
@@ -250,14 +248,13 @@ strings_as_usual(struct lk_ctx *ctx)
 		/* Next,    Macro,      Help,       Do,         Pause */
 		"\033[6~",  0,          0,          0,          0
 	};
-	int i;
+	unsigned char i;
 
 	for (i = 0; i < 30; i++) {
 		if (stringvalues[i]) {
 			struct kbsentry ke;
 			ke.kb_func = i;
-			strncpy((char *)ke.kb_string, stringvalues[i],
-				sizeof(ke.kb_string));
+			strncpy((char *)ke.kb_string, stringvalues[i], sizeof(ke.kb_string));
 			ke.kb_string[sizeof(ke.kb_string) - 1] = 0;
 
 			if (lk_add_func(ctx, &ke) == -1)
@@ -330,7 +327,7 @@ compose_as_usual(struct lk_ctx *ctx, char *charset)
 }
 
 
-#line 334 "parser.c" /* yacc.c:358  */
+#line 331 "parser.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -631,12 +628,12 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   181,   181,   182,   184,   185,   186,   187,   188,   189,
-     190,   191,   192,   194,   211,   216,   223,   228,   234,   239,
-     240,   242,   250,   256,   276,   286,   297,   298,   300,   360,
-     366,   373,   374,   376,   377,   378,   379,   380,   381,   382,
-     383,   384,   388,   389,   391,   397,   398,   399,   400,   401,
-     402
+       0,   178,   178,   179,   181,   182,   183,   184,   185,   186,
+     187,   188,   189,   191,   208,   213,   220,   225,   231,   236,
+     237,   239,   247,   253,   275,   285,   296,   297,   299,   359,
+     365,   372,   373,   375,   376,   377,   378,   379,   380,   381,
+     382,   383,   387,   388,   390,   396,   397,   398,   399,   400,
+     401
 };
 #endif
 
@@ -1150,6 +1147,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
       case N:                               \
         yyformat = S;                       \
       break
+    default: /* Avoid compiler warnings. */
       YYCASE_(0, YY_("syntax error"));
       YYCASE_(1, YY_("syntax error, unexpected %s"));
       YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
@@ -1472,7 +1470,7 @@ yyreduce:
   switch (yyn)
     {
         case 13:
-#line 195 "parser.y" /* yacc.c:1647  */
+#line 192 "parser.y" /* yacc.c:1648  */
     {
 				if (lk_set_charset(ctx, (char *) (yyvsp[-1].str).data)) {
 					ERR(ctx,
@@ -1488,55 +1486,55 @@ yyreduce:
 				    !strcasecmp((char *) (yyvsp[-1].str).data, "iso-8859-1"))
 					ctx->flags ^= LK_FLAG_PREFER_UNICODE;
 			}
-#line 1492 "parser.c" /* yacc.c:1647  */
+#line 1490 "parser.c" /* yacc.c:1648  */
     break;
 
   case 14:
-#line 212 "parser.y" /* yacc.c:1647  */
+#line 209 "parser.y" /* yacc.c:1648  */
     {
 				ctx->keywords |= LK_KEYWORD_ALTISMETA;
 			}
-#line 1500 "parser.c" /* yacc.c:1647  */
+#line 1498 "parser.c" /* yacc.c:1648  */
     break;
 
   case 15:
-#line 217 "parser.y" /* yacc.c:1647  */
+#line 214 "parser.y" /* yacc.c:1648  */
     {
 				if (strings_as_usual(ctx) == -1)
 					YYERROR;
 				ctx->keywords |= LK_KEYWORD_STRASUSUAL;
 			}
-#line 1510 "parser.c" /* yacc.c:1647  */
+#line 1508 "parser.c" /* yacc.c:1648  */
     break;
 
   case 16:
-#line 224 "parser.y" /* yacc.c:1647  */
+#line 221 "parser.y" /* yacc.c:1648  */
     {
 				if (compose_as_usual(ctx, (char *) (yyvsp[-1].str).data) == -1)
 					YYERROR;
 			}
-#line 1519 "parser.c" /* yacc.c:1647  */
+#line 1517 "parser.c" /* yacc.c:1648  */
     break;
 
   case 17:
-#line 229 "parser.y" /* yacc.c:1647  */
+#line 226 "parser.y" /* yacc.c:1648  */
     {
 				if (compose_as_usual(ctx, 0) == -1)
 					YYERROR;
 			}
-#line 1528 "parser.c" /* yacc.c:1647  */
+#line 1526 "parser.c" /* yacc.c:1648  */
     break;
 
   case 18:
-#line 235 "parser.y" /* yacc.c:1647  */
+#line 232 "parser.y" /* yacc.c:1648  */
     {
 				ctx->keywords |= LK_KEYWORD_KEYMAPS;
 			}
-#line 1536 "parser.c" /* yacc.c:1647  */
+#line 1534 "parser.c" /* yacc.c:1648  */
     break;
 
   case 21:
-#line 243 "parser.y" /* yacc.c:1647  */
+#line 240 "parser.y" /* yacc.c:1648  */
     {
 				int i;
 				for (i = (yyvsp[-2].num); i <= (yyvsp[0].num); i++) {
@@ -1544,20 +1542,20 @@ yyreduce:
 						YYERROR;
 				}
 			}
-#line 1548 "parser.c" /* yacc.c:1647  */
+#line 1546 "parser.c" /* yacc.c:1648  */
     break;
 
   case 22:
-#line 251 "parser.y" /* yacc.c:1647  */
+#line 248 "parser.y" /* yacc.c:1648  */
     {
 				if (lk_add_map(ctx, (yyvsp[0].num)) == -1)
 					YYERROR;
 			}
-#line 1557 "parser.c" /* yacc.c:1647  */
+#line 1555 "parser.c" /* yacc.c:1648  */
     break;
 
   case 23:
-#line 257 "parser.y" /* yacc.c:1647  */
+#line 254 "parser.y" /* yacc.c:1648  */
     {
 				struct kbsentry ke;
 
@@ -1567,62 +1565,64 @@ yyreduce:
 					YYERROR;
 				}
 
-				ke.kb_func = KVAL((yyvsp[-3].num));
+				ke.kb_func = (unsigned char) KVAL((yyvsp[-3].num));
+
 				strncpy((char *) ke.kb_string,
 				        (char *) (yyvsp[-1].str).data,
 				        sizeof(ke.kb_string));
+
 				ke.kb_string[sizeof(ke.kb_string) - 1] = 0;
 
 				if (lk_add_func(ctx, &ke) == -1)
 					YYERROR;
 			}
-#line 1580 "parser.c" /* yacc.c:1647  */
+#line 1580 "parser.c" /* yacc.c:1648  */
     break;
 
   case 24:
-#line 277 "parser.y" /* yacc.c:1647  */
+#line 276 "parser.y" /* yacc.c:1648  */
     {
 				struct lk_kbdiacr ptr;
-				ptr.diacr  = (yyvsp[-4].num);
-				ptr.base   = (yyvsp[-3].num);
-				ptr.result = (yyvsp[-1].num);
+				ptr.diacr  = (unsigned int) (yyvsp[-4].num);
+				ptr.base   = (unsigned int) (yyvsp[-3].num);
+				ptr.result = (unsigned int) (yyvsp[-1].num);
 
 				if (lk_append_compose(ctx, &ptr) == -1)
 					YYERROR;
 			}
-#line 1594 "parser.c" /* yacc.c:1647  */
+#line 1594 "parser.c" /* yacc.c:1648  */
     break;
 
   case 25:
-#line 287 "parser.y" /* yacc.c:1647  */
+#line 286 "parser.y" /* yacc.c:1648  */
     {
 				struct lk_kbdiacr ptr;
-				ptr.diacr  = (yyvsp[-4].num);
-				ptr.base   = (yyvsp[-3].num);
-				ptr.result = (yyvsp[-1].num);
+				ptr.diacr  = (unsigned int) (yyvsp[-4].num);
+				ptr.base   = (unsigned int) (yyvsp[-3].num);
+				ptr.result = (unsigned int) (yyvsp[-1].num);
 
 				if (lk_append_compose(ctx, &ptr) == -1)
 					YYERROR;
 			}
-#line 1608 "parser.c" /* yacc.c:1647  */
+#line 1608 "parser.c" /* yacc.c:1648  */
     break;
 
   case 26:
-#line 297 "parser.y" /* yacc.c:1647  */
+#line 296 "parser.y" /* yacc.c:1648  */
     {	(yyval.num) = (yyvsp[0].num);		}
-#line 1614 "parser.c" /* yacc.c:1647  */
+#line 1614 "parser.c" /* yacc.c:1648  */
     break;
 
   case 27:
-#line 298 "parser.y" /* yacc.c:1647  */
+#line 297 "parser.y" /* yacc.c:1648  */
     {	(yyval.num) = (yyvsp[0].num) ^ 0xf000;	}
-#line 1620 "parser.c" /* yacc.c:1647  */
+#line 1620 "parser.c" /* yacc.c:1648  */
     break;
 
   case 28:
-#line 301 "parser.y" /* yacc.c:1647  */
+#line 300 "parser.y" /* yacc.c:1648  */
     {
-				unsigned int j, i, keycode;
+				int j, i, keycode;
 				int *val;
 
 				if (ctx->key_line->count == 1) {
@@ -1666,7 +1666,7 @@ yyreduce:
 					}
 
 					if (i < ctx->key_line->count) {
-						ERR(ctx, _("too many (%d) entries on one line"),
+						ERR(ctx, _("too many (%ld) entries on one line"),
 							ctx->key_line->count);
 						YYERROR;
 					}
@@ -1679,130 +1679,130 @@ yyreduce:
 					}
 				}
 			}
-#line 1683 "parser.c" /* yacc.c:1647  */
+#line 1683 "parser.c" /* yacc.c:1648  */
     break;
 
   case 29:
-#line 361 "parser.y" /* yacc.c:1647  */
+#line 360 "parser.y" /* yacc.c:1648  */
     {
 				if (lk_add_key(ctx, ctx->mod, (yyvsp[-3].num), (yyvsp[-1].num)) < 0)
 					YYERROR;
 				ctx->mod = 0;
 			}
-#line 1693 "parser.c" /* yacc.c:1647  */
+#line 1693 "parser.c" /* yacc.c:1648  */
     break;
 
   case 30:
-#line 367 "parser.y" /* yacc.c:1647  */
+#line 366 "parser.y" /* yacc.c:1648  */
     {
 				if (lk_add_key(ctx, 0, (yyvsp[-3].num), (yyvsp[-1].num)) < 0)
 					YYERROR;
 				ctx->mod = 0;
 			}
-#line 1703 "parser.c" /* yacc.c:1647  */
+#line 1703 "parser.c" /* yacc.c:1648  */
     break;
 
   case 33:
-#line 376 "parser.y" /* yacc.c:1647  */
+#line 375 "parser.y" /* yacc.c:1648  */
     { ctx->mod |= M_SHIFT;	}
-#line 1709 "parser.c" /* yacc.c:1647  */
+#line 1709 "parser.c" /* yacc.c:1648  */
     break;
 
   case 34:
-#line 377 "parser.y" /* yacc.c:1647  */
+#line 376 "parser.y" /* yacc.c:1648  */
     { ctx->mod |= M_CTRL;	}
-#line 1715 "parser.c" /* yacc.c:1647  */
+#line 1715 "parser.c" /* yacc.c:1648  */
     break;
 
   case 35:
-#line 378 "parser.y" /* yacc.c:1647  */
+#line 377 "parser.y" /* yacc.c:1648  */
     { ctx->mod |= M_ALT;		}
-#line 1721 "parser.c" /* yacc.c:1647  */
+#line 1721 "parser.c" /* yacc.c:1648  */
     break;
 
   case 36:
-#line 379 "parser.y" /* yacc.c:1647  */
+#line 378 "parser.y" /* yacc.c:1648  */
     { ctx->mod |= M_ALTGR;	}
-#line 1727 "parser.c" /* yacc.c:1647  */
+#line 1727 "parser.c" /* yacc.c:1648  */
     break;
 
   case 37:
-#line 380 "parser.y" /* yacc.c:1647  */
+#line 379 "parser.y" /* yacc.c:1648  */
     { ctx->mod |= M_SHIFTL;	}
-#line 1733 "parser.c" /* yacc.c:1647  */
+#line 1733 "parser.c" /* yacc.c:1648  */
     break;
 
   case 38:
-#line 381 "parser.y" /* yacc.c:1647  */
+#line 380 "parser.y" /* yacc.c:1648  */
     { ctx->mod |= M_SHIFTR;	}
-#line 1739 "parser.c" /* yacc.c:1647  */
+#line 1739 "parser.c" /* yacc.c:1648  */
     break;
 
   case 39:
-#line 382 "parser.y" /* yacc.c:1647  */
+#line 381 "parser.y" /* yacc.c:1648  */
     { ctx->mod |= M_CTRLL;	}
-#line 1745 "parser.c" /* yacc.c:1647  */
+#line 1745 "parser.c" /* yacc.c:1648  */
     break;
 
   case 40:
-#line 383 "parser.y" /* yacc.c:1647  */
+#line 382 "parser.y" /* yacc.c:1648  */
     { ctx->mod |= M_CTRLR;	}
-#line 1751 "parser.c" /* yacc.c:1647  */
+#line 1751 "parser.c" /* yacc.c:1648  */
     break;
 
   case 41:
-#line 384 "parser.y" /* yacc.c:1647  */
+#line 383 "parser.y" /* yacc.c:1648  */
     { ctx->mod |= M_CAPSSHIFT;	}
-#line 1757 "parser.c" /* yacc.c:1647  */
+#line 1757 "parser.c" /* yacc.c:1648  */
     break;
 
   case 44:
-#line 392 "parser.y" /* yacc.c:1647  */
+#line 391 "parser.y" /* yacc.c:1648  */
     {
 				int val = (yyvsp[0].num);
 				lk_array_append(ctx->key_line, &val);
 			}
-#line 1766 "parser.c" /* yacc.c:1647  */
+#line 1766 "parser.c" /* yacc.c:1648  */
     break;
 
   case 45:
-#line 397 "parser.y" /* yacc.c:1647  */
+#line 396 "parser.y" /* yacc.c:1648  */
     { (yyval.num) = convert_code(ctx, (yyvsp[0].num), TO_AUTO);		}
-#line 1772 "parser.c" /* yacc.c:1647  */
+#line 1772 "parser.c" /* yacc.c:1648  */
     break;
 
   case 46:
-#line 398 "parser.y" /* yacc.c:1647  */
+#line 397 "parser.y" /* yacc.c:1648  */
     { (yyval.num) = add_capslock(ctx, (yyvsp[0].num));			}
-#line 1778 "parser.c" /* yacc.c:1647  */
+#line 1778 "parser.c" /* yacc.c:1648  */
     break;
 
   case 47:
-#line 399 "parser.y" /* yacc.c:1647  */
+#line 398 "parser.y" /* yacc.c:1648  */
     { (yyval.num) = convert_code(ctx, (yyvsp[0].num)^0xf000, TO_AUTO);	}
-#line 1784 "parser.c" /* yacc.c:1647  */
+#line 1784 "parser.c" /* yacc.c:1648  */
     break;
 
   case 48:
-#line 400 "parser.y" /* yacc.c:1647  */
+#line 399 "parser.y" /* yacc.c:1648  */
     { (yyval.num) = add_capslock(ctx, (yyvsp[0].num)^0xf000);		}
-#line 1790 "parser.c" /* yacc.c:1647  */
+#line 1790 "parser.c" /* yacc.c:1648  */
     break;
 
   case 49:
-#line 401 "parser.y" /* yacc.c:1647  */
+#line 400 "parser.y" /* yacc.c:1648  */
     { (yyval.num) = (yyvsp[0].num);					}
-#line 1796 "parser.c" /* yacc.c:1647  */
+#line 1796 "parser.c" /* yacc.c:1648  */
     break;
 
   case 50:
-#line 402 "parser.y" /* yacc.c:1647  */
+#line 401 "parser.y" /* yacc.c:1648  */
     { (yyval.num) = add_capslock(ctx, (yyvsp[0].num));			}
-#line 1802 "parser.c" /* yacc.c:1647  */
+#line 1802 "parser.c" /* yacc.c:1648  */
     break;
 
 
-#line 1806 "parser.c" /* yacc.c:1647  */
+#line 1806 "parser.c" /* yacc.c:1648  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2030,23 +2030,22 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 404 "parser.y" /* yacc.c:1906  */
+#line 403 "parser.y" /* yacc.c:1907  */
 
 
 int
-lk_parse_keymap(struct lk_ctx *ctx, lkfile_t *f)
+lk_parse_keymap(struct lk_ctx *ctx, struct kbdfile *fp)
 {
 	yyscan_t scanner;
 	int rc = -1;
 
 	ctx->mod = 0;
 
-	yylex_init(&scanner);
 	yylex_init_extra(ctx, &scanner);
 
-	INFO(ctx, _("Loading %s"), f->pathname);
+	INFO(ctx, _("Loading %s"), kbdfile_get_pathname(fp));
 
-	if (stack_push(ctx, f, scanner) == -1)
+	if (stack_push(ctx, fp, scanner) == -1)
 		goto fail;
 
 	if (yyparse(scanner, ctx))
@@ -2054,8 +2053,9 @@ lk_parse_keymap(struct lk_ctx *ctx, lkfile_t *f)
 
 	rc = 0;
 
+fail:
 	stack_pop(ctx, scanner);
 
- fail:	yylex_destroy(scanner);
+	yylex_destroy(scanner);
 	return rc;
 }

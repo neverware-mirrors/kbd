@@ -6,36 +6,63 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <linux/vt.h>
-#include "getfd.h"
-#include "nls.h"
-#include "version.h"
-#include "kbd_error.h"
+#include <getopt.h>
+#include <sysexits.h>
+
+#include "libcommon.h"
+
+static void __attribute__((noreturn))
+usage(int rc)
+{
+	fprintf(stderr, _("Usage: %s [option...] [N ...]\n"
+	                  "\n"
+	                  "Options:\n"
+	                  "\n"
+	                  "  -h, --help            print this usage message;\n"
+	                  "  -V, --version         print version number.\n"),
+		get_progname());
+	exit(rc);
+}
 
 int main(int argc, char *argv[])
 {
 	int fd, num, i;
 
+	const char *const short_opts = "hV";
+	const struct option long_opts[] = {
+		{ "help",    no_argument, NULL, 'h' },
+		{ "version", no_argument, NULL, 'V' },
+		{ NULL, 0, NULL, 0 }
+	};
+
 	if (argc < 1) /* unlikely */
 		return EXIT_FAILURE;
 	set_progname(argv[0]);
+	setuplocale();
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	while ((i = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
+		switch (i) {
+			case 'V':
+				print_version_and_exit();
+				break;
+			case 'h':
+				usage(EXIT_SUCCESS);
+			case '?':
+				usage(EX_USAGE);
+		}
+	}
 
-	if (argc == 2 && !strcmp(argv[1], "-V"))
-		print_version_and_exit();
-
-	for (i = 1; i < argc; i++) {
+	for (i = optind; i < argc; i++) {
 		if (!isdigit(argv[i][0])) {
-			fprintf(stderr, _("%s: unknown option\n"), progname);
-			return EXIT_FAILURE;
+			fprintf(stderr, _("%s: unknown option\n"), get_progname());
+			return EX_USAGE;
 		}
 	}
 

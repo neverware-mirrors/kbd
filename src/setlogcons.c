@@ -13,9 +13,8 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
-#include "getfd.h"
-#include "nls.h"
-#include "kbd_error.h"
+
+#include "libcommon.h"
 
 int main(int argc, char **argv)
 {
@@ -24,9 +23,8 @@ int main(int argc, char **argv)
 		char fn, subarg;
 	} arg;
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	set_progname(argv[0]);
+	setuplocale();
 
 	if (argc == 2)
 		cons = atoi(argv[1]);
