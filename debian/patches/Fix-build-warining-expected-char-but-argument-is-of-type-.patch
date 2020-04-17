@@ -1,0 +1,258 @@
+From: Alex Gladkov <gladkov.alexey@gmail.com>
+Date: Mon, 16 Dec 2019 16:37:27 +0100
+Subject: Fix build warining: expected 'char **' but argument is of type
+ 'const char **'
+
+Signed-off-by: Alex Gladkov <gladkov.alexey@gmail.com>
+---
+ src/libkeymap/analyze.l | 31 ++++++++++++++++++++++---------
+ src/loadkeys.c          | 18 ++++++++++++++----
+ src/loadunimap.c        | 13 +++++++++++--
+ src/mapscrn.c           | 14 ++++++++++++--
+ src/resizecons.c        | 11 +++++++++--
+ src/setfont.c           | 42 ++++++++++++++++++++++++++++++------------
+ 6 files changed, 98 insertions(+), 31 deletions(-)
+
+diff --git a/src/libkeymap/analyze.l b/src/libkeymap/analyze.l
+index e32ace6..9adcea7 100644
+--- a/src/libkeymap/analyze.l
++++ b/src/libkeymap/analyze.l
+@@ -98,20 +98,33 @@ stack_pop(struct lk_ctx *ctx, void *scanner)
+  * and afterwards use only "loadkeys /fullpath/mykeymap", where no
+  * lookups are required.
+  */
+-static const char *const include_dirpath0[] = { "", 0 };
+-static const char *const include_dirpath1[] = { "", "../include/", "../../include/", 0 };
+-static const char *const include_dirpath3[] = {
+-	DATADIR "/" KEYMAPDIR "/include/",
+-	DATADIR "/" KEYMAPDIR "/i386/include/",
+-	DATADIR "/" KEYMAPDIR "/mac/include/", 0
++static char *include_dirpath0[] = {
++	(char *) "",
++	NULL
++};
++static char *include_dirpath1[] = {
++	(char *) "",
++	(char *) "../include/",
++	(char *) "../../include/",
++	NULL
++};
++static char *include_dirpath3[] = {
++	(char *) DATADIR "/" KEYMAPDIR "/include/",
++	(char *) DATADIR "/" KEYMAPDIR "/i386/include/",
++	(char *) DATADIR "/" KEYMAPDIR "/mac/include/",
++	NULL
+ };
+ 
+-static const char *const include_suffixes[] = { "", ".inc", 0 };
++static char *include_suffixes[] = {
++	(char *) "",
++	(char *) ".inc",
++	NULL
++};
+ 
+ static int
+ find_incl_file_near_fn(struct lk_ctx *ctx, char *s, char *fn, struct kbdfile *fp)
+ {
+-	const char *include_dirpath2[] = { 0, 0, 0, 0 };
++	char *include_dirpath2[] = { NULL, NULL, NULL, NULL };
+ 	char *t, *te, *t1 = NULL, *t2 = NULL;
+ 	size_t len;
+ 	int rc = 1;
+@@ -211,7 +224,7 @@ find_incl_file(struct lk_ctx *ctx, char *s, struct kbdfile *fp)
+ 
+ 	if ((ev = getenv("LOADKEYS_INCLUDE_PATH")) != NULL) {
+ 		/* try user-specified path */
+-		const char *user_dir[2] = { 0, 0 };
++		char *user_dir[2] = { NULL, NULL };
+ 		while (ev) {
+ 			int rc;
+ 			char *t = strchr(ev, ':');
+diff --git a/src/loadkeys.c b/src/loadkeys.c
+index 406eef5..5ffa183 100644
+--- a/src/loadkeys.c
++++ b/src/loadkeys.c
+@@ -24,8 +24,18 @@
+ #include "paths.h"
+ #include "keymap.h"
+ 
+-static const char *const dirpath1[] = { "", DATADIR "/" KEYMAPDIR "/**", KERNDIR "/", 0 };
+-static const char *const suffixes[] = { "", ".kmap", ".map", 0 };
++static char *dirpath1[] = {
++	(char *) "",
++	(char *) DATADIR "/" KEYMAPDIR "/**",
++	(char *) KERNDIR "/",
++	NULL
++};
++static char *suffixes[] = {
++	(char *) "",
++	(char *) ".kmap",
++	(char *) ".map",
++	NULL
++};
+ 
+ static void __attribute__((noreturn))
+ usage(int rc)
+@@ -83,8 +93,8 @@ int main(int argc, char *argv[])
+ 	};
+ 	int options = 0;
+ 
+-	const char *const *dirpath;
+-	const char *dirpath2[] = { 0, 0 };
++	char **dirpath;
++	char *dirpath2[] = { NULL, NULL };
+ 
+ 	struct lk_ctx *ctx;
+ 	lk_flags flags = 0;
+diff --git a/src/loadunimap.c b/src/loadunimap.c
+index 716c6c3..af4a04e 100644
+--- a/src/loadunimap.c
++++ b/src/loadunimap.c
+@@ -30,8 +30,17 @@
+ extern char *progname;
+ extern int force;
+ 
+-static const char *const unidirpath[]  = { "", DATADIR "/" UNIMAPDIR "/", 0 };
+-static const char *const unisuffixes[] = { "", ".uni", ".sfm", 0 };
++static char *unidirpath[]  = {
++	(char *) "",
++	(char *) DATADIR "/" UNIMAPDIR "/",
++	NULL
++};
++static char *unisuffixes[] = {
++	(char *) "",
++	(char *) ".uni",
++	(char *) ".sfm",
++	NULL
++};
+ 
+ #ifdef MAIN
+ int verbose = 0;
+diff --git a/src/mapscrn.c b/src/mapscrn.c
+index 11739e4..5b46973 100644
+--- a/src/mapscrn.c
++++ b/src/mapscrn.c
+@@ -28,8 +28,18 @@ void loadnewmap(int fd, char *mfil);
+ static int ctoi(char *);
+ 
+ /* search for the map file in these directories (with trailing /) */
+-static const char *const mapdirpath[]  = { "", DATADIR "/" TRANSDIR "/", 0 };
+-static const char *const mapsuffixes[] = { "", ".trans", "_to_uni.trans", ".acm", 0 };
++static char *mapdirpath[]  = {
++	(char *) "",
++	(char *) DATADIR "/" TRANSDIR "/",
++	NULL
++};
++static char *mapsuffixes[] = {
++	(char *) "",
++	(char *) ".trans",
++	(char *) "_to_uni.trans",
++	(char *) ".acm",
++	NULL
++};
+ 
+ #ifdef MAIN
+ int verbose = 0;
+diff --git a/src/resizecons.c b/src/resizecons.c
+index ee746f3..c1072d1 100644
+--- a/src/resizecons.c
++++ b/src/resizecons.c
+@@ -102,8 +102,15 @@ static int vga_get_fontheight(void);
+ static void vga_set_cursor(int, int);
+ static void vga_set_verticaldisplayend_lowbyte(int);
+ 
+-const char *const dirpath[]  = { "", DATADIR "/" VIDEOMODEDIR "/", 0 };
+-const char *const suffixes[] = { "", 0 };
++char *dirpath[]  = {
++	(char *) "",
++	(char *) DATADIR "/" VIDEOMODEDIR "/",
++	NULL
++};
++char *suffixes[] = {
++	(char *) "",
++	NULL
++};
+ 
+ int main(int argc, char **argv)
+ {
+diff --git a/src/setfont.c b/src/setfont.c
+index 3e21e7c..6a10365 100644
+--- a/src/setfont.c
++++ b/src/setfont.c
+@@ -52,11 +52,29 @@ int force   = 0;
+ int debug   = 0;
+ 
+ /* search for the font in these directories (with trailing /) */
+-const char *const fontdirpath[]  = { "", DATADIR "/" FONTDIR "/", 0 };
+-const char *const fontsuffixes[] = { "", ".psfu", ".psf", ".cp", ".fnt", 0 };
++char *fontdirpath[]  = {
++	(char *) "",
++	(char *) DATADIR "/" FONTDIR "/",
++	NULL
++};
++char *fontsuffixes[] = {
++	(char *) "",
++	(char *) ".psfu",
++	(char *) ".psf",
++	(char *) ".cp",
++	(char *) ".fnt",
++	NULL
++};
+ /* hide partial fonts a bit - loading a single one is a bad idea */
+-const char *const partfontdirpath[]  = { "", DATADIR "/" FONTDIR "/" PARTIALDIR "/", 0 };
+-const char *const partfontsuffixes[] = { "", 0 };
++char *partfontdirpath[]  = {
++	(char *) "",
++	(char *) DATADIR "/" FONTDIR "/" PARTIALDIR "/",
++	NULL
++};
++char *partfontsuffixes[] = {
++	(char *) "",
++	NULL
++};
+ 
+ static inline int
+ findfont(char *fnam, struct kbdfile *fp)
+@@ -205,7 +223,7 @@ int main(int argc, char *argv[])
+ 	if (!ifilct && !mfil && !ufil &&
+ 	    !Ofil && !ofil && !omfil && !oufil && !restore)
+ 		/* reset to some default */
+-		ifiles[ifilct++] = "";
++		ifiles[ifilct++] = (char *) "";
+ 
+ 	if (Ofil)
+ 		saveoldfontplusunicodemap(fd, Ofil);
+@@ -497,17 +515,17 @@ loadnewfont(int fd, char *ifil, int iunit, int hwunit, int no_m, int no_u)
+ 		if (iunit < 0 || iunit > 32)
+ 			iunit = 0;
+ 		if (iunit == 0) {
+-			if (findfont(ifil = "default", fp) &&
+-			    findfont(ifil = "default8x16", fp) &&
+-			    findfont(ifil = "default8x14", fp) &&
+-			    findfont(ifil = "default8x8", fp)) {
++			if (findfont(ifil = (char *) "default", fp) &&
++			    findfont(ifil = (char *) "default8x16", fp) &&
++			    findfont(ifil = (char *) "default8x14", fp) &&
++			    findfont(ifil = (char *) "default8x8", fp)) {
+ 				fprintf(stderr, _("Cannot find default font\n"));
+ 				exit(EX_NOINPUT);
+ 			}
+ 		} else {
+ 			sprintf(defname, "default8x%d", iunit);
+ 			if (findfont(ifil = defname, fp) &&
+-			    findfont(ifil = "default", fp)) {
++			    findfont(ifil = (char *) "default", fp)) {
+ 				fprintf(stderr, _("Cannot find %s font\n"), ifil);
+ 				exit(EX_NOINPUT);
+ 			}
+@@ -548,8 +566,8 @@ loadnewfont(int fd, char *ifil, int iunit, int hwunit, int no_m, int no_u)
+ 
+ 	/* instructions to combine fonts? */
+ 	{
+-		char *combineheader = "# combine partial fonts\n";
+-		int chlth           = strlen(combineheader);
++		char *combineheader = (char *) "# combine partial fonts\n";
++		size_t chlth = strlen(combineheader);
+ 		char *p, *q;
+ 		if (inputlth >= chlth && !strncmp(inbuf, combineheader, chlth)) {
+ 			char *ifiles[MAXIFILES];
