@@ -1589,7 +1589,7 @@ kbd (0.91-13) unstable; urgency=low
   * Fixed dvorak-l and dvorak-r maps.
   * Fixed open(1) manual page.
 
- -- Dominik Kubla <dominik@debian.org>  Mon, 27 Jan 1996 09:14:00 +0100
+ -- Dominik Kubla <dominik@debian.org>  Sat, 27 Jan 1996 09:14:00 +0100
 
 kbd (0.91-12) frozen unstable; urgency=high
 
