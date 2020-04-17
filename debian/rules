@@ -36,7 +36,10 @@ override_dh_auto_clean:
 	rm -f src/libkeymap/analyze.h src/libkeymap/analyze.c
 
 override_dh_auto_configure:
-	dh_auto_configure -- --enable-nls --disable-vlock
+	dh_auto_configure -- \
+		--enable-nls \
+		--enable-libkeymap \
+		--disable-vlock
 
 override_dh_auto_build:
 	$(MAKE) -C src/libkeymap CFLAGS="-Os -g" analyze.h
