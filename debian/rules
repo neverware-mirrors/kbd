@@ -69,6 +69,8 @@ override_dh_auto_install:
 	mv $(addprefix debian/kbd/usr/bin/,$(MOVE_TO_USR_SBIN)) $(KBD)/usr/sbin/
 # prepare udeb
 	for ITEM in $(UDEB_BINARIES); do install -m755 src/$$ITEM-udeb $(KBD_UDEB)/bin/$$ITEM; done
+# drop libtool files
+	find $(KBD) -name '*.la' -delete
 
 override_dh_installdocs:
 	dh_installdocs
