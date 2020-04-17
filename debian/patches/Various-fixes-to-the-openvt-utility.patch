@@ -23,7 +23,7 @@ Three unrelated fixes:
 
 --- a/src/openvt.c
 +++ b/src/openvt.c
-@@ -240,10 +240,12 @@
+@@ -238,10 +238,12 @@
  			case 'V':
  				print_version_and_exit();
  				break;
@@ -37,7 +37,7 @@ Three unrelated fixes:
  		}
  	}
  
-@@ -365,7 +367,8 @@
+@@ -364,7 +366,8 @@
  		close(0);
  		close(1);
  		close(2);
@@ -47,7 +47,7 @@ Three unrelated fixes:
  
  		if ((dup2(fd, 0) == -1) || (dup2(fd, 1) == -1) || (dup2(fd, 2) == -1))
  			kbd_error(1, errno, "dup");
-@@ -388,7 +391,6 @@
+@@ -387,7 +390,6 @@
  	if (do_wait) {
  		int retval = 0; /* actual value returned form process */
  
@@ -55,7 +55,7 @@ Three unrelated fixes:
  		waitpid(pid, &retval, 0);
  
  		if (show) { /* Switch back... */
-@@ -405,7 +407,10 @@
+@@ -404,7 +406,10 @@
  
  		/* if all our stuff went right, we want to return the exit code of the command we ran
  		   super vital for scripting loops etc */

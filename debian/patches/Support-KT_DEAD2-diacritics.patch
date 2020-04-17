@@ -28,7 +28,7 @@ dead2_ prefix.
  }
 --- a/src/libkeymap/ksyms.c
 +++ b/src/libkeymap/ksyms.c
-@@ -289,6 +289,14 @@
+@@ -290,6 +290,14 @@
  		/* fall through to error printf */
  	}
  

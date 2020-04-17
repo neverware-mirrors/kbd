@@ -43,7 +43,7 @@ Forwarded: no
  writes, to the standard output, the current contents of the keyboard
 --- a/docs/man/man1/kbd_mode.1
 +++ b/docs/man/man1/kbd_mode.1
-@@ -10,7 +10,6 @@
+@@ -12,7 +12,6 @@
  .I -C CONSOLE
  ]
  .SH DESCRIPTION
@@ -53,7 +53,7 @@ Forwarded: no
  .B kbd_mode
 --- a/docs/man/man1/loadkeys.1.in
 +++ b/docs/man/man1/loadkeys.1.in
-@@ -38,7 +38,6 @@
+@@ -37,7 +37,6 @@
  ]
  .LP
  .SH DESCRIPTION
@@ -181,8 +181,8 @@ Forwarded: no
  console output.)
 --- a/docs/man/man1/setmetamode.1
 +++ b/docs/man/man1/setmetamode.1
-@@ -8,7 +8,6 @@
- .I {meta|bit|metabit | esc|prefix|escprefix}
+@@ -11,7 +11,6 @@
+ .I argument
  ]
  .SH DESCRIPTION
 -.IX "setmetamode command" "" "\fLsetmetamode\fR command"  
