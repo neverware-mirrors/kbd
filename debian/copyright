@@ -61,7 +61,7 @@ License: GPL-any
 Files: src/setvtrgb.c
 Copyright: 2011, Alexey Gladkov <gladkov.alexey@gmail.com>,
            2011, Canonical Ltd (Seth Forshee <seth.forshee@canonical.com>
-	                     and Dustin Kirkland <kirkland@canonical.com>)
+ 	                     and Dustin Kirkland <kirkland@canonical.com>)
 License: GPL-any
 
 Files: data/consolefonts/
