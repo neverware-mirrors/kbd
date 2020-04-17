@@ -12,13 +12,14 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <linux/kd.h>
-#include "kbd.h"
+
+#include <kbdfile.h>
+
+#include "libcommon.h"
+
 #include "paths.h"
-#include "findfile.h"
 #include "kdmapop.h"
 #include "utf8.h"
-#include "nls.h"
-#include "kbd_error.h"
 
 /* the two exported functions */
 void saveoldmap(int fd, char *omfil);
@@ -31,9 +32,6 @@ static const char *const mapdirpath[]  = { "", DATADIR "/" TRANSDIR "/", 0 };
 static const char *const mapsuffixes[] = { "", ".trans", "_to_uni.trans", ".acm", 0 };
 
 #ifdef MAIN
-#include "getfd.h"
-#include "version.h"
-
 int verbose = 0;
 int debug   = 0;
 
@@ -42,10 +40,7 @@ int main(int argc, char *argv[])
 	int fd;
 
 	set_progname(argv[0]);
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	setuplocale();
 
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 		print_version_and_exit();
@@ -69,7 +64,7 @@ int main(int argc, char *argv[])
 
 	if (argc != 2) {
 		fprintf(stderr, _("usage: %s [-V] [-v] [-o map.orig] map-file\n"),
-		        progname);
+		        get_progname());
 		exit(EXIT_FAILURE);
 	}
 	loadnewmap(fd, argv[1]);
@@ -132,15 +127,18 @@ readnewmapfromfile(char *mfil, char *buf, unsigned short *ubuf)
 	struct stat stbuf;
 	int u      = 0;
 	int lineno = 0;
-	lkfile_t fp;
+	struct kbdfile *fp;
 
-	if (lk_findfile(mfil, mapdirpath, mapsuffixes, &fp)) {
+	if ((fp = kbdfile_new(NULL)) == NULL)
+		nomem();
+
+	if (kbdfile_find(mfil, mapdirpath, mapsuffixes, fp)) {
 		fprintf(stderr, _("mapscrn: cannot open map file _%s_\n"),
 		        mfil);
 		exit(1);
 	}
-	if (stat(fp.pathname, &stbuf)) {
-		perror(fp.pathname);
+	if (stat(kbdfile_get_pathname(fp), &stbuf)) {
+		perror(kbdfile_get_pathname(fp));
 		fprintf(stderr, _("Cannot stat map file"));
 		exit(1);
 	}
@@ -148,38 +146,38 @@ readnewmapfromfile(char *mfil, char *buf, unsigned short *ubuf)
 		if (verbose)
 			printf(_("Loading binary direct-to-font screen map "
 			         "from file %s\n"),
-			       fp.pathname);
-		if (fread(buf, E_TABSZ, 1, fp.fd) != 1) {
+			       kbdfile_get_pathname(fp));
+		if (fread(buf, E_TABSZ, 1, kbdfile_get_file(fp)) != 1) {
 			fprintf(stderr,
 			        _("Error reading map from file `%s'\n"),
-			        fp.pathname);
+			        kbdfile_get_pathname(fp));
 			exit(1);
 		}
 	} else if (stbuf.st_size == 2 * E_TABSZ) {
 		if (verbose)
 			printf(_("Loading binary unicode screen map "
 			         "from file %s\n"),
-			       fp.pathname);
-		if (fread(ubuf, 2 * E_TABSZ, 1, fp.fd) != 1) {
+			       kbdfile_get_pathname(fp));
+		if (fread(ubuf, 2 * E_TABSZ, 1, kbdfile_get_file(fp)) != 1) {
 			fprintf(stderr,
 			        _("Error reading map from file `%s'\n"),
-			        fp.pathname);
+			        kbdfile_get_pathname(fp));
 			exit(1);
 		}
 		u = 1;
 	} else {
 		if (verbose)
 			printf(_("Loading symbolic screen map from file %s\n"),
-			       fp.pathname);
-		if (parsemap(fp.fd, buf, ubuf, &u, &lineno)) {
+			       kbdfile_get_pathname(fp));
+		if (parsemap(kbdfile_get_file(fp), buf, ubuf, &u, &lineno)) {
 			fprintf(stderr,
 			        _("Error parsing symbolic map "
 			          "from `%s', line %d\n"),
-			        fp.pathname, lineno);
+			        kbdfile_get_pathname(fp), lineno);
 			exit(1);
 		}
 	}
-	lk_fpclose(&fp);
+	kbdfile_free(fp);
 	return u;
 }
 

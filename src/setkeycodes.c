@@ -9,14 +9,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/kd.h>
-#include "getfd.h"
-#include "nls.h"
-#include "version.h"
-#include "kbd_error.h"
+
+#include "libcommon.h"
 
 static void __attribute__((noreturn))
 usage(char *s)
@@ -36,10 +35,7 @@ int main(int argc, char **argv)
 	struct kbkeycode a;
 
 	set_progname(argv[0]);
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	setuplocale();
 
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 		print_version_and_exit();

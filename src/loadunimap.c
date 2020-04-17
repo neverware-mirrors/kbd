@@ -15,17 +15,17 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/kd.h>
+
+#include <kbdfile.h>
+
 #include "paths.h"
-#include "getfd.h"
-#include "xmalloc.h"
-#include "findfile.h"
 #include "kdmapop.h"
 #include "psffontop.h"
 #include "loadunimap.h"
 #include "utf8.h"
 #include "psf.h"
-#include "nls.h"
-#include "kbd_error.h"
+
+#include "libcommon.h"
 
 extern char *progname;
 extern int force;
@@ -34,7 +34,6 @@ static const char *const unidirpath[]  = { "", DATADIR "/" UNIMAPDIR "/", 0 };
 static const char *const unisuffixes[] = { "", ".uni", ".sfm", 0 };
 
 #ifdef MAIN
-#include "version.h"
 int verbose = 0;
 int force   = 0;
 int debug   = 0;
@@ -52,13 +51,10 @@ int main(int argc, char *argv[])
 	int fd, c;
 	char *console = NULL;
 	char *outfnam = NULL;
-	char *infnam  = "def.uni";
+	const char *infnam  = "def.uni";
 
 	set_progname(argv[0]);
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	setuplocale();
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")))
@@ -163,7 +159,7 @@ addpair(int fp, int un)
  */
 
 static void
-parseline(char *buffer, char *tblname)
+parseline(char *buffer, const char *tblname)
 {
 	int fontlen = 512;
 	int i;
@@ -265,37 +261,40 @@ lookattail:
 		        tblname, p);
 }
 
-void loadunicodemap(int fd, char *tblname)
+void loadunicodemap(int fd, const char *tblname)
 {
 	char buffer[65536];
 	char *p;
-	lkfile_t fp;
+	struct kbdfile *fp;
 
-	if (lk_findfile(tblname, unidirpath, unisuffixes, &fp)) {
+	if ((fp = kbdfile_new(NULL)) == NULL)
+		nomem();
+
+	if (kbdfile_find((char *) tblname, unidirpath, unisuffixes, fp)) {
 		perror(tblname);
 		exit(EX_NOINPUT);
 	}
 
 	if (verbose)
-		printf(_("Loading unicode map from file %s\n"), fp.pathname);
+		printf(_("Loading unicode map from file %s\n"), kbdfile_get_pathname(fp));
 
-	while (fgets(buffer, sizeof(buffer), fp.fd) != NULL) {
+	while (fgets(buffer, sizeof(buffer), kbdfile_get_file(fp)) != NULL) {
 		if ((p = strchr(buffer, '\n')) != NULL)
 			*p = '\0';
 		else
 			fprintf(stderr, _("%s: %s: Warning: line too long\n"),
-			        progname, tblname);
+			        get_progname(), tblname);
 
 		parseline(buffer, tblname);
 	}
 
-	lk_fpclose(&fp);
+	kbdfile_free(fp);
 
 	if (listct == 0 && !force) {
 		fprintf(stderr,
 		        _("%s: not loading empty unimap\n"
 		          "(if you insist: use option -f to override)\n"),
-		        progname);
+		        get_progname());
 	} else {
 		descr.entry_ct = listct;
 		descr.entries  = list;
@@ -305,26 +304,23 @@ void loadunicodemap(int fd, char *tblname)
 	}
 }
 
-static struct unimapdesc
-getunicodemap(int fd)
+static int
+getunicodemap(int fd, struct unimapdesc *unimap_descr)
 {
-	struct unimapdesc unimap_descr;
-
-	if (getunimap(fd, &unimap_descr))
-		exit(1);
+	if (getunimap(fd, unimap_descr))
+		return -1;
 
 #ifdef MAIN
-	fprintf(stderr, "# %d %s\n", unimap_descr.entry_ct,
-	        (unimap_descr.entry_ct == 1) ? _("entry") : _("entries"));
+	fprintf(stderr, "# %d %s\n", unimap_descr->entry_ct,
+	        (unimap_descr->entry_ct == 1) ? _("entry") : _("entries"));
 #endif
-
-	return unimap_descr;
+	return 0;
 }
 
 void saveunicodemap(int fd, char *oufil)
 {
 	FILE *fpo;
-	struct unimapdesc unimap_descr;
+	struct unimapdesc unimap_descr = { 0 };
 	struct unipair *unilist;
 	int i;
 
@@ -333,8 +329,10 @@ void saveunicodemap(int fd, char *oufil)
 		exit(1);
 	}
 
-	unimap_descr = getunicodemap(fd);
-	unilist      = unimap_descr.entries;
+	if (getunicodemap(fd, &unimap_descr) < 0)
+		exit(1);
+
+	unilist = unimap_descr.entries;
 
 	for (i = 0; i < unimap_descr.entry_ct; i++)
 		fprintf(fpo, "0x%02x\tU+%04x\n", unilist[i].fontpos, unilist[i].unicode);
@@ -346,12 +344,14 @@ void saveunicodemap(int fd, char *oufil)
 
 void appendunicodemap(int fd, FILE *fp, int fontsize, int utf8)
 {
-	struct unimapdesc unimap_descr;
+	struct unimapdesc unimap_descr = { 0 };
 	struct unipair *unilist;
 	int i, j;
 
-	unimap_descr = getunicodemap(fd);
-	unilist      = unimap_descr.entries;
+	if (getunicodemap(fd, &unimap_descr) < 0)
+		exit(1);
+
+	unilist = unimap_descr.entries;
 
 	for (i = 0; i < fontsize; i++) {
 #if 0

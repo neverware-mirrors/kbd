@@ -11,17 +11,16 @@
 #include <string.h>
 #include <linux/kd.h>
 #include "kdmapop.h"
-#include "getfd.h"
-#include "nls.h"
+
+#include "libcommon.h"
 
 int main(int argc, char *argv[])
 {
 	int fd;
 	char *console = NULL;
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	set_progname(argv[0]);
+	setuplocale();
 
 	if (argc >= 3 && !strcmp(argv[1], "-C"))
 		console = argv[2];

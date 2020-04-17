@@ -5,18 +5,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <linux/kd.h>
-#include "nls.h"
-#include "getfd.h"
-#include "version.h"
+
+#include "libcommon.h"
+
 #include "kdmapop.h"
 #include "kdfontop.h"
-#include "kbd_error.h"
-#include "xmalloc.h"
 
 /*
  * Showing the font is nontrivial mostly because testing whether
@@ -48,13 +47,13 @@ leave(int n)
 static void
 settrivialscreenmap(void)
 {
-	int i;
+	unsigned short i;
 
 	if (getuniscrnmap(fd, obuf))
 		exit(1);
 	have_obuf = 1;
 
-	for (i          = 0; i < E_TABSZ; i++)
+	for (i = 0; i < E_TABSZ; i++)
 		nbuf[i] = i;
 
 	if (loaduniscrnmap(fd, nbuf)) {
@@ -78,7 +77,7 @@ getoldunicodemap(void)
 static void
 setnewunicodemap(int *list, int cnt)
 {
-	int i;
+	unsigned short i;
 
 	if (!nunimap.entry_ct) {
 		nunimap.entry_ct = 512;
@@ -88,8 +87,8 @@ setnewunicodemap(int *list, int cnt)
 		nunimap.entries[i].fontpos = i;
 		nunimap.entries[i].unicode = 0;
 	}
-	for (i                                   = 0; i < cnt; i++)
-		nunimap.entries[list[i]].unicode = BASE + i;
+	for (i = 0; i < cnt; i++)
+		nunimap.entries[list[i]].unicode = (unsigned short) (BASE + i);
 
 	if (loadunimap(fd, NULL, &nunimap))
 		leave(EXIT_FAILURE);
@@ -103,12 +102,13 @@ usage(void)
 	          "       showconsolefont [-C tty] [-v] [-i]\n"
 	          "(probably after loading a font with `setfont font')\n"
 	          "\n"
-	          "Valid options are:\n"
-	          " -V --version    Print version number and exit.\n"
-	          " -C tty          Device to read the font from. Default: current tty.\n"
-	          " -v              Be more verbose.\n"
-	          " -i              Don't print out the font table, just show\n"
-	          "                 ROWSxCOLSxCOUNT and exit.\n"));
+	          "Options:\n"
+	          "  -C tty                device to read the font from. Default: current tty;\n"
+	          "  -v                    be more verbose;\n"
+	          "  -i                    don't print out the font table, just show;\n"
+	          "                        ROWSxCOLSxCOUNT and exit;\n"
+	          "  -V, --version         print version number.\n"
+	));
 	exit(EXIT_FAILURE);
 }
 
@@ -116,14 +116,12 @@ int main(int argc, char **argv)
 {
 	int c, n, cols, rows, nr, i, j, k;
 	int mode;
-	char *space, *sep, *console = NULL;
+	const char *space, *sep;
+	char *console = NULL;
 	int list[64], lth, info = 0, verbose = 0;
 
 	set_progname(argv[0]);
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	setuplocale();
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")))

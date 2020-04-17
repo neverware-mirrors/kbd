@@ -5,9 +5,8 @@
 #include <errno.h>
 #include <sys/ioctl.h>
 #include <linux/kd.h>
-#include "getfd.h"
-#include "version.h"
-#include "kbd_error.h"
+
+#include "libcommon.h"
 
 int main(int argc, char **argv)
 {
@@ -15,9 +14,10 @@ int main(int argc, char **argv)
 	unsigned char cmap[48];
 
 	set_progname(argv[0]);
+	setuplocale();
 
 	if (argc != 5) {
-		fprintf(stderr, "usage: %s index red green blue\n", progname);
+		fprintf(stderr, "usage: %s index red green blue\n", get_progname());
 		exit(EXIT_FAILURE);
 	}
 
@@ -38,9 +38,9 @@ int main(int argc, char **argv)
 	if (ioctl(fd, GIO_CMAP, cmap))
 		kbd_error(EXIT_FAILURE, errno, "ioctl GIO_CMAP");
 
-	cmap[3 * indx]     = red;
-	cmap[3 * indx + 1] = green;
-	cmap[3 * indx + 2] = blue;
+	cmap[3 * indx]     = (unsigned char) red;
+	cmap[3 * indx + 1] = (unsigned char) green;
+	cmap[3 * indx + 2] = (unsigned char) blue;
 
 	if (ioctl(fd, PIO_CMAP, cmap))
 		kbd_error(EXIT_FAILURE, errno, "ioctl PIO_CMAP");

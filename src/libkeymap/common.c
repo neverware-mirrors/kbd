@@ -6,11 +6,10 @@
 
 #include "keymap.h"
 
-#include "kbd.h"
-#include "nls.h"
+#include "libcommon.h"
 #include "contextP.h"
 
-void __attribute__((format(printf, 6, 7)))
+void
 lk_log(struct lk_ctx *ctx, int priority,
        const char *file, int line, const char *fn,
        const char *fmt, ...)
@@ -79,11 +78,7 @@ log_file(void *data,
 
 #undef log_unused
 
-int lk_set_log_fn(struct lk_ctx *ctx,
-                  void (*log_fn)(void *data, int priority,
-                                 const char *file, int line, const char *fn,
-                                 const char *format, va_list args),
-                  const void *data)
+int lk_set_log_fn(struct lk_ctx *ctx, lk_logger_t log_fn, const void *data)
 {
 	if (!ctx)
 		return -1;
@@ -130,7 +125,7 @@ int lk_set_parser_flags(struct lk_ctx *ctx, lk_flags flags)
 }
 
 static int
-init_array(struct lk_ctx *ctx, struct lk_array **arr, size_t size)
+init_array(struct lk_ctx *ctx, struct lk_array **arr, ssize_t size)
 {
 	int rc;
 	void *ptr;
@@ -171,6 +166,13 @@ lk_init(void)
 	    init_array(ctx, &ctx->accent_table, sizeof(void *)) < 0 ||
 	    init_array(ctx, &ctx->key_constant, sizeof(char)) < 0 ||
 	    init_array(ctx, &ctx->key_line, sizeof(int)) < 0) {
+		lk_free(ctx);
+		return NULL;
+	}
+
+	ctx->kbdfile_ctx = kbdfile_context_new();
+
+	if (ctx->kbdfile_ctx == NULL) {
 		lk_free(ctx);
 		return NULL;
 	}
@@ -245,6 +247,11 @@ int lk_free(struct lk_ctx *ctx)
 		free(ctx->key_line);
 		ctx->key_line = NULL;
 	}
+
+	if (ctx->kbdfile_ctx != NULL)
+		ctx->kbdfile_ctx = kbdfile_context_free(ctx->kbdfile_ctx);
+
+	free(ctx);
 
 	return 0;
 }

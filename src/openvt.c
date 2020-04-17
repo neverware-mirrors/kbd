@@ -3,7 +3,9 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 #include <unistd.h>
 #include <getopt.h>
 #include <dirent.h>
@@ -15,10 +17,7 @@
 #include <sys/wait.h>
 #include <sys/file.h>
 
-#include "version.h"
-#include "kbd_error.h"
-#include "xmalloc.h"
-#include "getfd.h"
+#include "libcommon.h"
 
 #ifdef COMPAT_HEADERS
 #include "compat/linux-limits.h"
@@ -48,21 +47,21 @@ static void
 {
 	printf(_("Usage: %s [OPTIONS] -- command\n"
 	         "\n"
-	         "This utility help you to start a program on a new virtual terminal (VT).\n"
+	         "This utility helps you to start a program on a new virtual terminal (VT).\n"
 	         "\n"
 	         "Options:\n"
-	         "  -c, --console=NUM   use the given VT number;\n"
-	         "  -e, --exec          execute the command, without forking;\n"
-	         "  -f, --force         force opening a VT without checking;\n"
-	         "  -l, --login         make the command a login shell;\n"
-	         "  -u, --user          figure out the owner of the current VT;\n"
-	         "  -s, --switch        switch to the new VT;\n"
-	         "  -w, --wait          wait for command to complete;\n"
-	         "  -v, --verbose       print a message for each action;\n"
-	         "  -V, --version       print program version and exit;\n"
-	         "  -h, --help          output a brief help message.\n"
+	         "  -c, --console=NUM     use the given VT number;\n"
+	         "  -e, --exec            execute the command, without forking;\n"
+	         "  -f, --force           force opening a VT without checking;\n"
+	         "  -l, --login           make the command a login shell;\n"
+	         "  -u, --user            figure out the owner of the current VT;\n"
+	         "  -s, --switch          switch to the new VT;\n"
+	         "  -w, --wait            wait for command to complete;\n"
+	         "  -v, --verbose         explain what is being done;\n"
+	         "  -h, --help            print this usage message;\n"
+	         "  -V, --version         print version number.\n"
 	         "\n"),
-	       progname);
+	       get_progname());
 	exit(ret);
 }
 
@@ -164,8 +163,9 @@ open_vt(char *vtname, int force)
 
 int main(int argc, char *argv[])
 {
-	int opt, pid, i;
+	int opt, i;
 	struct vt_stat vtstat;
+	int pid          = 0;
 	int vtno         = -1;
 	int fd           = -1;
 	int consfd       = -1;
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 	char direct_exec = FALSE;
 	char do_wait     = FALSE;
 	char as_user     = FALSE;
-	char vtname[sizeof(VTNAME) + 2]; /* allow 999 possible VTs */
+	char vtname[PATH_MAX+1];
 	char *cmd = NULL, *def_cmd = NULL, *username = NULL;
 
 	struct option long_options[] = {
@@ -195,10 +195,7 @@ int main(int argc, char *argv[])
 	};
 
 	set_progname(argv[0]);
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	setuplocale();
 
 	while ((opt = getopt_long(argc, argv, "c:lsfuewhvV", long_options, NULL)) != -1) {
 		switch (opt) {
@@ -210,7 +207,8 @@ int main(int argc, char *argv[])
 					kbd_error(5, 0, _("%s: Illegal vt number"), optarg);
 
 				/* close security holes - until we can do this safely */
-				(void)setuid(getuid());
+				if (setuid(getuid()) < 0)
+					kbd_error(5, errno, "%s: setuid", optarg);
 				break;
 			case 'l':
 				login = TRUE;
@@ -267,11 +265,11 @@ int main(int argc, char *argv[])
 	} else if (!force) {
 		if (vtno >= 16)
 			kbd_error(7, 0, _("Cannot check whether vt %d is free; use `%s -f' to force."),
-			          vtno, progname);
+			          vtno, get_progname());
 
 		if (vtstat.v_state & (1 << vtno))
 			kbd_error(7, 0, _("vt %d is in use; command aborted; use `%s -f' to force."),
-			          vtno, progname);
+			          vtno, get_progname());
 	}
 
 	if (as_user)
@@ -315,7 +313,7 @@ int main(int argc, char *argv[])
 				kbd_error(5, errno, _("Unable to set new session"));
 		}
 
-		sprintf(vtname, VTNAME, vtno);
+		snprintf(vtname, PATH_MAX, VTNAME, vtno);
 
 		/* Can we open the vt we want? */
 		if ((fd = open_vt(vtname, force)) == -1) {
@@ -327,14 +325,14 @@ int main(int argc, char *argv[])
 				   before giving up. Note: the 16 is a kernel limitation. */
 				for (i = vtno + 1; i < 16; i++) {
 					if ((vtstat.v_state & (1 << i)) == 0) {
-						sprintf(vtname, VTNAME, i);
+						snprintf(vtname, PATH_MAX, VTNAME, i);
 						if ((fd = open_vt(vtname, force)) >= 0) {
 							vtno = i;
 							goto got_vtno;
 						}
 					}
 				}
-				sprintf(vtname, VTNAME, vtno);
+				snprintf(vtname, PATH_MAX, VTNAME, vtno);
 			}
 			kbd_error(5, errsv, _("Unable to open %s"), vtname);
 		}
@@ -352,7 +350,8 @@ int main(int argc, char *argv[])
 			uid_t uid = getuid();
 			if (chown(vtname, uid, getgid()) == -1)
 				kbd_error(5, errno, "chown");
-			setuid(uid);
+			if (setuid(uid) < 0)
+				kbd_error(5, errno, "setuid");
 		}
 
 		if (show) {

@@ -31,7 +31,8 @@
 
 #include "pam_auth.h"
 #include "vlock.h"
-#include "nls.h"
+
+#include "libcommon.h"
 
 /* Delay after fatal PAM errors, in seconds. */
 #define LONG_DELAY 10
@@ -140,9 +141,9 @@ int get_password(pam_handle_t *pamh, const char *username, const char *tty)
 				fflush(stdout);
 				/*
 				 * EOF encountered on read?
-				 * If not on VT, check stdin.
+				 * Check stdin.
 				 */
-				if (is_vt || isatty(STDIN_FILENO)) {
+				if (isatty(STDIN_FILENO)) {
 					/* Ignore error. */
 					sleep(SHORT_DELAY);
 					break;

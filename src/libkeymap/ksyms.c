@@ -9,7 +9,7 @@
 
 #include "contextP.h"
 #include "ksyms.h"
-#include "nls.h"
+#include "libcommon.h"
 
 #include "syms.cp1250.h"
 #include "syms.ethiopic.h"
@@ -56,13 +56,13 @@ const syms_entry syms[] = {
 
 #undef E
 
-const unsigned int syms_size = sizeof(syms) / sizeof(syms_entry);
-const unsigned int syn_size  = sizeof(synonyms) / sizeof(synonyms[0]);
+const int syms_size = sizeof(syms) / sizeof(syms_entry);
+const int syn_size  = sizeof(synonyms) / sizeof(synonyms[0]);
 
 const struct cs {
 	const char *charset;
 	const sym *charnames;
-	const int start;
+	const unsigned short start;
 } charsets[] = {
 	{ "iso-8859-1", latin1_syms, 160 },
 	{ "iso-8859-2", latin2_syms, 160 },
@@ -90,9 +90,10 @@ static const unsigned int charsets_size = sizeof(charsets) / sizeof(charsets[0])
 
 void lk_list_charsets(FILE *f)
 {
-	int lth, ct;
+	size_t lth;
+	int ct;
 	unsigned int i, j;
-	char *mm[] = { "iso-8859-", "koi8-" };
+	const char *mm[] = { "iso-8859-", "koi8-" };
 
 	for (j = 0; j < sizeof(mm) / sizeof(mm[0]); j++) {
 		if (j)
@@ -132,7 +133,7 @@ lk_get_charset(struct lk_ctx *ctx)
 
 int lk_set_charset(struct lk_ctx *ctx, const char *charset)
 {
-	unsigned int i;
+	unsigned short i;
 
 	for (i = 0; i < charsets_size; i++) {
 		if (!strcasecmp(charsets[i].charset, charset)) {
@@ -143,8 +144,8 @@ int lk_set_charset(struct lk_ctx *ctx, const char *charset)
 	return 1;
 }
 
-unsigned int
-get_sym_size(struct lk_ctx *ctx, unsigned int ktype)
+int
+get_sym_size(struct lk_ctx *ctx, int ktype)
 {
 	if (ktype >= syms_size) {
 		ERR(ctx, _("unable to get symbol by wrong type: %d"), ktype);
@@ -155,7 +156,7 @@ get_sym_size(struct lk_ctx *ctx, unsigned int ktype)
 }
 
 const char *
-get_sym(struct lk_ctx *ctx, unsigned int ktype, unsigned int index)
+get_sym(struct lk_ctx *ctx, int ktype, int index)
 {
 	if (!get_sym_size(ctx, ktype))
 		return NULL;
@@ -169,7 +170,7 @@ get_sym(struct lk_ctx *ctx, unsigned int ktype, unsigned int index)
 }
 
 char *
-lk_get_sym(struct lk_ctx *ctx, unsigned int ktype, unsigned int index)
+lk_get_sym(struct lk_ctx *ctx, int ktype, int index)
 {
 	const char *ksym = get_sym(ctx, ktype, index);
 	return (ksym ? strdup(ksym) : NULL);
@@ -244,7 +245,7 @@ lk_code_to_ksym(struct lk_ctx *ctx, int code)
 static int
 kt_latin(struct lk_ctx *ctx, const char *s, int direction)
 {
-	unsigned int i, max;
+	unsigned short i, max;
 
 	sym *p = (sym *)charsets[ctx->charset].charnames;
 
@@ -267,7 +268,7 @@ kt_latin(struct lk_ctx *ctx, const char *s, int direction)
 
 int ksymtocode(struct lk_ctx *ctx, const char *s, int direction)
 {
-	unsigned int i, j;
+	unsigned short i, j;
 	int n;
 	int keycode;
 	sym *p;

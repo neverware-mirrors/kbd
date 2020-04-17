@@ -26,10 +26,11 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <getopt.h>
+#include <sysexits.h>
 
 #include "vlock.h"
-#include "nls.h"
-#include "version.h"
+
+#include "libcommon.h"
 
 /*
  * This determines whether the default behavior is to lock only the
@@ -50,12 +51,13 @@ show_usage(void)
 	fprintf(stderr,
 	        _("Try `%s --help' for more information.\n"),
 	        program_invocation_short_name);
-	exit(1);
+	exit(EX_USAGE);
 }
 
 static void __attribute__((__noreturn__))
 show_help(void)
 {
+	const char *progname = get_progname();
 	printf(_("%s: locks virtual consoles, saving your current session.\n"
 	         "Usage: %s [options]\n"
 	         "       Where [options] are any of:\n"

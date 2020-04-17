@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.0.14.8bf2.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,20 +40,21 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 27 "parser.y" /* yacc.c:1909  */
+#line 24 "parser.y" /* yacc.c:1910  */
 
+#include <kbdfile.h>
 #include "keymap.h"
 
 #ifndef STRDATA_STRUCT
 #define STRDATA_STRUCT
 #define MAX_PARSER_STRING 512
 struct strdata {
-	unsigned int len;
+	unsigned long len;
 	unsigned char data[MAX_PARSER_STRING];
 };
 #endif
 
-#line 57 "parser.h" /* yacc.c:1909  */
+#line 58 "parser.h" /* yacc.c:1910  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -135,12 +136,12 @@ struct strdata {
 
 union YYSTYPE
 {
-#line 59 "parser.y" /* yacc.c:1909  */
+#line 57 "parser.y" /* yacc.c:1910  */
 
-	long long int num;
+	int num;
 	struct strdata str;
 
-#line 144 "parser.h" /* yacc.c:1909  */
+#line 145 "parser.h" /* yacc.c:1910  */
 };
 
 typedef union YYSTYPE YYSTYPE;

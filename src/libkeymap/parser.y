@@ -10,11 +10,8 @@
  * which should be included with kbd as the file COPYING.
  */
 %{
-#define YY_HEADER_EXPORT_START_CONDITIONS 1
-
 #include "config.h"
-#include "nls.h"
-#include "kbd.h"
+#include "libcommon.h"
 
 #include "contextP.h"
 #include "ksyms.h"
@@ -25,13 +22,14 @@
 %}
 
 %code requires {
+#include <kbdfile.h>
 #include "keymap.h"
 
 #ifndef STRDATA_STRUCT
 #define STRDATA_STRUCT
 #define MAX_PARSER_STRING 512
 struct strdata {
-	unsigned int len;
+	unsigned long len;
 	unsigned char data[MAX_PARSER_STRING];
 };
 #endif
@@ -57,7 +55,7 @@ struct strdata {
 %token UNUMBER ALT_IS_META STRINGS AS USUAL ON FOR
 
 %union {
-	long long int num;
+	int num;
 	struct strdata str;
 }
 
@@ -84,7 +82,7 @@ strings_as_usual(struct lk_ctx *ctx)
 	/*
 	 * 26 strings, mostly inspired by the VT100 family
 	 */
-	char *stringvalues[30] = {
+	const char *stringvalues[30] = {
 		/* F1 .. F20 */
 		"\033[[A",  "\033[[B",  "\033[[C",  "\033[[D",  "\033[[E",
 		"\033[17~", "\033[18~", "\033[19~", "\033[20~", "\033[21~",
@@ -96,14 +94,13 @@ strings_as_usual(struct lk_ctx *ctx)
 		/* Next,    Macro,      Help,       Do,         Pause */
 		"\033[6~",  0,          0,          0,          0
 	};
-	int i;
+	unsigned char i;
 
 	for (i = 0; i < 30; i++) {
 		if (stringvalues[i]) {
 			struct kbsentry ke;
 			ke.kb_func = i;
-			strncpy((char *)ke.kb_string, stringvalues[i],
-				sizeof(ke.kb_string));
+			strncpy((char *)ke.kb_string, stringvalues[i], sizeof(ke.kb_string));
 			ke.kb_string[sizeof(ke.kb_string) - 1] = 0;
 
 			if (lk_add_func(ctx, &ke) == -1)
@@ -263,10 +260,12 @@ strline		: STRING LITERAL EQUALS STRLITERAL EOL
 					YYERROR;
 				}
 
-				ke.kb_func = KVAL($2);
+				ke.kb_func = (unsigned char) KVAL($2);
+
 				strncpy((char *) ke.kb_string,
 				        (char *) $4.data,
 				        sizeof(ke.kb_string));
+
 				ke.kb_string[sizeof(ke.kb_string) - 1] = 0;
 
 				if (lk_add_func(ctx, &ke) == -1)
@@ -276,9 +275,9 @@ strline		: STRING LITERAL EQUALS STRLITERAL EOL
 compline        : COMPOSE compsym compsym TO CCHAR EOL
                         {
 				struct lk_kbdiacr ptr;
-				ptr.diacr  = $2;
-				ptr.base   = $3;
-				ptr.result = $5;
+				ptr.diacr  = (unsigned int) $2;
+				ptr.base   = (unsigned int) $3;
+				ptr.result = (unsigned int) $5;
 
 				if (lk_append_compose(ctx, &ptr) == -1)
 					YYERROR;
@@ -286,9 +285,9 @@ compline        : COMPOSE compsym compsym TO CCHAR EOL
 		 | COMPOSE compsym compsym TO rvalue EOL
 			{
 				struct lk_kbdiacr ptr;
-				ptr.diacr  = $2;
-				ptr.base   = $3;
-				ptr.result = $5;
+				ptr.diacr  = (unsigned int) $2;
+				ptr.base   = (unsigned int) $3;
+				ptr.result = (unsigned int) $5;
 
 				if (lk_append_compose(ctx, &ptr) == -1)
 					YYERROR;
@@ -299,7 +298,7 @@ compsym		: CCHAR		{	$$ = $1;		}
 		;
 singleline	: KEYCODE NUMBER EQUALS rvalue0 EOL
 			{
-				unsigned int j, i, keycode;
+				int j, i, keycode;
 				int *val;
 
 				if (ctx->key_line->count == 1) {
@@ -343,7 +342,7 @@ singleline	: KEYCODE NUMBER EQUALS rvalue0 EOL
 					}
 
 					if (i < ctx->key_line->count) {
-						ERR(ctx, _("too many (%d) entries on one line"),
+						ERR(ctx, _("too many (%ld) entries on one line"),
 							ctx->key_line->count);
 						YYERROR;
 					}
@@ -404,19 +403,18 @@ rvalue		: NUMBER	{ $$ = convert_code(ctx, $1, TO_AUTO);		}
 %%
 
 int
-lk_parse_keymap(struct lk_ctx *ctx, lkfile_t *f)
+lk_parse_keymap(struct lk_ctx *ctx, struct kbdfile *fp)
 {
 	yyscan_t scanner;
 	int rc = -1;
 
 	ctx->mod = 0;
 
-	yylex_init(&scanner);
 	yylex_init_extra(ctx, &scanner);
 
-	INFO(ctx, _("Loading %s"), f->pathname);
+	INFO(ctx, _("Loading %s"), kbdfile_get_pathname(fp));
 
-	if (stack_push(ctx, f, scanner) == -1)
+	if (stack_push(ctx, fp, scanner) == -1)
 		goto fail;
 
 	if (yyparse(scanner, ctx))
@@ -424,8 +422,9 @@ lk_parse_keymap(struct lk_ctx *ctx, lkfile_t *f)
 
 	rc = 0;
 
+fail:
 	stack_pop(ctx, scanner);
 
- fail:	yylex_destroy(scanner);
+	yylex_destroy(scanner);
 	return rc;
 }

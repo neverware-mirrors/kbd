@@ -1,15 +1,16 @@
 #include "config.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/kd.h>
 #include <getopt.h>
-#include "getfd.h"
-#include "nls.h"
-#include "version.h"
-#include "kbd_error.h"
+#include <sysexits.h>
+
+#include "libcommon.h"
 
 static const char *action = NULL;
 static const char *value  = NULL;
@@ -18,14 +19,20 @@ static void __attribute__((noreturn))
 usage(int code)
 {
 	fprintf(stderr,
-	        _("Usage: %1$s [-C DEVICE] getmode [text|graphics]\n"
-	          "   or: %1$s [-C DEVICE] gkbmode [raw|xlate|mediumraw|unicode]\n"
-	          "   or: %1$s [-C DEVICE] gkbmeta [metabit|escprefix]\n"
-	          "   or: %1$s [-C DEVICE] gkbled  [scrolllock|numlock|capslock]\n"
-	          "Other options:\n"
-	          "   -h                   print this usage message\n"
-	          "   -V                   print version number\n"),
-	        progname);
+	        _("Usage: %1$s [options] getmode [text|graphics]\n"
+	          "   or: %1$s [options] gkbmode [raw|xlate|mediumraw|unicode]\n"
+	          "   or: %1$s [options] gkbmeta [metabit|escprefix]\n"
+	          "   or: %1$s [options] gkbled  [scrolllock|numlock|capslock]\n"
+	          "\n"
+	          "The utility allows to read and check various parameters\n"
+	          "of the keyboard and virtual console.\n"
+	          "\n"
+	          "Options:\n"
+	          "  -C, --console=DEV     the console device to be used;\n"
+	          "  -h, --help            print this usage message;\n"
+	          "  -V, --version         print version number.\n"
+	         ),
+	        get_progname());
 	exit(code);
 }
 
@@ -46,17 +53,22 @@ int main(int argc, char **argv)
 	char flags;
 	const char *console = NULL;
 
+	const char *short_opts = "C:hV";
+	const struct option long_opts[] = {
+		{ "console", required_argument, NULL, 'C' },
+		{ "help",    no_argument,       NULL, 'h' },
+		{ "version", no_argument,       NULL, 'V' },
+		{ NULL,      0,                 NULL,  0  }
+	};
+
 	set_progname(argv[0]);
+	setuplocale();
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
-
-	while ((c = getopt(argc, argv, "C:hV")) != EOF) {
+	while ((c = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
 		switch (c) {
 			case 'C':
 				if (optarg == NULL || optarg[0] == '\0')
-					usage(EXIT_FAILURE);
+					usage(EX_USAGE);
 				console = optarg;
 				break;
 			case 'V':
@@ -64,6 +76,9 @@ int main(int argc, char **argv)
 				break;
 			case 'h':
 				usage(EXIT_SUCCESS);
+				break;
+			case '?':
+				usage(EX_USAGE);
 				break;
 		}
 	}

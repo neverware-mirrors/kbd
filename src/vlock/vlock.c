@@ -32,9 +32,8 @@
 
 #include "pam_auth.h"
 #include "vlock.h"
-#include "nls.h"
-#include "version.h"
-#include "kbd_error.h"
+
+#include "libcommon.h"
 
 int main(int ac, char *const av[])
 {
@@ -44,10 +43,7 @@ int main(int ac, char *const av[])
 	pam_handle_t *pamh;
 
 	set_progname(av[0]);
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
-	textdomain(PACKAGE_NAME);
+	setuplocale();
 
 	/* 1st, parse command line arguments. */
 	parse(ac, av);
