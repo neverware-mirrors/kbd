@@ -4,3 +4,4 @@ Various-fixes-to-the-openvt-utility.patch
 Check-for-X-in-kbd_mode.patch
 Support-KT_DEAD2-diacritics.patch
 Fix-build-warining-expected-char-but-argument-is-of-type-.patch
+configure.ac-respect-user-CFLAGS.patch
