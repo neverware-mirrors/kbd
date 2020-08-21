@@ -1,2 +1,3 @@
-version=3
-http://ftp.altlinux.org/pub/people/legion/kbd/kbd-([0-9.]+)\.tar\.xz
+version=4
+opts=filenamemangle=s/.+\/v?(\d\S+)\.tar\.gz/kbd-$1\.tar\.gz/ \
+  https://github.com/legionus/kbd/tags .*/v?(\d\S+)\.tar\.gz
