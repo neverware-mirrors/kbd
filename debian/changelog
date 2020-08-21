@@ -1,4 +1,6 @@
-kbd (2.2.0-1) UNRELEASED; urgency=medium
+kbd (2.2.0-1) unstable; urgency=medium
+
+  * Team upload.
 
   [ Ondřej Nový ]
   * d/copyright: Use https protocol in Format field
@@ -17,12 +19,13 @@ kbd (2.2.0-1) UNRELEASED; urgency=medium
   * Cherry-pick upstream format-string fix
   * Avoid shipping any libtool files
   * Drop obsolete upgrade maintscript code
+  * debian/gbp.conf: Remove build-area setting
 
   lintian-brush fixes:
   * debian/copyright: use spaces rather than tabs to start continuation lines.
   * Fix day-of-week for changelog entry 0.91-13.
 
- -- Andreas Henriksson <andreas@fatal.se>  Fri, 17 Apr 2020 22:35:19 +0200
+ -- Andreas Henriksson <andreas@fatal.se>  Fri, 21 Aug 2020 13:52:04 +0200
 
 kbd (2.0.4-4) unstable; urgency=medium
 
