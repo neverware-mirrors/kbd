@@ -42,6 +42,7 @@ override_dh_auto_configure:
 		--disable-vlock
 
 override_dh_auto_build:
+ifeq (, $(filter noudeb, $(DEB_BUILD_PROFILES)))
 	$(MAKE) -C src/libkeymap CFLAGS="-Os -g" analyze.h
 	$(MAKE) -C src/libcommon CFLAGS="-Os -g"
 	$(MAKE) -C src/libkbdfile CFLAGS="-Os -g"
@@ -54,6 +55,7 @@ override_dh_auto_build:
 	$(MAKE) -C src/libkbdfile clean
 	$(MAKE) -C src/libkfont clean
 	$(MAKE) -C src/ clean
+endif
 	$(MAKE)
 	$(MAKE) -C src/ $(EXTRA_BINARIES)
 	$(MAKE) $(CROSS) CFLAGS="-O2 -g" -C contrib/ $(CONTRIB_BINARIES)
@@ -72,7 +74,9 @@ override_dh_auto_install:
 	mv $(addprefix debian/kbd/usr/bin/,$(MOVE_TO_SBIN)) $(KBD)/sbin/
 	mv $(addprefix debian/kbd/usr/bin/,$(MOVE_TO_USR_SBIN)) $(KBD)/usr/sbin/
 # prepare udeb
+ifeq (, $(filter noudeb, $(DEB_BUILD_PROFILES)))
 	for ITEM in $(UDEB_BINARIES); do install -m755 src/$$ITEM-udeb $(KBD_UDEB)/bin/$$ITEM; done
+endif
 # drop libtool files
 	find $(KBD) -name '*.la' -delete
 

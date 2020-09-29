@@ -24,6 +24,7 @@ Description: Linux console font and keytable utilities
  in the “console-data” package.
 
 Package: kbd-udeb
+Build-Profiles: <!noudeb>
 Package-Type: udeb
 Section: debian-installer
 Architecture: linux-any
