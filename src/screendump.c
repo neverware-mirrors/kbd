@@ -71,8 +71,12 @@ int main(int argc, char **argv)
 	cols = header[1];
 	if (rows * cols == 0)
 		goto try_ioctl;
-	inbuf  = xmalloc(rows * cols * 2);
-	outbuf = xmalloc(rows * (cols + 1));
+
+	if (!(inbuf = malloc(rows * cols * 2)))
+		kbd_error(EXIT_FAILURE, errno, _("out of memory"));
+
+	if (!(outbuf = malloc(rows * (cols + 1))))
+		kbd_error(EXIT_FAILURE, errno, _("out of memory"));
 
 	if (read(fd, inbuf, rows * cols * 2) != (ssize_t)(rows * cols * 2)) {
 		kbd_error(EXIT_FAILURE, errno, _("Error reading %s"), infile);
@@ -112,7 +116,10 @@ try_ioctl : {
 		kbd_error(EXIT_FAILURE, errno, "ioctl TIOCGWINSZ");
 	}
 
-	screenbuf    = xmalloc(2 + (size_t)(win.ws_row * win.ws_col));
+	screenbuf = malloc(2 + (size_t)(win.ws_row * win.ws_col));
+	if (!screenbuf)
+		kbd_error(EXIT_FAILURE, errno, _("out of memory"));
+
 	screenbuf[0] = 0;
 	screenbuf[1] = (unsigned char)cons;
 
@@ -120,13 +127,13 @@ try_ioctl : {
 	    (!fd || ioctl(0, TIOCLINUX, screenbuf))) {
 #if 0
 	    perror("TIOCLINUX");
-	    fprintf(stderr,_("couldn't read %s, and cannot ioctl dump\n"),
+	    fprintf(stderr,"couldn't read %s, and cannot ioctl dump\n",
 		    infile);
 #else
 		/* we tried this just to be sure, but TIOCLINUX
 	       function 0 has been disabled since 1.1.92
 	       Do not mention `ioctl dump' in error msg */
-		kbd_warning(0, _("couldn't read %s\n"), infile);
+		kbd_warning(0, _("Couldn't read %s"), infile);
 #endif
 		return EXIT_FAILURE;
 	}
@@ -135,13 +142,17 @@ try_ioctl : {
 	cols = screenbuf[1];
 	if (rows != win.ws_row || cols != win.ws_col) {
 		kbd_error(EXIT_FAILURE, 0,
-		          _("Strange ... screen is both %dx%d and %dx%d ??\n"),
+		          _("Strange ... screen is both %dx%d and %dx%d ?"),
 		          win.ws_col, win.ws_row, cols, rows);
 	}
 
-	outbuf = xmalloc(rows * (cols + 1));
-	p      = ((char *)screenbuf) + 2;
-	q      = outbuf;
+	outbuf = malloc(rows * (cols + 1));
+	if (!outbuf)
+		kbd_error(EXIT_FAILURE, errno, _("out of memory"));
+
+	p = ((char *)screenbuf) + 2;
+	q = outbuf;
+
 	for (i = 0; i < rows; i++) {
 		for (j = 0; j < cols; j++)
 			*q++ = *p++;
@@ -152,7 +163,7 @@ try_ioctl : {
 }
 done:
 	if (write(1, outbuf, (size_t) (q - outbuf)) != q - outbuf) {
-		kbd_error(EXIT_FAILURE, 0, _("Error writing screendump\n"));
+		kbd_error(EXIT_FAILURE, errno, _("Error writing screendump"));
 	}
 
 	return EXIT_SUCCESS;

@@ -4,10 +4,10 @@
 
 #include <stdio.h>
 #include <stdlib.h> /* exit */
+#include <limits.h>
 
 #include "libcommon.h"
-
-#include "psf.h"
+#include "kfont.h"
 
 static void __attribute__((noreturn))
 usage(void)

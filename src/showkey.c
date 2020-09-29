@@ -7,6 +7,7 @@
 #include <getopt.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <string.h>
 #include <termios.h>
 #include <sysexits.h>
 #include <sys/ioctl.h>
@@ -30,9 +31,9 @@ get_mode(void)
 {
 	const char *m;
 
-	if (ioctl(fd, KDGKBMODE, &oldkbmode)) {
-		kbd_error(EXIT_FAILURE, errno, "ioctl KDGKBMODE");
-	}
+	if (ioctl(fd, KDGKBMODE, &oldkbmode))
+		kbd_error(EXIT_FAILURE, errno, _("Unable to read keyboard mode"));
+
 	switch (oldkbmode) {
 		case K_RAW:
 			m = "RAW";
@@ -85,19 +86,32 @@ watch_dog(int x __attribute__((unused)))
 }
 
 static void __attribute__((noreturn))
-usage(int rc)
+usage(int rc, const struct kbd_help *options)
 {
-	fprintf(stderr, _(
-		"showkey version %s\n\n"
-		"usage: showkey [options...]\n"
-		"\n"
-		"Options:\n"
-		"  -a, --ascii           display the decimal/octal/hex values of the keys;\n"
-		"  -s, --scancodes       display only the raw scan-codes;\n"
-		"  -k, --keycodes        display only the interpreted keycodes (default);\n"
-		"  -h, --help            print this usage message;\n"
-		"  -V, --version         print version number.\n"),
-	        PACKAGE_VERSION);
+	const struct kbd_help *h;
+	fprintf(stderr, _("Usage: %s [option...]\n"), get_progname());
+	if (options) {
+		int max = 0;
+
+		fprintf(stderr, "\n");
+		fprintf(stderr, _("Options:"));
+		fprintf(stderr, "\n");
+
+		for (h = options; h && h->opts; h++) {
+			int len = (int) strlen(h->opts);
+			if (max < len)
+				max = len;
+		}
+		max += 2;
+
+		for (h = options; h && h->opts; h++)
+			fprintf(stderr, "  %-*s %s\n", max, h->opts, h->desc);
+	}
+
+	fprintf(stderr, "\n");
+	fprintf(stderr, _("Report bugs to authors.\n"));
+	fprintf(stderr, "\n");
+
 	exit(rc);
 }
 
@@ -124,6 +138,15 @@ int main(int argc, char *argv[])
 	set_progname(argv[0]);
 	setuplocale();
 
+	const struct kbd_help opthelp[] = {
+		{ "-a, --ascii",     _("display the decimal/octal/hex values of the keys.") },
+		{ "-s, --scancodes", _("display only the raw scan-codes.") },
+		{ "-k, --keycodes",  _("display only the interpreted keycodes (default).") },
+		{ "-h, --help",      _("print this usage message.") },
+		{ "-V, --version",   _("print version number.")     },
+		{ NULL, NULL }
+	};
+
 	while ((c = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
 		switch (c) {
 			case 's':
@@ -139,16 +162,16 @@ int main(int argc, char *argv[])
 				print_version_and_exit();
 				break;
 			case 'h':
-				usage(EXIT_SUCCESS);
+				usage(EXIT_SUCCESS, opthelp);
 				break;
 			case '?':
-				usage(EX_USAGE);
+				usage(EX_USAGE, opthelp);
 				break;
 		}
 	}
 
 	if (optind < argc)
-		usage(EX_USAGE);
+		usage(EX_USAGE, opthelp);
 
 	if (print_ascii) {
 		/* no mode and signal and timer stuff - just read stdin */
@@ -185,7 +208,7 @@ int main(int argc, char *argv[])
 	}
 
 	if ((fd = getfd(NULL)) < 0)
-		kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console"));
+		kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console."));
 
 	/* the program terminates when there is no input for 10 secs */
 	signal(SIGALRM, watch_dog);
@@ -257,7 +280,7 @@ int main(int argc, char *argv[])
 		i = 0;
 		while (i < n) {
 			int kc;
-			char *s;
+			const char *s;
 
 			s = (buf[i] & 0x80) ? _("release") : _("press");
 

@@ -6,16 +6,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 #include <errno.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <sysexits.h>
 #include <sys/ioctl.h>
-#include <linux/kd.h>
 
 #include "libcommon.h"
-
-#include "kdmapop.h"
-#include "kdfontop.h"
+#include "kfont.h"
 
 /*
  * Showing the font is nontrivial mostly because testing whether
@@ -31,57 +29,60 @@ int have_obuf    = 0;
 int have_ounimap = 0;
 
 static void __attribute__((noreturn))
-leave(int n)
+leave(struct kfont_context *ctx, int n)
 {
-	if (have_obuf && loaduniscrnmap(fd, obuf)) {
-		kbd_warning(0, _("failed to restore original translation table\n"));
+	if (have_obuf && kfont_put_uniscrnmap(ctx, fd, obuf)) {
+		kbd_warning(0, _("failed to restore original translation table"));
 		n = EXIT_FAILURE;
 	}
-	if (have_ounimap && loadunimap(fd, NULL, &ounimap)) {
-		kbd_warning(0, _("failed to restore original unimap\n"));
+	if (have_ounimap && kfont_put_unicodemap(ctx, fd, NULL, &ounimap)) {
+		kbd_warning(0, _("failed to restore original unimap"));
 		n = EXIT_FAILURE;
 	}
 	exit(n);
 }
 
 static void
-settrivialscreenmap(void)
+settrivialscreenmap(struct kfont_context *ctx)
 {
 	unsigned short i;
 
-	if (getuniscrnmap(fd, obuf))
+	if (kfont_get_uniscrnmap(ctx, fd, obuf))
 		exit(1);
 	have_obuf = 1;
 
 	for (i = 0; i < E_TABSZ; i++)
 		nbuf[i] = i;
 
-	if (loaduniscrnmap(fd, nbuf)) {
-		kbd_error(EXIT_FAILURE, 0, _("cannot change translation table\n"));
+	if (kfont_put_uniscrnmap(ctx, fd, nbuf)) {
+		kbd_error(EXIT_FAILURE, 0, _("cannot change translation table"));
 	}
 }
 
 static void
-getoldunicodemap(void)
+getoldunicodemap(struct kfont_context *ctx)
 {
 	struct unimapdesc descr;
 
-	if (getunimap(fd, &descr))
-		leave(EXIT_FAILURE);
-	ounimap      = descr;
+	if (kfont_get_unicodemap(ctx, fd, &descr))
+		leave(ctx, EXIT_FAILURE);
+	ounimap = descr;
 	have_ounimap = 1;
 }
 
 #define BASE 041 /* ' '+1 */
 
 static void
-setnewunicodemap(int *list, int cnt)
+setnewunicodemap(struct kfont_context *ctx, unsigned int *list, int cnt)
 {
 	unsigned short i;
 
 	if (!nunimap.entry_ct) {
 		nunimap.entry_ct = 512;
-		nunimap.entries  = (struct unipair *)xmalloc(nunimap.entry_ct * sizeof(struct unipair));
+
+		nunimap.entries  = malloc(nunimap.entry_ct * sizeof(struct unipair));
+		if (!nunimap.entries)
+			kbd_error(EX_OSERR, errno, "malloc");
 	}
 	for (i = 0; i < 512; i++) {
 		nunimap.entries[i].fontpos = i;
@@ -90,68 +91,111 @@ setnewunicodemap(int *list, int cnt)
 	for (i = 0; i < cnt; i++)
 		nunimap.entries[list[i]].unicode = (unsigned short) (BASE + i);
 
-	if (loadunimap(fd, NULL, &nunimap))
-		leave(EXIT_FAILURE);
+	if (kfont_put_unicodemap(ctx, fd, NULL, &nunimap))
+		leave(ctx, EXIT_FAILURE);
 }
 
 static void __attribute__((noreturn))
-usage(void)
+usage(int rc, const struct kbd_help *options)
 {
-	fprintf(stderr,
-	        _("usage: showconsolefont -V|--version\n"
-	          "       showconsolefont [-C tty] [-v] [-i]\n"
-	          "(probably after loading a font with `setfont font')\n"
-	          "\n"
-	          "Options:\n"
-	          "  -C tty                device to read the font from. Default: current tty;\n"
-	          "  -v                    be more verbose;\n"
-	          "  -i                    don't print out the font table, just show;\n"
-	          "                        ROWSxCOLSxCOUNT and exit;\n"
-	          "  -V, --version         print version number.\n"
-	));
-	exit(EXIT_FAILURE);
+	const struct kbd_help *h;
+
+	fprintf(stderr, _("Usage: %s [option...]\n"), get_progname());
+	fprintf(stderr, _("(probably after loading a font with `setfont font')\n"));
+
+	if (options) {
+		int max = 0;
+
+		fprintf(stderr, "\n");
+		fprintf(stderr, _("Options:"));
+		fprintf(stderr, "\n");
+
+		for (h = options; h && h->opts; h++) {
+			int len = (int) strlen(h->opts);
+			if (max < len)
+				max = len;
+		}
+		max += 2;
+
+		for (h = options; h && h->opts; h++)
+			fprintf(stderr, "  %-*s %s\n", max, h->opts, h->desc);
+	}
+
+	fprintf(stderr, "\n");
+	fprintf(stderr, _("Report bugs to authors.\n"));
+	fprintf(stderr, "\n");
+
+	exit(rc);
 }
 
 int main(int argc, char **argv)
 {
-	int c, n, cols, rows, nr, i, j, k;
+	int c, ret;
+	unsigned int cols, rows, nr, n, i, j, k;
 	int mode;
 	const char *space, *sep;
 	char *console = NULL;
-	int list[64], lth, info = 0, verbose = 0;
+	unsigned int list[64];
+	int lth, info = 0;
 
 	set_progname(argv[0]);
 	setuplocale();
 
-	if (argc == 2 &&
-	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")))
-		print_version_and_exit();
+	const char *const short_opts = "C:ivVh";
+	const struct option long_opts[] = {
+		{ "console", required_argument, NULL, 'C' },
+		{ "info",    no_argument, NULL, 'i' },
+		{ "verbose", no_argument, NULL, 'v' },
+		{ "help",    no_argument, NULL, 'h' },
+		{ "version", no_argument, NULL, 'V' },
+		{ NULL, 0, NULL, 0 }
+	};
+	const struct kbd_help opthelp[] = {
+		{ "-C, --console=DEV", _("the console device to be used.") },
+		{ "-i, --info",        _("don't print out the font table, just show: ROWSxCOLSxCOUNT and exit.") },
+		{ "-v, --verbose",     _("be more verbose.") },
+		{ "-V, --version",     _("print version number.")     },
+		{ "-h, --help",        _("print this usage message.") },
+		{ NULL, NULL }
+	};
 
-	while ((c = getopt(argc, argv, "ivC:")) != EOF) {
+	struct kfont_context *kfont;
+
+	if ((ret = kfont_init(get_progname(), &kfont)) < 0)
+		return -ret;
+
+	while ((c = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
 		switch (c) {
+			case 'C':
+				console = optarg;
+				break;
 			case 'i':
 				info = 1;
 				break;
 			case 'v':
-				verbose = 1;
+				kfont_inc_verbosity(kfont);
 				break;
-			case 'C':
-				console = optarg;
+			case 'V':
+				print_version_and_exit();
 				break;
-			default:
-				usage();
+			case 'h':
+				usage(EXIT_SUCCESS, opthelp);
+				break;
+			case '?':
+				usage(EX_USAGE, opthelp);
+				break;
 		}
 	}
 
 	if (optind != argc)
-		usage();
+		usage(EX_USAGE, opthelp);
 
 	if ((fd = getfd(console)) < 0)
-		kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console"));
+		kbd_error(EX_OSERR, 0, _("Couldn't get a file descriptor referring to the console."));
 
 	if (ioctl(fd, KDGKBMODE, &mode)) {
-		kbd_warning(errno, "ioctl KDGKBMODE");
-		leave(EXIT_FAILURE);
+		kbd_warning(errno, _("Unable to read keyboard mode"));
+		leave(kfont, EX_OSERR);
 	}
 	if (mode == K_UNICODE)
 		space = "\xef\x80\xa0"; /* U+F020 (direct-to-font space) */
@@ -160,24 +204,25 @@ int main(int argc, char **argv)
 
 	if (info) {
 		nr = rows = cols = 0;
-		n                = getfont(fd, NULL, &nr, &rows, &cols);
-		if (n != 0)
-			leave(EXIT_FAILURE);
 
-		if (verbose) {
-			printf(_("Character count: %d\n"), nr);
-			printf(_("Font width     : %d\n"), rows);
-			printf(_("Font height    : %d\n"), cols);
+		ret = kfont_get_font(kfont, fd, NULL, &nr, &rows, &cols);
+		if (ret != 0)
+			leave(kfont, EXIT_FAILURE);
+
+		if (kfont_get_verbosity(kfont)) {
+			printf(_("Character count: %u\n"), nr);
+			printf(_("Font width     : %u\n"), rows);
+			printf(_("Font height    : %u\n"), cols);
 		} else
 			printf("%dx%dx%d\n", rows, cols, nr);
-		leave(EXIT_SUCCESS);
+		leave(kfont, EXIT_SUCCESS);
 	}
 
-	settrivialscreenmap();
-	getoldunicodemap();
+	settrivialscreenmap(kfont);
+	getoldunicodemap(kfont);
 
-	n = getfontsize(fd);
-	if (verbose)
+	n = kfont_get_fontsize(kfont, fd);
+	if (kfont_get_verbosity(kfont))
 		printf(_("Showing %d-char font\n\n"), n);
 	cols = ((n > 256) ? 32 : 16);
 	nr   = 64 / cols;
@@ -190,11 +235,11 @@ int main(int argc, char **argv)
 			for (k = i; k < i + nr; k++)
 				for (j              = 0; j < cols; j++)
 					list[lth++] = k + j * rows;
-			setnewunicodemap(list, lth);
+			setnewunicodemap(kfont, list, lth);
 		}
 		printf("%1$s%1$s%1$s%1$s", space);
 		for (j = 0; j < cols && i + j * rows < n; j++) {
-			putchar(BASE + (i % nr) * cols + j);
+			printf("%c", BASE + (i % nr) * cols + j);
 			printf(sep, space);
 			if (j % 8 == 7)
 				printf(sep, space);
@@ -205,6 +250,6 @@ int main(int argc, char **argv)
 		fflush(stdout);
 	}
 
-	leave(EXIT_SUCCESS);
+	leave(kfont, EXIT_SUCCESS);
 	return EXIT_SUCCESS;
 }

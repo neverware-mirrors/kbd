@@ -8,9 +8,12 @@
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <signal.h>
+#include <time.h>
 #include <dirent.h>
 #include <pwd.h>
 #include <errno.h>
+#include <sysexits.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/vt.h>
@@ -41,28 +44,38 @@
 #error vt device name must be defined
 #endif
 
-static void
-    __attribute__((noreturn))
-    print_help(int ret)
+static void __attribute__((noreturn))
+usage(int rc, const struct kbd_help *options)
 {
-	printf(_("Usage: %s [OPTIONS] -- command\n"
-	         "\n"
-	         "This utility helps you to start a program on a new virtual terminal (VT).\n"
-	         "\n"
-	         "Options:\n"
-	         "  -c, --console=NUM     use the given VT number;\n"
-	         "  -e, --exec            execute the command, without forking;\n"
-	         "  -f, --force           force opening a VT without checking;\n"
-	         "  -l, --login           make the command a login shell;\n"
-	         "  -u, --user            figure out the owner of the current VT;\n"
-	         "  -s, --switch          switch to the new VT;\n"
-	         "  -w, --wait            wait for command to complete;\n"
-	         "  -v, --verbose         explain what is being done;\n"
-	         "  -h, --help            print this usage message;\n"
-	         "  -V, --version         print version number.\n"
-	         "\n"),
-	       get_progname());
-	exit(ret);
+	const struct kbd_help *h;
+
+	fprintf(stderr, _("Usage: %s [option...] -- command\n"), get_progname());
+	fprintf(stderr, "\n");
+	fprintf(stderr, _("This utility helps you to start a program on a new virtual terminal (VT).\n"));
+
+	if (options) {
+		int max = 0;
+
+		fprintf(stderr, "\n");
+		fprintf(stderr, _("Options:"));
+		fprintf(stderr, "\n");
+
+		for (h = options; h && h->opts; h++) {
+			int len = (int) strlen(h->opts);
+			if (max < len)
+				max = len;
+		}
+		max += 2;
+
+		for (h = options; h && h->opts; h++)
+			fprintf(stderr, "  %-*s %s\n", max, h->opts, h->desc);
+	}
+
+	fprintf(stderr, "\n");
+	fprintf(stderr, _("Report bugs to authors.\n"));
+	fprintf(stderr, "\n");
+
+	exit(rc);
 }
 
 /*
@@ -161,6 +174,75 @@ open_vt(char *vtname, int force)
 	return fd;
 }
 
+static void
+sighandler(int sig __attribute__((unused)),
+           siginfo_t *si __attribute__((unused)),
+           void *uc __attribute__((unused)))
+{
+	return;
+}
+
+static int
+change_vt(int fd, int vtno)
+{
+	int rc = -1;
+	timer_t timerid = NULL;
+	struct sigaction sa;
+	struct sigevent sev;
+	struct itimerspec its;
+
+	sa.sa_flags = SA_SIGINFO;
+	sa.sa_sigaction = sighandler;
+	sigemptyset(&sa.sa_mask);
+
+	if (sigaction(SIGALRM, &sa, NULL) < 0) {
+		kbd_warning(errno, _("Unable to set signal handler"));
+		return rc;
+	}
+
+	sev.sigev_notify = SIGEV_SIGNAL;
+	sev.sigev_signo = SIGALRM;
+	sev.sigev_value.sival_ptr = &timerid;
+
+	if (timer_create(CLOCK_REALTIME, &sev, &timerid) < 0) {
+		kbd_warning(errno, _("Unable to create timer"));
+		goto fail;
+	}
+
+	its.it_value.tv_sec     = 1;
+	its.it_value.tv_nsec    = 0;
+	its.it_interval.tv_sec  = its.it_value.tv_sec;
+	its.it_interval.tv_nsec = its.it_value.tv_nsec;
+
+	if (timer_settime(timerid, 0, &its, NULL) < 0) {
+		kbd_warning(errno, _("Unable to set timer"));
+		goto fail;
+	}
+
+	do {
+		errno = 0;
+
+		if (ioctl(fd, VT_ACTIVATE, vtno) < 0 && errno != EINTR) {
+			kbd_warning(errno, _("Couldn't activate vt %d"), vtno);
+			goto fail;
+		}
+
+		if (ioctl(fd, VT_WAITACTIVE, vtno) < 0 && errno != EINTR) {
+			kbd_warning(errno, "ioctl(VT_WAITACTIVE)");
+			goto fail;
+		}
+	} while (errno == EINTR);
+
+	rc = 0;
+fail:
+	if (timerid)
+		timer_delete(timerid);
+
+	signal(SIGALRM, SIG_DFL);
+
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	int opt, i;
@@ -180,6 +262,9 @@ int main(int argc, char *argv[])
 	char vtname[PATH_MAX+1];
 	char *cmd = NULL, *def_cmd = NULL, *username = NULL;
 
+	set_progname(argv[0]);
+	setuplocale();
+
 	struct option long_options[] = {
 		{ "help", no_argument, 0, 'h' },
 		{ "version", no_argument, 0, 'V' },
@@ -194,8 +279,19 @@ int main(int argc, char *argv[])
 		{ 0, 0, 0, 0 }
 	};
 
-	set_progname(argv[0]);
-	setuplocale();
+	const struct kbd_help opthelp[] = {
+		{ "-C, --console=DEV", _("the console device to be used.") },
+		{ "-e, --exec",        _("execute the command, without forking.") },
+		{ "-f, --force",       _("force opening a VT without checking.") },
+		{ "-l, --login",       _("make the command a login shell.") },
+		{ "-u, --user",        _("figure out the owner of the current VT.") },
+		{ "-s, --switch",      _("switch to the new VT.") },
+		{ "-w, --wait",        _("wait for command to complete") },
+		{ "-v, --verbose",     _("be more verbose.") },
+		{ "-V, --version",     _("print version number.")     },
+		{ "-h, --help",        _("print this usage message.") },
+		{ NULL, NULL }
+	};
 
 	while ((opt = getopt_long(argc, argv, "c:lsfuewhvV", long_options, NULL)) != -1) {
 		switch (opt) {
@@ -240,7 +336,7 @@ int main(int argc, char *argv[])
 				break;
 			default:
 			case 'h':
-				print_help(EXIT_SUCCESS);
+				usage(EXIT_SUCCESS, opthelp);
 				break;
 		}
 	}
@@ -253,7 +349,7 @@ int main(int argc, char *argv[])
 	}
 
 	if ((consfd = getfd(NULL)) < 0)
-		kbd_error(2, 0, _("Couldn't get a file descriptor referring to the console"));
+		kbd_error(2, 0, _("Couldn't get a file descriptor referring to the console."));
 
 	if (ioctl(consfd, VT_GETSTATE, &vtstat) < 0)
 		kbd_error(4, errno, "ioctl(VT_GETSTATE)");
@@ -279,10 +375,13 @@ int main(int argc, char *argv[])
 			def_cmd = getenv("SHELL");
 			if (def_cmd == NULL)
 				kbd_error(7, 0, _("Unable to find command."));
-			cmd = xmalloc(strlen(def_cmd) + 2);
+			cmd = malloc(strlen(def_cmd) + 2);
 		} else {
-			cmd = xmalloc(strlen(argv[optind]) + 2);
+			cmd = malloc(strlen(argv[optind]) + 2);
 		}
+
+		if (!cmd)
+			kbd_error(EX_OSERR, errno, "malloc");
 
 		if (login)
 			strcpy(cmd, "-");
@@ -334,7 +433,8 @@ int main(int argc, char *argv[])
 				}
 				snprintf(vtname, PATH_MAX, VTNAME, vtno);
 			}
-			kbd_error(5, errsv, _("Unable to open %s"), vtname);
+			errno = errsv;
+			kbd_error(5, 0, _("Unable to open file: %s: %m"), vtname);
 		}
 	got_vtno:
 		if (verbose)
@@ -354,13 +454,9 @@ int main(int argc, char *argv[])
 				kbd_error(5, errno, "setuid");
 		}
 
-		if (show) {
-			if (ioctl(fd, VT_ACTIVATE, vtno))
-				kbd_error(1, errno, _("Couldn't activate vt %d"), vtno);
+		if (show && change_vt(fd, vtno) < 0)
+			exit(1);
 
-			if (ioctl(fd, VT_WAITACTIVE, vtno))
-				kbd_error(1, errno, _("Activation interrupted?"));
-		}
 		close(0);
 		close(1);
 		close(2);
@@ -391,12 +487,8 @@ int main(int argc, char *argv[])
 		waitpid(pid, &retval, 0);
 
 		if (show) { /* Switch back... */
-			if (ioctl(consfd, VT_ACTIVATE, vtstat.v_active))
-				kbd_error(8, errno, "ioctl(VT_ACTIVATE)");
-
-			/* wait to be really sure we have switched */
-			if (ioctl(consfd, VT_WAITACTIVE, vtstat.v_active))
-				kbd_error(8, errno, "ioctl(VT_WAITACTIVE)");
+			if (change_vt(consfd, vtstat.v_active) < 0)
+				exit(8);
 
 			if (ioctl(consfd, VT_DISALLOCATE, vtno))
 				kbd_error(8, 0, _("Couldn't deallocate console %d"), vtno);
