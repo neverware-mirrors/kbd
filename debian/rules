@@ -50,6 +50,9 @@ override_dh_auto_build:
 	$(MAKE) -C src/ CFLAGS="-Os -g" $(UDEB_BINARIES)
 	cd src/ && for ITEM in $(UDEB_BINARIES); do mv $$ITEM $$ITEM-udeb; done
 	$(MAKE) -C src/libkeymap clean
+	$(MAKE) -C src/libcommon clean
+	$(MAKE) -C src/libkbdfile clean
+	$(MAKE) -C src/libkfont clean
 	$(MAKE) -C src/ clean
 	$(MAKE)
 	$(MAKE) -C src/ $(EXTRA_BINARIES)
