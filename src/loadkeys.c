@@ -16,6 +16,7 @@
 #include <string.h>
 #include <getopt.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sysexits.h>
 #include <sys/ioctl.h>
 
@@ -24,67 +25,59 @@
 #include "paths.h"
 #include "keymap.h"
 
-static const char *const dirpath1[] = { "", DATADIR "/" KEYMAPDIR "/**", KERNDIR "/", 0 };
-static const char *const suffixes[] = { "", ".kmap", ".map", 0 };
+static const char *const dirpath1[] = {
+	"",
+	DATADIR "/" KEYMAPDIR "/**",
+	KERNDIR "/",
+	NULL
+};
+static const char *const suffixes[] = {
+	"",
+	".kmap",
+	".map",
+	NULL
+};
 
 static void __attribute__((noreturn))
-usage(int rc)
+usage(int rc, const struct kbd_help *options)
 {
-	fprintf(stderr, _(
-		"loadkeys version %s\n"
-		"\n"
-		"Usage: %s [option...] [mapfile...]\n"
-		"\n"
-		"Options:\n"
-		"  -a, --ascii           force conversion to ASCII;\n"
-		"  -b, --bkeymap         output a binary keymap to stdout;\n"
-		"  -c, --clearcompose    clear kernel compose table;\n"
-		"  -C, --console=file    the console device to be used;\n"
-		"  -d, --default         load \"%s\";\n"
-		"  -m, --mktable         output a \"defkeymap.c\" to stdout;\n"
-		"  -p, --parse           search and parse keymap without action;\n"
-		"  -s, --clearstrings    clear kernel string table;\n"
-		"  -u, --unicode         force conversion to Unicode;\n"
-		"  -q, --quiet           suppress all normal output;\n"
-		"  -v, --verbose         explain what is being done;\n"
-		"  -h, --help            print this usage message;\n"
-		"  -V, --version         print version number.\n"),
-	        PACKAGE_VERSION, get_progname(), DEFMAP);
+	const struct kbd_help *h;
+
+	fprintf(stderr, _("Usage: %s [option...] [mapfile...]\n"), get_progname());
+
+	if (options) {
+		int max = 0;
+
+		fprintf(stderr, "\n");
+		fprintf(stderr, _("Options:"));
+		fprintf(stderr, "\n");
+
+		for (h = options; h && h->opts; h++) {
+			int len = (int) strlen(h->opts);
+			if (max < len)
+				max = len;
+		}
+		max += 2;
+
+		for (h = options; h && h->opts; h++)
+			fprintf(stderr, "  %-*s %s\n", max, h->opts, h->desc);
+	}
+
+	fprintf(stderr, "\n");
+	fprintf(stderr, _("Default keymap: %s\n"), DEFMAP);
+	fprintf(stderr, "\n");
+	fprintf(stderr, _("Report bugs to authors.\n"));
+	fprintf(stderr, "\n");
+
 	exit(rc);
 }
 
 int main(int argc, char *argv[])
 {
-	const char *const short_opts          = "abcC:dhmpsuqvV";
-	const struct option long_opts[] = {
-		{ "console", required_argument, NULL, 'C' },
-		{ "ascii", no_argument, NULL, 'a' },
-		{ "bkeymap", no_argument, NULL, 'b' },
-		{ "clearcompose", no_argument, NULL, 'c' },
-		{ "default", no_argument, NULL, 'd' },
-		{ "help", no_argument, NULL, 'h' },
-		{ "mktable", no_argument, NULL, 'm' },
-		{ "parse", no_argument, NULL, 'p' },
-		{ "clearstrings", no_argument, NULL, 's' },
-		{ "unicode", no_argument, NULL, 'u' },
-		{ "quiet", no_argument, NULL, 'q' },
-		{ "verbose", no_argument, NULL, 'v' },
-		{ "version", no_argument, NULL, 'V' },
-		{ NULL, 0, NULL, 0 }
-	};
-
-	enum options {
-		OPT_A = (1 << 1),
-		OPT_B = (1 << 2),
-		OPT_D = (1 << 3),
-		OPT_M = (1 << 4),
-		OPT_U = (1 << 5),
-		OPT_P = (1 << 6)
-	};
 	int options = 0;
 
 	const char *const *dirpath;
-	const char *dirpath2[] = { 0, 0 };
+	const char *dirpath2[] = { NULL, NULL };
 
 	struct lk_ctx *ctx;
 	lk_flags flags = 0;
@@ -101,13 +94,56 @@ int main(int argc, char *argv[])
 	set_progname(argv[0]);
 	setuplocale();
 
+	const char *const short_opts = "abcC:dhmpsuqvV";
+	const struct option long_opts[] = {
+		{ "console", required_argument, NULL, 'C' },
+		{ "ascii", no_argument, NULL, 'a' },
+		{ "bkeymap", no_argument, NULL, 'b' },
+		{ "clearcompose", no_argument, NULL, 'c' },
+		{ "default", no_argument, NULL, 'd' },
+		{ "help", no_argument, NULL, 'h' },
+		{ "mktable", no_argument, NULL, 'm' },
+		{ "parse", no_argument, NULL, 'p' },
+		{ "clearstrings", no_argument, NULL, 's' },
+		{ "unicode", no_argument, NULL, 'u' },
+		{ "quiet", no_argument, NULL, 'q' },
+		{ "verbose", no_argument, NULL, 'v' },
+		{ "version", no_argument, NULL, 'V' },
+		{ NULL, 0, NULL, 0 }
+	};
+	const struct kbd_help opthelp[] = {
+		{ "-C, --console=DEV",  _("the console device to be used.") },
+		{ "-a, --ascii",        _("force conversion to ASCII.") },
+		{ "-b, --bkeymap",      _("output a binary keymap to stdout.") },
+		{ "-c, --clearcompose", _("clear kernel compose table.") },
+		{ "-d, --default",      _("load default.") },
+		{ "-m, --mktable",      _("output a 'defkeymap.c' to stdout.") },
+		{ "-p, --parse",        _("search and parse keymap without action.") },
+		{ "-s, --clearstrings", _("clear kernel string table.") },
+		{ "-u, --unicode",      _("force conversion to Unicode.") },
+		{ "-q, --quiet",        _("suppress all normal output.") },
+		{ "-v, --verbose",      _("be more verbose.") },
+		{ "-V, --version",      _("print version number.")     },
+		{ "-h, --help",         _("print this usage message.") },
+		{ NULL, NULL }
+	};
+
+	enum options {
+		OPT_A = (1 << 1),
+		OPT_B = (1 << 2),
+		OPT_D = (1 << 3),
+		OPT_M = (1 << 4),
+		OPT_U = (1 << 5),
+		OPT_P = (1 << 6)
+	};
+
 	ctx = lk_init();
 	if (!ctx) {
 		exit(EXIT_FAILURE);
 	}
 
-	if ((fctx = kbdfile_context_new()) == NULL)
-		nomem();
+	if (!(fctx = kbdfile_context_new()))
+		kbd_error(EXIT_FAILURE, errno, _("Unable to create kbdfile context"));
 
 	while ((c = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
 		switch (c) {
@@ -150,40 +186,34 @@ int main(int argc, char *argv[])
 				print_version_and_exit();
 				break;
 			case 'h':
-				usage(EXIT_SUCCESS);
+				usage(EXIT_SUCCESS, opthelp);
 				break;
 			case '?':
-				usage(EX_USAGE);
+				usage(EX_USAGE, opthelp);
 				break;
 		}
 	}
 
-	if ((options & OPT_U) && (options & OPT_A)) {
-		fprintf(stderr,
-		        _("%s: Options --unicode and --ascii are mutually exclusive\n"),
-		        get_progname());
-		exit(EXIT_FAILURE);
-	}
+	if ((options & OPT_U) && (options & OPT_A))
+		kbd_error(EXIT_FAILURE, 0, _("Options %s and %s are mutually exclusive."),
+				"--unicode", "--ascii");
 
 	if (!(options & OPT_M) && !(options & OPT_B)) {
 		/* get console */
 		if ((fd = getfd(console)) < 0)
-			kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console"));
+			kbd_error(EXIT_FAILURE, 0, _("Couldn't get a file descriptor referring to the console."));
 
 		/* check whether the keyboard is in Unicode mode */
-		if (ioctl(fd, KDGKBMODE, &kbd_mode) ||
-		    ioctl(fd, KDGETMODE, &kd_mode)) {
-			fprintf(stderr, _("%s: error reading keyboard mode: %m\n"),
-			        get_progname());
-			exit(EXIT_FAILURE);
-		}
+		if (ioctl(fd, KDGKBMODE, &kbd_mode))
+			kbd_error(EXIT_FAILURE, errno, _("Unable to read keyboard mode"));
+		if (ioctl(fd, KDGETMODE, &kd_mode))
+			kbd_error(EXIT_FAILURE, errno, _("Unable to read console mode"));
 
 		if (kbd_mode == K_UNICODE) {
 			if (options & OPT_A) {
-				fprintf(stderr,
-				        _("%s: warning: loading non-Unicode keymap on Unicode console\n"
-				          "    (perhaps you want to do `kbd_mode -a'?)\n"),
-				        get_progname());
+				kbd_warning(0,
+				        _("Warning: loading non-Unicode keymap on Unicode console\n"
+				          "    (perhaps you want to do `kbd_mode -a'?)"));
 			} else {
 				flags |= LK_FLAG_PREFER_UNICODE;
 			}
@@ -192,10 +222,9 @@ int main(int argc, char *argv[])
 			flags ^= LK_FLAG_UNICODE_MODE;
 
 		} else if (options & OPT_U && kd_mode != KD_GRAPHICS) {
-			fprintf(stderr,
-			        _("%s: warning: loading Unicode keymap on non-Unicode console\n"
-			          "    (perhaps you want to do `kbd_mode -u'?)\n"),
-			        get_progname());
+			kbd_warning(0,
+			        _("Warning: loading Unicode keymap on non-Unicode console\n"
+			          "    (perhaps you want to do `kbd_mode -u'?)"));
 		}
 	}
 
@@ -208,14 +237,12 @@ int main(int argc, char *argv[])
 	}
 
 	if (options & OPT_D) {
-		if ((fp = kbdfile_new(fctx)) == NULL)
-			nomem();
+		if (!(fp = kbdfile_new(fctx)))
+			kbd_error(EXIT_FAILURE, 0, _("Unable to create kbdfile instance: %m"));
 
 		/* first read default map - search starts in . */
-		if (kbdfile_find((char *) DEFMAP, dirpath, suffixes, fp)) {
-			fprintf(stderr, _("Cannot find %s\n"), DEFMAP);
-			exit(EXIT_FAILURE);
-		}
+		if (kbdfile_find(DEFMAP, dirpath, suffixes, fp))
+			kbd_error(EXIT_FAILURE, 0, _("Unable to find file: %s"), DEFMAP);
 
 		rc = lk_parse_keymap(ctx, fp);
 		kbdfile_free(fp);
@@ -224,8 +251,8 @@ int main(int argc, char *argv[])
 			goto fail;
 
 	} else if (optind == argc) {
-		if ((fp = kbdfile_new(fctx)) == NULL)
-			nomem();
+		if (!(fp = kbdfile_new(fctx)))
+			kbd_error(EXIT_FAILURE, 0, _("Unable to create kbdfile instance: %m"));
 
 		kbdfile_set_file(fp, stdin);
 		kbdfile_set_pathname(fp, "<stdin>");
@@ -238,15 +265,16 @@ int main(int argc, char *argv[])
 	}
 
 	for (i = optind; argv[i]; i++) {
-		if ((fp = kbdfile_new(fctx)) == NULL)
-			nomem();
+		if (!(fp = kbdfile_new(fctx))) {
+			kbd_error(EXIT_FAILURE, 0, _("Unable to create kbdfile instance: %m"));
+		}
 
 		if (!strcmp(argv[i], "-")) {
 			kbdfile_set_file(fp, stdin);
 			kbdfile_set_pathname(fp, "<stdin>");
 
 		} else if (kbdfile_find(argv[i], dirpath, suffixes, fp)) {
-			fprintf(stderr, _("cannot open file %s\n"), argv[i]);
+			kbd_warning(0, _("Unable to open file: %s: %m"), argv[i]);
 			goto fail;
 		}
 

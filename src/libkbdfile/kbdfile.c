@@ -161,7 +161,7 @@ maybe_pipe_open(struct kbdfile *fp)
 }
 
 static int
-findfile_by_fullname(const char *fnam, char **suffixes, struct kbdfile *fp)
+findfile_by_fullname(const char *fnam, const char *const *suffixes, struct kbdfile *fp)
 {
 	int i;
 	struct stat st;
@@ -200,10 +200,10 @@ findfile_by_fullname(const char *fnam, char **suffixes, struct kbdfile *fp)
 }
 
 static int
-filecmp(const char *fname, char *name, char **suf, unsigned int *index, struct decompressor **d)
+filecmp(const char *fname, const char *name, const char *const *suf, unsigned int *index, struct decompressor **d)
 {
 	/* Does d_name start right? */
-	char *p = name;
+	const char *p = name;
 	const char *q = fname;
 
 	while (*p && *p == *q)
@@ -242,7 +242,7 @@ filecmp(const char *fname, char *name, char **suf, unsigned int *index, struct d
 }
 
 static int
-findfile_in_dir(const char *fnam, const char *dir, const int recdepth, char **suf, struct kbdfile *fp)
+findfile_in_dir(const char *fnam, const char *dir, const int recdepth, const char *const *suf, struct kbdfile *fp)
 {
 	char errbuf[200];
 	char *ff, *fdir, *path;
@@ -344,20 +344,13 @@ StartScan:
 		snprintf(fp->pathname, sizeof(fp->pathname), "%s/%s%s%s", dir, fnam, suf[index], (dc ? dc->ext : ""));
 
 		if (!dc) {
-			fp->flags &= ~KBDFILE_PIPE;
-			fp->fd = fopen(fp->pathname, "r");
+			rc = maybe_pipe_open(fp);
+			goto EndScan;
+		}
 
-			if (!(fp->fd)) {
-				strerror_r(errno, errbuf, sizeof(errbuf));
-				ERR(fp->ctx, "fopen: %s: %s", fp->pathname, errbuf);
-				rc = -1;
-				goto EndScan;
-			}
-		} else {
-			if (pipe_open(dc, fp) < 0) {
-				rc = -1;
-				goto EndScan;
-			}
+		if (pipe_open(dc, fp) < 0) {
+			rc = -1;
+			goto EndScan;
 		}
 	}
 
@@ -380,7 +373,7 @@ EndScan:
 }
 
 int
-kbdfile_find(char *fnam, char **dirpath, char **suffixes, struct kbdfile *fp)
+kbdfile_find(const char *fnam, const char *const *dirpath, const char *const *suffixes, struct kbdfile *fp)
 {
 	int rc, i;
 
@@ -433,8 +426,8 @@ kbdfile_find(char *fnam, char **dirpath, char **suffixes, struct kbdfile *fp)
 		rc = findfile_in_dir(fnam, dir, recdepth, suffixes, fp);
 		free(dir);
 
-		if (rc <= 0)
-			return rc;
+		if (!rc)
+			return 0;
 	}
 
 	return 1;
@@ -456,4 +449,10 @@ kbdfile_open(struct kbdfile_ctx *ctx, const char *filename)
 	}
 
 	return fp;
+}
+
+int
+kbdfile_is_compressed(struct kbdfile *fp)
+{
+	return (fp->flags & KBDFILE_PIPE);
 }

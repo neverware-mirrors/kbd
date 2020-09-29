@@ -1,17 +1,29 @@
-.TH SETFONT 8 "11 Feb 2001" "" "International Support"
+.TH SETFONT 8 "11 Feb 2001" "kbd"
 .SH NAME
 setfont \- load EGA/VGA console screen font
 .SH SYNOPSIS
 .B setfont
-.RI "[-O " "font+umap.orig" "] [-o " "font.orig" ]
-.RI "[-om " "cmap.orig" ]
-.RI "[-ou " "umap.orig" ]
-.RI "[-" "N" "] [" "font.new ..." ]
-.RI "[-m " "cmap" ]
-.RI "[-u " "umap" ]
-.RI "[-C " "console" ]
-.RI "[-h" "H" ]
-.RI "[-v] [-V]"
+.RB [ -O
+.IR font+umap.orig ]
+.RB [ -o
+.IR font.orig ]
+.RB [ -om
+.IR cmap.orig ]
+.RB [ -ou
+.IR umap.orig ]
+.RB [ -\c
+.IR N ]
+.RI [ "font.new ...\&" ]
+.RB [ -m
+.IR cmap ]
+.RB [ -u
+.IR umap ]
+.RB [ -C
+.IR console ]
+.RB [ -h\c
+.IR H ]
+.RB [ -v ]
+.RB [ -V ]
 .IX "setfont command" "" "\fLsetfont\fR command"
 .SH DESCRIPTION
 The
@@ -69,7 +81,7 @@ Raw font files are binary files of size
 bytes, containing bit images for each of 256 characters,
 one byte per scan line, and
 .I N
-bytes per character (0 < 
+bytes per character (0 <
 .I N
 <= 32).
 Most fonts have a width of 8 bits, but with the framebuffer device (fb)
@@ -183,6 +195,13 @@ One may add a Unicode mapping table to a psf font using
 .BI "\-h " H
 Override font height.
 .TP
+.B \-d
+Doubles the size of the font, by replicating all of its pixels
+vertically and horizontally.  This is suitable for high pixel density
+(e.g. "4k") displays on which the standard fonts are too small to be
+easily legible.  Due to kernel limitations, this is suitable only for
+16x16 or smaller fonts.
+.TP
 .BI "\-m " file
 Load console map or Unicode console map from
 .IR file .
@@ -223,12 +242,18 @@ glyphs in the font. So, if the font has more than 256 glyphs,
 the console will be reduced to 8 (instead of 16) colors.
 
 .SH FILES
+.TP
 .I @DATADIR@/consolefonts
-is the default font directory.
+The default font directory.
+.LP
+.TP
 .I @DATADIR@/unimaps
-is the default directory for Unicode maps.
+The default directory for Unicode maps.
+.LP
+.TP
 .I @DATADIR@/consoletrans
-is the default directory for screen mappings.
+The default directory for screen mappings.
+.LP
 The default font is a file
 .I default
 (or

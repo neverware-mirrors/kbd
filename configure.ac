@@ -1,6 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_INIT([kbd],[2.2.0],[gladkov.alexey@gmail.com],[],[http://kbd-project.org/])
+AC_INIT([kbd],[2.3.0],[gladkov.alexey@gmail.com],[],[http://kbd-project.org/])
 
 AC_PREREQ([2.69])
 
@@ -9,6 +9,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([1.9 -Wall -Wno-portability color-tests dist-xz])
 AC_CONFIG_SRCDIR([src/loadkeys.c])
+AC_CONFIG_TESTDIR(tests)
 AC_CONFIG_HEADERS(config.h)
 PKG_PROG_PKG_CONFIG
 AX_CODE_COVERAGE
@@ -34,7 +35,7 @@ dnl older versions of automake didn't include this macro
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT
 
-AM_GNU_GETTEXT_VERSION([0.14.1])
+AM_GNU_GETTEXT_VERSION([0.19.8])
 AM_GNU_GETTEXT([external])
 ALL_LINGUAS=`cd $srcdir/po > /dev/null && echo *.po | sed 's/\.po//g'`
 
@@ -62,6 +63,8 @@ AC_FUNC_STAT
 AC_CHECK_FUNCS([alarm memset setlocale strcasecmp strchr strdup strerror \
 strspn strstr strtol strtoul setpgrp malloc realloc])
 
+AC_SEARCH_LIBS([timer_create], [rt])
+
 # Optimization level
 CC_O_LEVEL="-O2"
 FORTIFY_SOURCE="-D_FORTIFY_SOURCE=2"
@@ -72,9 +75,9 @@ if test "$enable_code_coverage" = yes; then
 fi
 
 case "$GCC,$ac_cv_prog_cc_g" in
-	yes,yes) CFLAGS="-g $CC_O_LEVEL $FORTIFY_SOURCE" ;;
-	yes,)    CFLAGS="$CC_O_LEVEL $FORTIFY_SOURCE" ;;
-	   ,yes) CFLAGS="-g" ;;
+	yes,yes) CFLAGS="$CC_O_LEVEL $FORTIFY_SOURCE $CFLAGS" ;;
+	yes,)    CFLAGS="$CC_O_LEVEL $FORTIFY_SOURCE $CFLAGS" ;;
+	   ,yes) CFLAGS="$CFLAGS" ;;
 esac
 
 CC_CHECK_CFLAGS_APPEND([\
@@ -94,6 +97,17 @@ CC_CHECK_CFLAGS_APPEND([\
 	-Wstrict-prototypes \
 	-Wwrite-strings \
 ])
+
+AC_ARG_ENABLE(werror,
+	[AS_HELP_STRING([--enable-werror], [turn on -Werror for some kind of warnings])],
+	[use_werror=$enableval], [use_werror=no])
+
+if test "$use_werror" = yes; then
+	CC_CHECK_CFLAGS_APPEND([ \
+		-Werror=incompatible-pointer-types \
+		-Werror=discarded-qualifiers \
+	])
+fi
 
 case $host_cpu in
 	m68*) KEYCODES_PROGS=no ;;
@@ -166,9 +180,15 @@ AC_CONFIG_FILES([Makefile
 		src/Makefile
 		src/libcommon/Makefile
 		src/libkbdfile/Makefile
+		src/libkfont/Makefile
 		src/libkeymap/Makefile
 		src/vlock/Makefile
-		tests/Makefile])
+		tests/helpers/Makefile
+		tests/libkbdfile/Makefile
+		tests/libkeymap/Makefile
+		tests/libtswrap/Makefile
+		tests/Makefile
+])
 AC_OUTPUT
 
 AC_MSG_RESULT([
