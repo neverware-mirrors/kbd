@@ -1,9 +1,11 @@
-kbd (2.3.0-2) UNRELEASED; urgency=medium
+kbd (2.3.0-2) unstable; urgency=medium
 
+  * Team upload.
   * debian/rules: clean all udeb built files
   * debian/rules: avoid shipping libtool scripts in udeb (Closes: #969965)
+  * Support the noudeb build profile
 
- -- Andreas Henriksson <andreas@fatal.se>  Tue, 29 Sep 2020 20:59:40 +0200
+ -- Andreas Henriksson <andreas@fatal.se>  Tue, 29 Sep 2020 21:20:45 +0200
 
 kbd (2.3.0-1) unstable; urgency=medium
 
