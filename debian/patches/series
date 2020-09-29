@@ -4,4 +4,3 @@ Various-fixes-to-the-openvt-utility.patch
 Check-for-X-in-kbd_mode.patch
 Support-KT_DEAD2-diacritics.patch
 configure.ac-respect-user-CFLAGS.patch
-analyze.l-add-missing-string-format.patch
