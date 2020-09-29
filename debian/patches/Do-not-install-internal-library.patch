@@ -1,0 +1,25 @@
+From: Alexey Gladkov <gladkov.alexey@gmail.com>
+Date: Sun, 9 Aug 2020 13:56:04 +0200
+Subject: Do not install internal library
+
+Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+---
+ tests/libtswrap/Makefile.am | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/tests/libtswrap/Makefile.am b/tests/libtswrap/Makefile.am
+index 2e71706..6a69aca 100644
+--- a/tests/libtswrap/Makefile.am
++++ b/tests/libtswrap/Makefile.am
+@@ -8,6 +8,9 @@ LIBTSWRAP_AGE      = 0
+ 
+ libtswrap_la_SOURCES = ioctl.c
+ libtswrap_la_LIBADD  = -ldl
+-libtswrap_la_LDFLAGS = -export-symbols-regex ^ioctl -version-info $(LIBTSWRAP_CURRENT):$(LIBTSWRAP_REVISION):$(LIBTSWRAP_AGE)
++libtswrap_la_LDFLAGS = \
++	-export-symbols-regex ^ioctl \
++	-version-info $(LIBTSWRAP_CURRENT):$(LIBTSWRAP_REVISION):$(LIBTSWRAP_AGE) \
++	-rpath /nowhere
+ 
+-lib_LTLIBRARIES    = libtswrap.la
++noinst_LTLIBRARIES   = libtswrap.la
