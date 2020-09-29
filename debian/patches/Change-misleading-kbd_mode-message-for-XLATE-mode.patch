@@ -22,11 +22,11 @@ codesearch.google.com shows only the BiCon project
 --- a/src/kbd_mode.c
 +++ b/src/kbd_mode.c
 @@ -36,7 +36,7 @@
- 			fprintf(stream, _("The keyboard is in mediumraw (keycode) mode\n"));
+ 			fprintf(stream, _("The keyboard is in mediumraw (keycode) mode"));
  			break;
  		case K_XLATE:
--			fprintf(stream, _("The keyboard is in the default (ASCII) mode\n"));
-+			fprintf(stream, _("The keyboard is in xlate (8-bit) mode\n"));
+-			fprintf(stream, _("The keyboard is in the default (ASCII) mode"));
++			fprintf(stream, _("The keyboard is in xlate (8-bit) mode"));
  			break;
  		case K_UNICODE:
- 			fprintf(stream, _("The keyboard is in Unicode (UTF-8) mode\n"));
+ 			fprintf(stream, _("The keyboard is in Unicode (UTF-8) mode"));

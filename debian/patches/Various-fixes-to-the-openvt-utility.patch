@@ -29,10 +29,10 @@ Three unrelated fixes:
  				break;
 -			default:
  			case 'h':
- 				print_help(EXIT_SUCCESS);
+ 				usage(EXIT_SUCCESS, opthelp);
  				break;
 +			default:
-+				print_help(EXIT_FAILURE);
++				usage(EXIT_FAILURE, opthelp);
 +				break;
  		}
  	}

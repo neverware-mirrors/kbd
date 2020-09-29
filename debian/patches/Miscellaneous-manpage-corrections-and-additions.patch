@@ -37,7 +37,7 @@ Forwarded: no
  .B \-v \-\-verbose \-V \-\-version
  ]
  .SH DESCRIPTION
--.IX "dumpkeys command" "" "\fLdumpkeys\fR command"  
+-.IX "dumpkeys command" "" "\fLdumpkeys\fR command"
  .LP
  .B dumpkeys
  writes, to the standard output, the current contents of the keyboard
@@ -57,7 +57,7 @@ Forwarded: no
  ]
  .LP
  .SH DESCRIPTION
--.IX "loadkeys command" "" "\fLloadkeys\fR command"  
+-.IX "loadkeys command" "" "\fLloadkeys\fR command"
  .LP
  The program
  .B loadkeys
@@ -67,7 +67,7 @@ Forwarded: no
  .I "\-e, \-\-exec"
  Directly execute the given command, without forking.
  This option is meant for use in
--.IR /etc/inittab ;
+-.IR /etc/inittab .
 +.IR /etc/inittab .
 +If you want to use this feature in another context, be aware that
 +.B openvt
@@ -115,7 +115,7 @@ Forwarded: no
  .IR outtable ]
  .RB [ \-nt ]
  .SH DESCRIPTION
--.IX "psfxtable command" "" "\fLpsfxtable\fR command"  
+-.IX "psfxtable command" "" "\fLpsfxtable\fR command"
  .LP
  .B psfxtable
  handles the embedded Unicode character table for .psf format
@@ -125,7 +125,7 @@ Forwarded: no
  .RI [ "-v" "] [" "-L" "] [" "-D" "] [" "-F" ]
  .RI [ {+|-}num "] [" {+|-}caps "] [" {+|-}scroll ]
  .SH DESCRIPTION
--.IX "setleds command" "" "\fLsetleds\fR command"  
+-.IX "setleds command" "" "\fLsetleds\fR command"
  .LP
  .B Setleds
  reports and changes the led flag settings of a VT
@@ -156,29 +156,6 @@ Forwarded: no
  .br
  .in +5m
  INITTY=/dev/tty[1-8]
-@@ -60,19 +59,19 @@
- .in -5m
- .SH OPTIONS
- .TP
--\-num \+num
-+\-num +num
- Clear or set NumLock.
- (At present, the NumLock setting influences the
- interpretation of keypad keys.
- Pressing the NumLock key complements the NumLock setting.)
- .TP
--\-caps \+caps
-+\-caps +caps
- Clear or set CapsLock.
- (At present, the CapsLock setting complements the Shift key
- when applied to letters.
- Pressing the CapsLock key complements the CapsLock setting.)
- .TP
--\-scroll \+scroll
-+\-scroll +scroll
- Clear or set ScrollLock.
- (At present, pressing the ScrollLock key (or ^S/^Q) stops/starts
- console output.)
 --- a/docs/man/man1/setmetamode.1
 +++ b/docs/man/man1/setmetamode.1
 @@ -11,7 +11,6 @@
@@ -205,7 +182,7 @@ Forwarded: no
  .B unicode_start
  .RI [ font " [" umap ]]
  .SH DESCRIPTION
--.IX "unicode_start command" "" "\fLunicode_start\fR command"  
+-.IX "unicode_start command" "" "\fLunicode_start\fR command"
  .LP
  The
  .B unicode_start
@@ -215,21 +192,10 @@ Forwarded: no
  .SH SYNOPSIS
  .B unicode_stop
  .SH DESCRIPTION
--.IX "unicode_stop command" "" "\fLunicode_stop\fR command"  
+-.IX "unicode_stop command" "" "\fLunicode_stop\fR command"
  .LP
  The
  .B unicode_stop
---- a/docs/man/man1misc/splitfont.1
-+++ b/docs/man/man1misc/splitfont.1
-@@ -11,7 +11,7 @@
- 
- .SH DESCRIPTION
- The command
--.splitfont
-+.B splitfont
- removes characters from a given font file; it removes all the
- specified characters from the named font file.
- .P
 --- a/docs/man/man5/keymaps.5
 +++ b/docs/man/man5/keymaps.5
 @@ -5,11 +5,6 @@
@@ -270,9 +236,9 @@ Forwarded: no
 --- a/docs/man/man8/setfont.8.in
 +++ b/docs/man/man8/setfont.8.in
 @@ -12,7 +12,6 @@
- .RI "[-C " "console" ]
- .RI "[-h" "H" ]
- .RI "[-v] [-V]"
+ .IR H ]
+ .RB [ -v ]
+ .RB [ -V ]
 -.IX "setfont command" "" "\fLsetfont\fR command"
  .SH DESCRIPTION
  The
@@ -288,13 +254,6 @@ Forwarded: no
  
  .SH SEE ALSO
  .BR dumpkeys (1),
-@@ -39,4 +39,4 @@
- .\" .br
- .\" Pablo Saratxaga <pablo@mandrakesoft.com>
- .\" .br
--.\" Manpage by Alastair McKinstry, <mckinstry@computer.org>
-\ No newline at end of file
-+.\" Manpage by Alastair McKinstry, <mckinstry@computer.org>
 --- a/docs/man/man8misc/setvesablank.8
 +++ b/docs/man/man8misc/setvesablank.8
 @@ -16,7 +16,6 @@
