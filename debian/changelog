@@ -1,3 +1,11 @@
+kbd (2.3.0-3) unstable; urgency=medium
+
+  * Team upload.
+  * Revert "debian/rules: avoid shipping libtool scripts in udeb"
+  * Disable libkeymap (Closes: #969965)
+
+ -- Andreas Henriksson <andreas@fatal.se>  Sun, 11 Oct 2020 12:13:12 +0200
+
 kbd (2.3.0-2) unstable; urgency=medium
 
   * Team upload.
