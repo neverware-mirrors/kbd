@@ -38,7 +38,7 @@ override_dh_auto_clean:
 override_dh_auto_configure:
 	dh_auto_configure -- \
 		--enable-nls \
-		--enable-libkeymap \
+		--disable-libkeymap \
 		--disable-vlock
 
 override_dh_auto_build:
